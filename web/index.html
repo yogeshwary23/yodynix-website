@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    The value below is replaced by the `--base-href` argument of `flutter build web`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>YODYNIX | Digital Technology &amp; Innovation Studio</title>
+  <meta name="description" content="YODYNIX is a digital technology and innovation studio helping businesses, startups and students turn ideas into practical digital solutions — websites, mobile apps, custom software, AI automation, digital marketing, UI/UX design, branding and internships.">
+  <meta name="keywords" content="YODYNIX, website development, mobile app development, Flutter, e-commerce, custom software, AI automation, digital marketing, UI/UX design, branding, internships">
+  <meta name="theme-color" content="#0A1022">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://yodynix.it.com/">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="YODYNIX">
+  <meta property="og:url" content="https://yodynix.it.com/">
+  <meta property="og:title" content="YODYNIX | Turning Ideas Into Powerful Digital Experiences">
+  <meta property="og:description" content="A digital technology and innovation studio for businesses, startups and students — websites, apps, AI automation, digital growth and practical learning.">
+  <meta property="og:image" content="https://yodynix.it.com/icons/Icon-512.png">
+  <meta property="og:image:alt" content="YODYNIX logo">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="YODYNIX | Turning Ideas Into Powerful Digital Experiences">
+  <meta name="twitter:description" content="Digital technology and innovation studio — websites, apps, AI automation, digital growth, branding and internships.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="YODYNIX">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "YODYNIX",
+    "description": "Digital Technology & Innovation Studio",
+    "slogan": "Turning Ideas Into Powerful Digital Experiences."
+  }
+  </script>
+
+  <style>
+    html, body { margin: 0; background: #0A1022; }
+    #splash {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      background: radial-gradient(circle at 50% 45%, #14286B 0%, #0A1022 60%);
+      transition: opacity .4s ease;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    #splash img { width: 88px; height: 88px; animation: pulse 1.6s ease-in-out infinite; }
+    #splash .bar { width: 120px; height: 3px; border-radius: 3px; background: #223258; overflow: hidden; }
+    #splash .bar::after {
+      content: ""; display: block; width: 40%; height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, #386BFF, #00D4FF, #8CCFFF);
+      animation: slide 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 50% { transform: scale(.94); opacity: .85; } }
+    @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+    @media (prefers-reduced-motion: reduce) { #splash img, #splash .bar::after { animation: none; } }
+    .seo-content { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  </style>
+</head>
+<body>
+  <div id="splash" aria-hidden="true">
+    <img src="icons/Icon-192.png" alt="">
+    <div class="bar"></div>
+  </div>
+
+  <!-- Readable summary for crawlers and visitors without JavaScript. -->
+  <noscript>
+    <main>
+      <h1>YODYNIX — Turning Ideas Into Powerful Digital Experiences.</h1>
+      <p>YODYNIX is a digital technology and innovation studio helping businesses, startups, entrepreneurs and students transform their ideas into practical digital solutions.</p>
+      <h2>Services</h2>
+      <ul>
+        <li>Website Development</li>
+        <li>E-commerce Development</li>
+        <li>Mobile Application Development</li>
+        <li>Flutter Development</li>
+        <li>Custom Software Development</li>
+        <li>AI Solutions &amp; Chatbots</li>
+        <li>Business Automation</li>
+        <li>Digital Marketing</li>
+        <li>UI/UX Design</li>
+        <li>Branding &amp; Digital Presence</li>
+      </ul>
+      <h2>Internships</h2>
+      <p>Hands-on internship programmes in Flutter, Web, UI/UX, Python, Digital Marketing, AI &amp; Automation and Full Stack Development.</p>
+      <p>Please enable JavaScript to view the full website.</p>
+    </main>
+  </noscript>
+
+  <script>
+    // Fade out the splash once Flutter renders its first frame.
+    function hideSplash() {
+      var splash = document.getElementById('splash');
+      if (!splash) return;
+      splash.style.opacity = '0';
+      setTimeout(function () { splash.remove(); }, 450);
+    }
+    window.addEventListener('flutter-first-frame', hideSplash);
+    setTimeout(hideSplash, 12000); // Safety net if the event never fires.
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

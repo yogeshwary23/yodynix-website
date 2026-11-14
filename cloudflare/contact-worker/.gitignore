@@ -1,0 +1,6 @@
+node_modules/
+.wrangler/
+# Local-only secrets for `wrangler dev`. Never commit real credentials.
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

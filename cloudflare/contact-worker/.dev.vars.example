@@ -1,0 +1,5 @@
+# Copy to .dev.vars for `wrangler dev`. .dev.vars is git-ignored.
+# Use a local test SMTP server here, not the production password.
+SMTP_HOST=127.0.0.1
+SMTP_PORT=2525
+SMTP_PASSWORD=local-test-password
