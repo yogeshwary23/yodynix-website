@@ -104,7 +104,7 @@ class _CampaignPlannerDemoState extends State<CampaignPlannerDemo> {
                 style: AppTypography.body(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.cyan,
+                  color: AppColors.electricBlue,
                   letterSpacing: 1.3,
                   height: 1.2,
                 ),
@@ -231,7 +231,7 @@ class _FunnelBar extends StatelessWidget {
               value: fraction,
               minHeight: 10,
               backgroundColor: AppColors.deepNavy,
-              valueColor: const AlwaysStoppedAnimation(AppColors.cyan),
+              valueColor: const AlwaysStoppedAnimation(AppColors.electricBlue),
             ),
           ),
         ],

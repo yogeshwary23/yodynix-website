@@ -5,6 +5,15 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import 'visual_primitives.dart';
 
+// Hero palette: champagne gold, balanced with muted steel blue and soft silver.
+const _gold = AppColors.champagneGold; // #C6A46A
+const _softGold = AppColors.softChampagne; // #D6BD8F
+const _steel = AppColors.steelBlue; // #60758F
+const _silver = AppColors.softGrey; // #A8B0BC
+const _edge = Color(0x8C60758F); // silver-blue hairline
+const _tileFill = Color(0xFF202735);
+const _goldGradient = LinearGradient(colors: [_gold, _softGold], begin: Alignment.topLeft, end: Alignment.bottomRight);
+
 /// Cinematic hero composition: a glowing "innovation core" inside tilted
 /// orbital rings, linked to an AI assistant, a website, a mobile app and an
 /// automation workflow. Laid out on a 640×600 design canvas.
@@ -52,7 +61,7 @@ class _HeroVisualState extends State<HeroVisual> with SingleTickerProviderStateM
             // Light pooling behind the core.
             Positioned.fill(
               child: DecoratedBox(
-                decoration: BoxDecoration(gradient: AppColors.glow(center: const Alignment(0, 0), radius: 0.62, strength: 1.4)),
+                decoration: BoxDecoration(gradient: AppColors.glow(center: const Alignment(0, 0), radius: 0.62, strength: 1.2)),
               ),
             ),
             Positioned.fill(
@@ -92,13 +101,21 @@ class _Core extends StatelessWidget {
         gradient: const RadialGradient(
           center: Alignment(-0.3, -0.35),
           radius: 0.95,
-          colors: [AppColors.iceBlue, AppColors.cyan, AppColors.electricBlue, Color(0xFF14308F), Color(0xFF060B1C)],
+          colors: [Color(0xFFE6D4B1), _softGold, _gold, AppColors.antiqueGold, Color(0xFF151B26)],
           stops: [0, 0.22, 0.45, 0.8, 1],
         ),
         boxShadow: [
-          BoxShadow(color: AppColors.electricBlue.withValues(alpha: 0.65), blurRadius: 70, spreadRadius: 6),
-          BoxShadow(color: AppColors.cyan.withValues(alpha: 0.35), blurRadius: 140, spreadRadius: 30),
+          BoxShadow(color: _gold.withValues(alpha: 0.16), blurRadius: 48, spreadRadius: 2),
+          BoxShadow(color: _steel.withValues(alpha: 0.10), blurRadius: 110, spreadRadius: 16),
         ],
+      ),
+      foregroundDecoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          center: const Alignment(0.55, 0.75),
+          radius: 0.7,
+          colors: [_steel.withValues(alpha: 0.32), _steel.withValues(alpha: 0)],
+        ),
       ),
       child: Center(
         child: Container(
@@ -116,7 +133,7 @@ class _Core extends StatelessWidget {
   }
 }
 
-/// Navy glass tile with a faint electric-blue edge.
+/// Charcoal glass tile with a hairline edge.
 class _GlassTile extends StatelessWidget {
   const _GlassTile({required this.child, this.width});
 
@@ -131,15 +148,12 @@ class _GlassTile extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [const Color(0xFF1A2850).withValues(alpha: 0.92), const Color(0xFF0D1631).withValues(alpha: 0.92)],
+          colors: [const Color(0xFF2A3243).withValues(alpha: 0.92), _tileFill.withValues(alpha: 0.92)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: AppColors.electricBlue.withValues(alpha: 0.4)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.6), blurRadius: 30, offset: const Offset(0, 16)),
-          BoxShadow(color: AppColors.electricBlue.withValues(alpha: 0.16), blurRadius: 36, spreadRadius: -6),
-        ],
+        border: Border.all(color: _edge),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 30, offset: const Offset(0, 16))],
       ),
       child: child,
     );
@@ -155,19 +169,19 @@ Widget _tileHeader(IconData icon, String title, String caption) {
         height: 34,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          gradient: AppColors.brandGradient,
-          boxShadow: [BoxShadow(color: AppColors.electricBlue.withValues(alpha: 0.5), blurRadius: 14)],
+          gradient: _goldGradient,
+          boxShadow: [BoxShadow(color: _gold.withValues(alpha: 0.22), blurRadius: 12)],
         ),
-        child: Icon(icon, size: 19, color: AppColors.white),
+        child: Icon(icon, size: 19, color: AppColors.deepCharcoal),
       ),
       const SizedBox(width: 10),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          vLabel(title, size: 12.5, weight: FontWeight.w700),
+          vLabel(title, size: 12.5, weight: FontWeight.w700, color: AppColors.white),
           const SizedBox(height: 2),
-          vLabel(caption, size: 9.5, color: AppColors.muted),
+          vLabel(caption, size: 9.5, color: _silver),
         ],
       ),
     ],
@@ -190,20 +204,20 @@ class _AiTile extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Container(
               padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(gradient: AppColors.brandGradient, borderRadius: BorderRadius.circular(9)),
+              decoration: BoxDecoration(gradient: _goldGradient, borderRadius: BorderRadius.circular(9)),
               child: Skel(width: 86, height: 4, color: AppColors.white.withValues(alpha: 0.8)),
             ),
           ),
           const SizedBox(height: 7),
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: AppColors.cardRaised, borderRadius: BorderRadius.circular(9)),
+            decoration: BoxDecoration(color: VizColors.raised, borderRadius: BorderRadius.circular(9)),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Skel(width: 150, height: 4, color: Color(0xFF3A4B75)),
+                Skel(width: 150, height: 4, color: Color(0xFF3A4354)),
                 SizedBox(height: 5),
-                Skel(width: 112, height: 4, color: Color(0xFF3A4B75)),
+                Skel(width: 112, height: 4, color: Color(0xFF3A4354)),
               ],
             ),
           ),
@@ -215,10 +229,7 @@ class _AiTile extends StatelessWidget {
                   width: 6,
                   height: 6,
                   margin: const EdgeInsets.only(right: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.cyan.withValues(alpha: 1 - i * 0.28),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: [_gold, _steel, _silver][i].withValues(alpha: 0.9)),
                 ),
             ],
           ),
@@ -234,10 +245,11 @@ class _WebTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BrowserFrame(
+      dotColors: const [_silver, _steel, _gold],
       width: 214,
       height: 150,
       child: ColoredBox(
-        color: AppColors.card,
+        color: _tileFill,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
@@ -246,10 +258,7 @@ class _WebTile extends StatelessWidget {
               Container(
                 height: 54,
                 padding: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  gradient: const LinearGradient(colors: [Color(0xFF132A6B), AppColors.electricBlue]),
-                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), gradient: _goldGradient),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -267,9 +276,9 @@ class _WebTile extends StatelessWidget {
                       child: Container(
                         height: 30,
                         decoration: BoxDecoration(
-                          color: AppColors.cardRaised,
+                          color: VizColors.raised,
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: i == 0 ? AppColors.electricBlue.withValues(alpha: 0.6) : AppColors.border),
+                          border: Border.all(color: i == 0 ? _gold.withValues(alpha: 0.6) : _edge),
                         ),
                       ),
                     ),
@@ -293,18 +302,19 @@ class _MobileTile extends StatelessWidget {
     return PhoneFrame(
       width: 132,
       height: 252,
-      screenColor: const Color(0xFF0D1631),
+      screenColor: _tileFill,
+      edgeColor: _steel,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            vLabel('Mobile Apps', size: 10.5, weight: FontWeight.w700),
+            vLabel('Mobile Apps', size: 10.5, weight: FontWeight.w700, color: AppColors.white),
             const SizedBox(height: 8),
             Container(
               height: 62,
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), gradient: AppColors.warmGradient),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), gradient: _goldGradient),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -319,19 +329,16 @@ class _MobileTile extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(color: AppColors.cardRaised, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(color: VizColors.raised, borderRadius: BorderRadius.circular(8)),
                 child: Row(
                   children: [
                     Container(
                       width: 16,
                       height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: i == 0 ? AppColors.electricBlue : AppColors.skeleton,
-                      ),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: i == 0 ? _gold : VizColors.skeleton),
                     ),
                     const SizedBox(width: 6),
-                    Skel(width: 50.0 - i * 8, height: 4, color: const Color(0xFF3A4B75)),
+                    Skel(width: 50.0 - i * 8, height: 4, color: const Color(0xFF3A4354)),
                   ],
                 ),
               ),
@@ -367,14 +374,14 @@ class _AutomationTile extends StatelessWidget {
                       height: 30,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(9),
-                        color: i == 2 ? null : AppColors.cardRaised,
-                        gradient: i == 2 ? AppColors.brandGradient : null,
-                        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.45)),
+                        color: i == 2 ? null : VizColors.raised,
+                        gradient: i == 2 ? _goldGradient : null,
+                        border: Border.all(color: _steel.withValues(alpha: 0.6)),
                       ),
-                      child: Icon(icon, size: 16, color: i == 2 ? AppColors.white : AppColors.cyan),
+                      child: Icon(icon, size: 16, color: i == 2 ? AppColors.deepCharcoal : _softGold),
                     ),
                     const SizedBox(height: 5),
-                    vLabel(label, size: 8.5, color: AppColors.lightGrey),
+                    vLabel(label, size: 8.5, color: _silver),
                   ],
                 ),
                 if (i < _steps.length - 1)
@@ -382,7 +389,7 @@ class _AutomationTile extends StatelessWidget {
                     child: Container(
                       height: 2,
                       margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
-                      decoration: const BoxDecoration(gradient: AppColors.brandGradient),
+                      decoration: const BoxDecoration(gradient: LinearGradient(colors: [_gold, _steel])),
                     ),
                   ),
               ],
@@ -407,9 +414,8 @@ class _OrbitPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Connectors.
     for (final (i, anchor) in anchors.indexed) {
-      final shader = LinearGradient(
-        colors: [AppColors.electricBlue.withValues(alpha: 0.7), AppColors.electricBlue.withValues(alpha: 0.05)],
-      ).createShader(Rect.fromPoints(center, anchor));
+      final shader = LinearGradient(colors: [_gold.withValues(alpha: 0.6), _steel.withValues(alpha: 0.08)])
+          .createShader(Rect.fromPoints(center, anchor));
       final path = Path()
         ..moveTo(center.dx, center.dy)
         ..quadraticBezierTo((center.dx + anchor.dx) / 2, center.dy, anchor.dx, anchor.dy);
@@ -442,10 +448,10 @@ class _OrbitPainter extends CustomPainter {
           ..shader = SweepGradient(
             transform: GradientRotation(t * 2 * math.pi * speed),
             colors: [
-              AppColors.electricBlue.withValues(alpha: 0.05),
-              AppColors.cyan.withValues(alpha: 0.85),
-              AppColors.iceBlue.withValues(alpha: 0.25),
-              AppColors.electricBlue.withValues(alpha: 0.05),
+              _gold.withValues(alpha: 0.05),
+              (i == 1 ? _steel : _softGold).withValues(alpha: 0.8),
+              _silver.withValues(alpha: 0.28),
+              _gold.withValues(alpha: 0.05),
             ],
             stops: const [0, 0.3, 0.55, 1],
           ).createShader(rect),
@@ -461,7 +467,7 @@ class _OrbitPainter extends CustomPainter {
     canvas.drawOval(
       Rect.fromCenter(center: center.translate(0, 150), width: 260, height: 34),
       Paint()
-        ..color = AppColors.electricBlue.withValues(alpha: 0.22)
+        ..color = _gold.withValues(alpha: 0.16)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
     );
   }
@@ -471,10 +477,10 @@ class _OrbitPainter extends CustomPainter {
       p,
       r * 3,
       Paint()
-        ..color = AppColors.electricBlue.withValues(alpha: 0.35 * opacity)
+        ..color = _gold.withValues(alpha: 0.3 * opacity)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, r * 1.6),
     );
-    canvas.drawCircle(p, r, Paint()..color = Color.lerp(AppColors.iceBlue, AppColors.white, 0.4)!.withValues(alpha: opacity));
+    canvas.drawCircle(p, r, Paint()..color = Color.lerp(_softGold, AppColors.white, 0.4)!.withValues(alpha: opacity));
   }
 
   @override

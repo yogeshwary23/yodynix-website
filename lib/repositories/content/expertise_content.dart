@@ -8,14 +8,14 @@ class ExpertiseContent {
 
   static const heading = 'Technology Meets Creative Thinking.';
   static const lead =
-      'A focused, modern toolkit we use and offer — chosen for reliability, '
+      'A focused, modern toolkit we use and offer, chosen for reliability, '
       'maintainability and a great end-user experience.';
 
   // Icons use theme colours (not each product's brand colour) so the
-  // section stays within the site palette.
-  static const _a = AppColors.cyan;
-  static const _b = AppColors.iceBlue;
-  static const _c = AppColors.primary;
+  // section stays within the site palette: gold tones on the charcoal band.
+  static const _a = AppColors.champagneGold;
+  static const _b = AppColors.goldTint;
+  static const _c = AppColors.onDarkBody;
 
   static final categories = [
     TechCategory(

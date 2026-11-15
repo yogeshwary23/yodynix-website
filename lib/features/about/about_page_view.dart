@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/about_page.dart';
 import '../../models/site_section.dart';
@@ -42,7 +43,7 @@ class AboutPageView extends StatelessWidget {
         children: [
           _Hero(page: page, heading: heading, lead: lead),
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             topPadding: context.responsive(mobile: 48.0, desktop: 72.0),
             glowAt: const Alignment(1.1, -0.6),
             glowStrength: 0.7,
@@ -66,15 +67,12 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tone = SurfaceColors.dark;
     return SectionShell(
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 40.0, desktop: 56.0),
-      gradient: const LinearGradient(
-        colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-        stops: [0, 0.6, 1],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
+      tone: tone,
+      gradient: AppColors.darkBandGradient,
       glowAt: const Alignment(0, -1.2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,7 +84,6 @@ class _Hero extends StatelessWidget {
           SizedBox(height: context.responsive(mobile: 24.0, desktop: 32.0)),
           SectionHeader(
             eyebrow: page.title,
-            eyebrowColor: AppColors.cyan,
             title: heading,
             lead: lead,
             centered: true,
@@ -113,13 +110,13 @@ class _Breadcrumb extends StatelessWidget {
       icon: Icon(icon, size: 16),
       label: Text(label),
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.body,
+        foregroundColor: context.tone.body,
         textStyle: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.2),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         minimumSize: const Size(0, 36),
       ),
     );
-    const separator = Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.muted);
+    final separator = Icon(Icons.chevron_right_rounded, size: 16, color: context.tone.muted);
 
     return Semantics(
       container: true,
@@ -137,7 +134,7 @@ class _Breadcrumb extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               current.title,
-              style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.cyan, height: 1.2),
+              style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: context.tone.accent, height: 1.2),
             ),
           ),
         ],
@@ -192,7 +189,8 @@ class _TabState extends State<_Tab> {
   @override
   Widget build(BuildContext context) {
     final active = widget.active;
-    final color = active ? AppColors.white : (_hover ? AppColors.cyan : AppColors.body);
+    final tone = context.tone;
+    final color = active ? AppColors.onPrimary : (_hover ? tone.ink : tone.body);
     return Semantics(
       button: true,
       selected: active,
@@ -209,11 +207,9 @@ class _TabState extends State<_Tab> {
             curve: AppMotion.ease,
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: BoxDecoration(
-              gradient: active ? AppColors.brandGradient : null,
-              color: active ? null : AppColors.card.withValues(alpha: _hover ? 1 : 0.7),
+              color: active ? AppColors.primary : (_hover ? tone.ghostHoverFill : tone.ghostFill),
               borderRadius: BorderRadius.circular(AppRadius.pill),
-              border: Border.all(color: active ? Colors.transparent : AppColors.cyan.withValues(alpha: _hover ? 0.55 : 0.18)),
-              boxShadow: active ? AppColors.glowShadow(0.5) : null,
+              border: Border.all(color: active ? AppColors.primary : tone.ghostBorder),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -249,7 +245,7 @@ class _MoreAbout extends StatelessWidget {
   Widget build(BuildContext context) {
     final others = AboutPage.values.where((p) => p != current).toList();
     return SectionShell(
-      background: AppColors.background,
+      background: AppColors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -314,7 +310,6 @@ class _AboutPageCardState extends State<AboutPageCard> {
       child: HoverCard(
         padding: const EdgeInsets.all(10),
         onTap: _open,
-        accent: AppColors.cyan,
         semanticLabel: page.title,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -333,25 +328,30 @@ class _AboutPageCardState extends State<AboutPageCard> {
                 children: [
                   Row(
                     children: [
-                      Icon(page.icon, size: 18, color: AppColors.cyan),
+                      Icon(page.icon, size: 18, color: AppColors.cardAccent),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           page.title,
-                          style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3),
+                          style: AppTypography.display(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            height: 1.3,
+                            color: AppColors.cardHeading,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(page.summary, style: AppTypography.body(fontSize: 14, height: 1.6)),
+                  Text(page.summary, style: AppTypography.body(fontSize: 14, height: 1.6, color: AppColors.cardBody)),
                 ],
               ),
             ),
             const Spacer(),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 14, 12, 6),
-              child: ArrowLink(label: 'Explore', color: AppColors.cyan, onPressed: _open),
+              child: ArrowLink(label: 'Explore', color: AppColors.cardAccent, onPressed: _open),
             ),
           ],
         ),

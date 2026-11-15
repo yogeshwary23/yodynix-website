@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 
 enum ButtonSize { small, medium, large }
 
@@ -18,7 +19,8 @@ double _fontSize(ButtonSize size) => switch (size) {
   ButtonSize.large => 16,
 };
 
-/// Gradient brand button with a hover glow and an arrow that nudges forward.
+/// Solid champagne-gold action with a soft lift on hover and an arrow that
+/// nudges forward.
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
     super.key,
@@ -29,6 +31,7 @@ class PrimaryButton extends StatefulWidget {
     this.expand = false,
     this.loading = false,
     this.warm = false,
+    this.fill,
   });
 
   final String label;
@@ -38,8 +41,12 @@ class PrimaryButton extends StatefulWidget {
   final bool expand;
   final bool loading;
 
-  /// Uses the orange accent gradient instead of the blue brand gradient.
+  /// Uses the charcoal fill instead of gold, for a quieter action
+  /// next to a primary one.
   final bool warm;
+
+  /// Overrides the gold fill; hover deepens to the standard gold.
+  final Color? fill;
 
   @override
   State<PrimaryButton> createState() => _PrimaryButtonState();
@@ -50,10 +57,13 @@ class _PrimaryButtonState extends State<PrimaryButton> {
 
   @override
   Widget build(BuildContext context) {
-    final gradient = widget.warm
-        ? const LinearGradient(colors: [AppColors.cyan, AppColors.iceBlue])
-        : const LinearGradient(colors: [AppColors.electricBlue, AppColors.cyan]);
-    final glow = widget.warm ? AppColors.cyan : AppColors.electricBlue;
+    final base = widget.warm ? AppColors.charcoalNavy : widget.fill ?? AppColors.primary;
+    final hoverFill = widget.warm
+        ? AppColors.deepCharcoal
+        : widget.fill != null
+        ? AppColors.primary
+        : AppColors.primaryDeep;
+    final foreground = widget.warm ? AppColors.white : AppColors.onPrimary;
     final enabled = widget.onPressed != null && !widget.loading;
 
     return Semantics(
@@ -69,8 +79,8 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           borderRadius: BorderRadius.circular(AppRadius.pill),
           boxShadow: [
             BoxShadow(
-              color: glow.withValues(alpha: _hover && enabled ? 0.55 : 0.28),
-              blurRadius: _hover ? 34 : 20,
+              color: AppColors.deepCharcoal.withValues(alpha: _hover && enabled ? 0.18 : 0.08),
+              blurRadius: _hover ? 22 : 14,
               offset: const Offset(0, 6),
             ),
           ],
@@ -80,10 +90,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           borderRadius: BorderRadius.circular(AppRadius.pill),
           clipBehavior: Clip.antiAlias,
           child: Ink(
-            decoration: BoxDecoration(
-              gradient: enabled ? gradient : null,
-              color: enabled ? null : AppColors.muted.withValues(alpha: 0.4),
-            ),
+            decoration: BoxDecoration(color: enabled ? (_hover ? hoverFill : base) : AppColors.softGrey),
             child: InkWell(
               onTap: enabled ? widget.onPressed : null,
               onHover: (v) => setState(() => _hover = v),
@@ -94,11 +101,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (widget.loading)
-                      const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.white),
-                      )
+                      SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: foreground))
                     else
                       Flexible(
                         child: Text(
@@ -107,7 +110,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
                           style: AppTypography.body(
                             fontSize: _fontSize(widget.size),
                             fontWeight: FontWeight.w600,
-                            color: AppColors.white,
+                            color: foreground,
                             height: 1.2,
                           ),
                         ),
@@ -116,7 +119,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
                       AnimatedPadding(
                         duration: AppMotion.hover,
                         padding: EdgeInsets.only(left: _hover ? 12 : 8),
-                        child: Icon(widget.icon, size: 18, color: AppColors.white),
+                        child: Icon(widget.icon, size: 18, color: foreground),
                       ),
                     ],
                   ],
@@ -156,18 +159,15 @@ class _SecondaryButtonState extends State<SecondaryButton> {
 
   @override
   Widget build(BuildContext context) {
+    final tone = context.tone;
+    final hoverText = tone.accent;
     return Semantics(
       button: true,
       label: widget.label,
       excludeSemantics: true,
       child: Material(
-        color: _hover ? AppColors.primarySoft : AppColors.white.withValues(alpha: 0.04),
-        shape: StadiumBorder(
-          side: BorderSide(
-            color: _hover ? AppColors.primary.withValues(alpha: 0.7) : AppColors.white.withValues(alpha: 0.22),
-            width: 1.2,
-          ),
-        ),
+        color: _hover ? tone.ghostHoverFill : tone.ghostFill,
+        shape: StadiumBorder(side: BorderSide(color: _hover ? tone.accent.withValues(alpha: 0.7) : tone.ghostBorder, width: 1.2)),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: widget.onPressed,
@@ -185,14 +185,14 @@ class _SecondaryButtonState extends State<SecondaryButton> {
                     style: AppTypography.body(
                       fontSize: _fontSize(widget.size),
                       fontWeight: FontWeight.w600,
-                      color: _hover ? AppColors.primary : AppColors.ink,
+                      color: _hover ? hoverText : tone.ink,
                       height: 1.2,
                     ),
                   ),
                 ),
                 if (widget.icon != null) ...[
                   const SizedBox(width: 8),
-                  Icon(widget.icon, size: 18, color: _hover ? AppColors.primary : AppColors.ink),
+                  Icon(widget.icon, size: 18, color: _hover ? hoverText : tone.ink),
                 ],
               ],
             ),
@@ -205,11 +205,13 @@ class _SecondaryButtonState extends State<SecondaryButton> {
 
 /// Inline text action with an arrow, e.g. "Learn more →".
 class ArrowLink extends StatefulWidget {
-  const ArrowLink({super.key, required this.label, required this.onPressed, this.color = AppColors.primary});
+  const ArrowLink({super.key, required this.label, required this.onPressed, this.color});
 
   final String label;
   final VoidCallback onPressed;
-  final Color color;
+
+  /// Defaults to the surface's accent.
+  final Color? color;
 
   @override
   State<ArrowLink> createState() => _ArrowLinkState();
@@ -220,6 +222,7 @@ class _ArrowLinkState extends State<ArrowLink> {
 
   @override
   Widget build(BuildContext context) {
+    final color = context.readable(widget.color ?? context.tone.accent);
     return Semantics(
       button: true,
       label: widget.label,
@@ -238,12 +241,12 @@ class _ArrowLinkState extends State<ArrowLink> {
               children: [
                 Text(
                   widget.label,
-                  style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: widget.color, height: 1.2),
+                  style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: color, height: 1.2),
                 ),
                 AnimatedPadding(
                   duration: const Duration(milliseconds: 200),
                   padding: EdgeInsets.only(left: _hover ? 10 : 6),
-                  child: Icon(Icons.arrow_forward_rounded, size: 17, color: widget.color),
+                  child: Icon(Icons.arrow_forward_rounded, size: 17, color: color),
                 ),
               ],
             ),

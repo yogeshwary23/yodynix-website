@@ -128,9 +128,9 @@ class _ServicePhoto extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.deepNavy.withValues(alpha: 0.82),
               borderRadius: BorderRadius.circular(AppRadius.sm),
-              border: Border.all(color: AppColors.cyan.withValues(alpha: 0.45)),
+              border: Border.all(color: AppColors.cardLine),
             ),
-            child: Icon(service.icon, size: 20, color: AppColors.cyan),
+            child: Icon(service.icon, size: 20, color: AppColors.cardAccent),
           ),
         ),
       ],
@@ -148,7 +148,6 @@ class _ServiceCard extends StatelessWidget {
     return _HoverScope(
       builder: (hover) => HoverCard(
         padding: EdgeInsets.zero,
-        accent: AppColors.cyan,
         semanticLabel: service.title,
         onTap: () => openServicePage(context, service),
         child: Column(
@@ -181,7 +180,6 @@ class _WideServiceCard extends StatelessWidget {
     return _HoverScope(
       builder: (hover) => HoverCard(
         padding: EdgeInsets.zero,
-        accent: AppColors.cyan,
         semanticLabel: service.title,
         onTap: () => openServicePage(context, service),
         child: IntrinsicHeight(
@@ -226,22 +224,27 @@ class _ServiceCardBody extends StatelessWidget {
       children: [
         Text(
           service.title,
-          style: AppTypography.display(fontSize: wide ? 22 : 18.5, fontWeight: FontWeight.w700, height: 1.3),
+          style: AppTypography.display(
+            fontSize: wide ? 22 : 18.5,
+            fontWeight: FontWeight.w700,
+            height: 1.3,
+            color: AppColors.cardHeading,
+          ),
         ),
         const SizedBox(height: 14),
-        Text(wide ? service.description : service.summary, style: AppTypography.body(fontSize: 14.8)),
+        Text(wide ? service.description : service.summary, style: AppTypography.body(fontSize: 14.8, color: AppColors.cardBody)),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
             for (final c in service.capabilities.take(shown)) TagChip(c),
-            if (remaining > 0) TagChip('+$remaining more', color: AppColors.cyan, filled: true),
+            if (remaining > 0) TagChip('+$remaining more', color: AppColors.cardAccent, filled: true),
           ],
         ),
         if (!wide) const Spacer(),
         const SizedBox(height: 18),
-        ArrowLink(label: 'Explore service', color: AppColors.cyan, onPressed: () => openServicePage(context, service)),
+        ArrowLink(label: 'Explore service', color: AppColors.cardAccent, onPressed: () => openServicePage(context, service)),
       ],
     );
   }

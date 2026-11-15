@@ -4,6 +4,7 @@ import '../../core/constants/site_config.dart';
 import '../../core/routing/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/site_section.dart';
 import '../../repositories/content/internship_content.dart';
@@ -30,10 +31,7 @@ class SiteFooter extends StatelessWidget {
             SiteSection.internship,
             SiteSection.contact,
           ])
-            _FooterLink(
-              s.navLabel!,
-              () => s == SiteSection.internship ? openInternshipPage(context) : goToSection(context, s),
-            ),
+            _FooterLink(s.navLabel!, () => s == SiteSection.internship ? openInternshipPage(context) : goToSection(context, s)),
         ],
       ),
       _FooterColumn(
@@ -58,98 +56,88 @@ class SiteFooter extends StatelessWidget {
     return Semantics(
       container: true,
       label: 'Footer',
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          gradient: AppColors.glow(center: Alignment.bottomLeft, radius: 1.1, strength: 0.35),
-          border: Border(top: BorderSide(color: AppColors.primary.withValues(alpha: 0.35))),
-        ),
-        child: MaxWidth(
-          child: Padding(
-            padding: EdgeInsets.only(top: context.responsive(mobile: 56.0, desktop: 80.0), bottom: 28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (context.isDesktop)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Expanded(flex: 4, child: _BrandBlock()),
-                      const SizedBox(width: 40),
-                      for (final column in columns) Expanded(flex: 2, child: column),
-                    ],
-                  )
-                else ...[
-                  const _BrandBlock(),
-                  const SizedBox(height: 40),
-                  ResponsiveGrid(
-                    minItemWidth: 220,
-                    maxColumns: 2,
-                    spacing: 24,
-                    runSpacing: 32,
-                    equalHeight: false,
-                    children: columns,
-                  ),
-                ],
-                const SizedBox(height: 48),
-                const Divider(),
-                const SizedBox(height: 22),
-                Center(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 20,
-                    runSpacing: 8,
-                    children: [
-                      _FooterLink(
-                        'Privacy Policy',
-                        () => Navigator.of(context).pushNamed(AppRoutes.privacy),
-                        compact: true,
-                      ),
-                      _FooterLink(
-                        'Terms & Conditions',
-                        () => Navigator.of(context).pushNamed(AppRoutes.terms),
-                        compact: true,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 18),
-                // The year follows the visitor's clock, so it never needs editing.
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    '© ${DateTime.now().year} ${SiteConfig.brandName}. All Rights Reserved.',
-                    textAlign: TextAlign.center,
-                    style: AppTypography.body(fontSize: 13.5, color: AppColors.muted, height: 1.5),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text.rich(
-                    TextSpan(
-                      text: 'Designed & Developed by ',
+      child: SurfaceTone(
+        colors: SurfaceColors.dark,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.deepCharcoal,
+            border: Border(top: BorderSide(color: AppColors.champagneGold.withValues(alpha: 0.45))),
+          ),
+          child: MaxWidth(
+            child: Padding(
+              padding: EdgeInsets.only(top: context.responsive(mobile: 56.0, desktop: 80.0), bottom: 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (context.isDesktop)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSpan(
-                          text: SiteConfig.brandName,
-                          style: AppTypography.body(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.iceBlue,
-                            height: 1.5,
-                          ).copyWith(letterSpacing: 0.6),
-                        ),
+                        const Expanded(flex: 4, child: _BrandBlock()),
+                        const SizedBox(width: 40),
+                        for (final column in columns) Expanded(flex: 2, child: column),
+                      ],
+                    )
+                  else ...[
+                    const _BrandBlock(),
+                    const SizedBox(height: 40),
+                    ResponsiveGrid(
+                      minItemWidth: 220,
+                      maxColumns: 2,
+                      spacing: 24,
+                      runSpacing: 32,
+                      equalHeight: false,
+                      children: columns,
+                    ),
+                  ],
+                  const SizedBox(height: 48),
+                  const Divider(color: AppColors.darkBorder),
+                  const SizedBox(height: 22),
+                  Center(
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 20,
+                      runSpacing: 8,
+                      children: [
+                        _FooterLink('Privacy Policy', () => Navigator.of(context).pushNamed(AppRoutes.privacy), compact: true),
+                        _FooterLink('Terms & Conditions', () => Navigator.of(context).pushNamed(AppRoutes.terms), compact: true),
                       ],
                     ),
-                    textAlign: TextAlign.center,
-                    style: AppTypography.body(
-                      fontSize: 12.5,
-                      color: AppColors.muted.withValues(alpha: 0.85),
-                      height: 1.5,
+                  ),
+                  const SizedBox(height: 18),
+                  // The year follows the visitor's clock, so it never needs editing.
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      '© ${DateTime.now().year} ${SiteConfig.brandName}. All Rights Reserved.',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.body(fontSize: 13.5, color: AppColors.onDarkMuted, height: 1.5),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 6),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Designed & Developed by ',
+                        children: [
+                          TextSpan(
+                            text: SiteConfig.brandName,
+                            style: AppTypography.body(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.onDark,
+                              height: 1.5,
+                            ).copyWith(letterSpacing: 0.6),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                      style: AppTypography.body(fontSize: 12.5, color: AppColors.onDarkMuted, height: 1.5),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -185,11 +173,11 @@ class _BrandBlock extends StatelessWidget {
         const SizedBox(height: 20),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 360),
-          child: Text(SiteConfig.shortDescription, style: AppTypography.body(fontSize: 14.5)),
+          child: Text(SiteConfig.shortDescription, style: AppTypography.body(fontSize: 14.5, color: AppColors.onDarkBody)),
         ),
         const SizedBox(height: 22),
         if (SocialConfig.links.isEmpty)
-          Text('Social profiles coming soon.', style: AppTypography.body(fontSize: 13, color: AppColors.muted))
+          Text('Social profiles coming soon.', style: AppTypography.body(fontSize: 13, color: AppColors.onDarkMuted))
         else
           Wrap(
             spacing: 10,
@@ -199,16 +187,12 @@ class _BrandBlock extends StatelessWidget {
                 Tooltip(
                   message: link.platform.label,
                   child: Material(
-                    color: AppColors.card,
-                    shape: const CircleBorder(side: BorderSide(color: AppColors.border)),
+                    color: AppColors.charcoalNavy,
+                    shape: const CircleBorder(side: BorderSide(color: AppColors.darkBorder)),
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: () => LinkService.open(link.url),
-                      child: SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Icon(link.platform.icon, size: 16, color: AppColors.ink),
-                      ),
+                      child: SizedBox(width: 40, height: 40, child: Icon(link.platform.icon, size: 16, color: AppColors.onDark)),
                     ),
                   ),
                 ),
@@ -230,7 +214,10 @@ class _FooterColumn extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTypography.display(fontSize: 15, fontWeight: FontWeight.w700)),
+        Text(
+          title,
+          style: AppTypography.display(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.onDark),
+        ),
         const SizedBox(height: 18),
         ...links,
       ],
@@ -270,7 +257,7 @@ class _FooterLinkState extends State<_FooterLink> {
               duration: const Duration(milliseconds: 180),
               style: AppTypography.body(
                 fontSize: widget.compact ? 13.5 : 14.5,
-                color: _hover ? AppColors.primary : AppColors.body,
+                color: _hover ? AppColors.primaryTint : AppColors.onDarkBody,
                 height: 1.4,
               ),
               child: Text(widget.label),

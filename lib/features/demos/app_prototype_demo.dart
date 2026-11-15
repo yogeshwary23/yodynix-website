@@ -55,7 +55,7 @@ class _AppPrototypeDemoState extends State<AppPrototypeDemo> {
           const SizedBox(height: 10),
           Text(
             'Step ${_screen + 1} of 3 · ${_screens[_screen]}',
-            style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.iceBlue, height: 1.3),
+            style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.electricBlueTint, height: 1.3),
           ),
           const SizedBox(height: 16),
           FittedBox(

@@ -34,7 +34,7 @@ class AboutVisual extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: AppColors.signatureGradient,
+                gradient: AppColors.brandGradient,
                 boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 30)],
               ),
               child: const Icon(Icons.all_inclusive_rounded, color: AppColors.white, size: 36),
@@ -43,12 +43,12 @@ class AboutVisual extends StatelessWidget {
           Positioned(
             left: 30,
             top: 50,
-            child: _stage(Icons.lightbulb_outline_rounded, 'Idea', 'Understand the possibility', AppColors.sun, 0.25),
+            child: _stage(Icons.lightbulb_outline_rounded, 'Idea', 'Understand the possibility', AppColors.charcoalNavy, 0.25),
           ),
           Positioned(
             left: 320,
             top: 50,
-            child: _stage(Icons.draw_outlined, 'Design', 'Shape the experience', AppColors.sky, 0.5),
+            child: _stage(Icons.draw_outlined, 'Design', 'Shape the experience', AppColors.primaryTint, 0.5),
           ),
           Positioned(
             left: 320,
@@ -58,7 +58,7 @@ class AboutVisual extends StatelessWidget {
           Positioned(
             left: 30,
             top: 340,
-            child: _stage(Icons.rocket_launch_outlined, 'Grow', 'Launch and improve', AppColors.accent, 1),
+            child: _stage(Icons.rocket_launch_outlined, 'Grow', 'Launch and improve', AppColors.primaryTint, 1),
           ),
         ],
       ),
@@ -85,7 +85,7 @@ class AboutVisual extends StatelessWidget {
                     children: [
                       vLabel(title, size: 14, weight: FontWeight.w700),
                       const SizedBox(height: 3),
-                      vLabel(subtitle, size: 10, color: AppColors.muted, weight: FontWeight.w500),
+                      vLabel(subtitle, size: 10, color: VizColors.muted, weight: FontWeight.w500),
                     ],
                   ),
                 ),
@@ -94,7 +94,7 @@ class AboutVisual extends StatelessWidget {
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(value: progress, minHeight: 5, color: color, backgroundColor: AppColors.skeleton),
+              child: LinearProgressIndicator(value: progress, minHeight: 5, color: color, backgroundColor: VizColors.skeleton),
             ),
           ],
         ),
@@ -164,7 +164,7 @@ class InternshipVisual extends StatelessWidget {
                           children: [
                             vLabel('Sprint board', size: 11, weight: FontWeight.w700),
                             const SizedBox(height: 10),
-                            for (final c in const [AppColors.primary, AppColors.accent, AppColors.mint, AppColors.violet])
+                            for (final c in const [AppColors.primary, AppColors.primaryTint, AppColors.mint, AppColors.violet])
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Row(
@@ -172,7 +172,7 @@ class InternshipVisual extends StatelessWidget {
                                     Icon(
                                       c == AppColors.violet ? Icons.radio_button_unchecked : Icons.check_circle_rounded,
                                       size: 12,
-                                      color: c == AppColors.violet ? AppColors.muted : AppColors.success,
+                                      color: c == AppColors.violet ? VizColors.muted : AppColors.success,
                                     ),
                                     const SizedBox(width: 6),
                                     Skel(width: 70, height: 5, color: c.withValues(alpha: 0.5)),
@@ -185,7 +185,7 @@ class InternshipVisual extends StatelessWidget {
                     ),
                     Container(
                       width: 130,
-                      color: AppColors.cardRaised,
+                      color: VizColors.raised,
                       padding: const EdgeInsets.all(12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +195,7 @@ class InternshipVisual extends StatelessWidget {
                           for (final w in const [80.0, 60.0, 90.0, 50.0, 70.0])
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8),
-                              child: Skel(width: w, height: 5, color: const Color(0xFF2E3D63)),
+                              child: Skel(width: w, height: 5, color: const Color(0xFF3A4354)),
                             ),
                         ],
                       ),
@@ -207,10 +207,10 @@ class InternshipVisual extends StatelessWidget {
           ),
           for (final a in const [
             (Offset(96, 70), AppColors.primary),
-            (Offset(440, 80), AppColors.accent),
+            (Offset(440, 80), AppColors.primaryTint),
             (Offset(70, 300), AppColors.violet),
             (Offset(450, 300), AppColors.mint),
-            (Offset(262, 334), AppColors.sky),
+            (Offset(262, 334), AppColors.primaryTint),
           ])
             Positioned(
               left: a.$1.dx,
@@ -222,11 +222,11 @@ class InternshipVisual extends StatelessWidget {
               ),
             ),
           Positioned(left: 180, top: 40, child: Floating(phase: 0.2, child: _tag('Flutter', AppColors.primary))),
-          Positioned(left: 330, top: 50, child: Floating(phase: 0.6, child: _tag('UI/UX', AppColors.sky))),
+          Positioned(left: 330, top: 50, child: Floating(phase: 0.6, child: _tag('UI/UX', AppColors.primaryTint))),
           Positioned(left: 20, top: 190, child: Floating(phase: 0.4, child: _tag('Python', AppColors.violet))),
           Positioned(left: 450, top: 200, child: Floating(phase: 0.8, child: _tag('AI', AppColors.mint))),
           Positioned(left: 150, top: 350, child: Floating(phase: 0.1, child: _tag('Marketing', AppColors.rose))),
-          Positioned(left: 340, top: 370, child: Floating(phase: 0.9, child: _tag('Full Stack', AppColors.accent))),
+          Positioned(left: 340, top: 370, child: Floating(phase: 0.9, child: _tag('Full Stack', AppColors.primaryTint))),
         ],
       ),
     );
@@ -236,7 +236,7 @@ class InternshipVisual extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.cardRaised,
+        color: VizColors.raised,
         borderRadius: BorderRadius.circular(99),
         border: Border.all(color: color.withValues(alpha: 0.35)),
         boxShadow: AppColors.softShadow(0.6),

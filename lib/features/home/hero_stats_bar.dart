@@ -4,7 +4,6 @@ import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
-import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/viewport_trigger.dart';
 
 /// Single-row statistics bar at the foot of the hero. Values come from
@@ -61,10 +60,10 @@ class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderSt
       child: Container(
         padding: EdgeInsets.symmetric(vertical: mobile ? 18 : (tablet ? 22 : 28), horizontal: mobile ? 8 : 12),
         decoration: BoxDecoration(
-          gradient: AppColors.glassGradient,
+          gradient: AppColors.darkGlassGradient,
           borderRadius: BorderRadius.circular(mobile ? 20 : 24),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
-          boxShadow: [...AppColors.softShadow(), ...AppColors.glowShadow(0.45)],
+          border: Border.all(color: AppColors.darkBorder),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 32, offset: const Offset(0, 14))],
         ),
         // One straight row from tablet up; on phones 3 + 2 rows so labels
         // stay readable without horizontal scrolling.
@@ -78,9 +77,9 @@ class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderSt
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.cyan.withValues(alpha: 0),
-                          AppColors.cyan.withValues(alpha: 0.45),
-                          AppColors.cyan.withValues(alpha: 0),
+                          AppColors.darkBorder.withValues(alpha: 0),
+                          AppColors.softGrey.withValues(alpha: 0.35),
+                          AppColors.darkBorder.withValues(alpha: 0),
                         ],
                       ),
                     ),
@@ -111,7 +110,7 @@ class _StatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (value, suffix, label) = stat;
-    final style = AppTypography.display(fontSize: numberSize, fontWeight: FontWeight.w800, height: 1.1);
+    final style = AppTypography.display(fontSize: numberSize, fontWeight: FontWeight.w800, height: 1.1, color: AppColors.onDark);
     return Semantics(
       label: '$value$suffix $label',
       excludeSemantics: true,
@@ -123,21 +122,21 @@ class _StatItem extends StatelessWidget {
             AnimatedBuilder(
               animation: progress,
               builder: (context, _) {
-                final text = '${(value * progress.value).round()}$suffix';
+                // White numerals with only the suffix in accent blue.
+                final count = '${(value * progress.value).round()}';
                 return FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Stack(
-                    children: [
-                      // Soft bloom behind the gradient numerals.
-                      Text(
-                        text,
-                        style: style.copyWith(
-                          color: Colors.transparent,
-                          shadows: [Shadow(color: AppColors.cyan.withValues(alpha: 0.45), blurRadius: 22)],
+                  child: Text.rich(
+                    TextSpan(
+                      text: count,
+                      children: [
+                        TextSpan(
+                          text: suffix,
+                          style: style.copyWith(color: AppColors.primaryTint),
                         ),
-                      ),
-                      GradientText(text, style: style),
-                    ],
+                      ],
+                    ),
+                    style: style,
                   ),
                 );
               },
@@ -146,7 +145,12 @@ class _StatItem extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: AppTypography.body(fontSize: labelSize, color: AppColors.muted, fontWeight: FontWeight.w500, height: 1.35),
+              style: AppTypography.body(
+                fontSize: labelSize,
+                color: AppColors.onDarkMuted,
+                fontWeight: FontWeight.w500,
+                height: 1.35,
+              ),
             ),
           ],
         ),
@@ -168,12 +172,11 @@ class _VerticalDivider extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.cyan.withValues(alpha: 0.05),
-            AppColors.cyan.withValues(alpha: 0.55),
-            AppColors.primary.withValues(alpha: 0.05),
+            AppColors.softGrey.withValues(alpha: 0.0),
+            AppColors.softGrey.withValues(alpha: 0.35),
+            AppColors.softGrey.withValues(alpha: 0.0),
           ],
         ),
-        boxShadow: [BoxShadow(color: AppColors.cyan.withValues(alpha: 0.35), blurRadius: 6)],
       ),
     );
   }

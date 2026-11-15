@@ -4,6 +4,7 @@ import '../../core/constants/asset_paths.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../models/pillar_page.dart' show PillarStep;
@@ -55,7 +56,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
         children: [
           _Hero(service: service, content: content, onStart: _startProject, onPortfolio: _toPortfolio),
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -79,7 +80,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
             ),
           ),
           SectionShell(
-            background: AppColors.background,
+            background: AppColors.surface,
             glowAt: const Alignment(-1.1, -0.4),
             glowStrength: 0.6,
             child: Column(
@@ -107,7 +108,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           KeyedSubtree(
             key: _portfolioKey,
             child: SectionShell(
-              background: AppColors.surface,
+              background: AppColors.background,
               glowAt: const Alignment(1.1, -0.8),
               glowStrength: 0.6,
               child: Column(
@@ -160,28 +161,34 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tone = SurfaceColors.dark;
     final desktop = context.isDesktop;
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Eyebrow(service.title, color: AppColors.cyan),
+        Eyebrow(service.title, color: tone.accent),
         const SizedBox(height: 20),
         Semantics(
           header: true,
           child: Text(
             content.heroHeading,
-            style: AppTypography.display(fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0)),
+            style: AppTypography.display(
+              fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0),
+              color: tone.ink,
+            ),
           ),
         ),
         const SizedBox(height: 18),
-        Text(content.heroLead, style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7)),
+        Text(
+          content.heroLead,
+          style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7, color: tone.body),
+        ),
         const SizedBox(height: 24),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            for (final c in service.capabilities.take(4))
-              TagChip(c, color: AppColors.cyan, icon: Icons.check_rounded, filled: true),
+            for (final c in service.capabilities.take(4)) TagChip(c, color: tone.accent, icon: Icons.check_rounded, filled: true),
           ],
         ),
         const SizedBox(height: 30),
@@ -203,7 +210,7 @@ class _Hero extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.xl),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.22),
+              color: Colors.black.withValues(alpha: 0.35),
               blurRadius: 70,
               spreadRadius: -12,
               offset: const Offset(0, 24),
@@ -221,12 +228,8 @@ class _Hero extends StatelessWidget {
     return SectionShell(
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
-      gradient: const LinearGradient(
-        colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-        stops: [0, 0.6, 1],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
+      tone: tone,
+      gradient: AppColors.darkBandGradient,
       glowAt: const Alignment(0.8, -0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -268,13 +271,13 @@ class ServiceBreadcrumb extends StatelessWidget {
       icon: Icon(icon, size: 16),
       label: Text(label),
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.body,
+        foregroundColor: context.tone.body,
         textStyle: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.2),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         minimumSize: const Size(0, 36),
       ),
     );
-    const separator = Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.muted);
+    final separator = Icon(Icons.chevron_right_rounded, size: 16, color: context.tone.muted);
 
     return Semantics(
       container: true,
@@ -298,7 +301,7 @@ class ServiceBreadcrumb extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 current,
-                style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.cyan, height: 1.2),
+                style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: context.tone.accent, height: 1.2),
               ),
             ),
           ],
@@ -340,26 +343,33 @@ class _Overview extends StatelessWidget {
 
     final idealFor = Container(
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.22)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              IconBadge(icon: service.icon, color: AppColors.cyan, size: 44),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Text('Ideal For', style: AppTypography.display(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          CheckList(items: content.idealFor, color: AppColors.cyan),
-        ],
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconBadge(icon: service.icon, color: AppColors.accent, size: 44),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    'Ideal For',
+                    style: AppTypography.display(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.cardHeading,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            CheckList(items: content.idealFor, color: AppColors.accent),
+          ],
+        ),
       ),
     );
 
@@ -397,15 +407,17 @@ class _OfferCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoverCard(
       padding: const EdgeInsets.all(24),
-      accent: AppColors.cyan,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           IconBadge(icon: feature.icon, color: color, size: 46),
           const SizedBox(height: 18),
-          Text(feature.title, style: AppTypography.display(fontSize: 17.5, fontWeight: FontWeight.w700, height: 1.3)),
+          Text(
+            feature.title,
+            style: AppTypography.display(fontSize: 17.5, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+          ),
           const SizedBox(height: 8),
-          Text(feature.description, style: AppTypography.body(fontSize: 14.5, height: 1.6)),
+          Text(feature.description, style: AppTypography.body(fontSize: 14.5, height: 1.6, color: AppColors.cardBody)),
         ],
       ),
     );
@@ -456,7 +468,7 @@ class _ToolPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.25)),
+        border: Border.all(color: AppColors.accent.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -487,29 +499,31 @@ class _ProcessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                (index + 1).toString().padLeft(2, '0'),
-                style: AppTypography.display(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.cyan),
-              ),
-              const Spacer(),
-              Icon(step.icon, size: 22, color: AppColors.iceBlue),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(step.title, style: AppTypography.display(fontSize: 17, fontWeight: FontWeight.w700, height: 1.3)),
-          const SizedBox(height: 8),
-          Text(step.description, style: AppTypography.body(fontSize: 14, height: 1.55)),
-        ],
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  (index + 1).toString().padLeft(2, '0'),
+                  style: AppTypography.display(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.cardAccent),
+                ),
+                const Spacer(),
+                Icon(step.icon, size: 22, color: AppColors.charcoalNavy),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              step.title,
+              style: AppTypography.display(fontSize: 17, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+            ),
+            const SizedBox(height: 8),
+            Text(step.description, style: AppTypography.body(fontSize: 14, height: 1.55, color: AppColors.cardBody)),
+          ],
+        ),
       ),
     );
   }
@@ -531,7 +545,7 @@ class _StatusBadge extends StatelessWidget {
         // Opaque enough to stay legible over light demo screenshots.
         color: AppColors.deepNavy.withValues(alpha: live ? 0.9 : 0.78),
         borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: live ? AppColors.cyan.withValues(alpha: 0.6) : AppColors.muted.withValues(alpha: 0.5)),
+        border: Border.all(color: AppColors.white.withValues(alpha: live ? 0.24 : 0.14)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -539,7 +553,7 @@ class _StatusBadge extends StatelessWidget {
           Icon(
             live ? Icons.play_circle_outline_rounded : Icons.lightbulb_outline_rounded,
             size: 14,
-            color: live ? AppColors.cyan : AppColors.lightGrey,
+            color: live ? AppColors.primaryTint : AppColors.cardLine,
           ),
           const SizedBox(width: 6),
           Text(
@@ -547,7 +561,7 @@ class _StatusBadge extends StatelessWidget {
             style: AppTypography.body(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: live ? AppColors.cyan : AppColors.lightGrey,
+              color: live ? AppColors.primaryTint : AppColors.cardLine,
               letterSpacing: 1.2,
               height: 1.2,
             ),
@@ -579,7 +593,6 @@ class _ProjectCardState extends State<_ProjectCard> {
       onExit: (_) => setState(() => _hover = false),
       child: HoverCard(
         padding: EdgeInsets.zero,
-        accent: AppColors.cyan,
         semanticLabel: p.name,
         onTap: () => showProjectDetails(context, p),
         child: Column(
@@ -612,15 +625,23 @@ class _ProjectCardState extends State<_ProjectCard> {
                       style: AppTypography.body(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.cyan,
+                        color: AppColors.cardAccent,
                         letterSpacing: 1.3,
                         height: 1.2,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(p.name, style: AppTypography.display(fontSize: 21, fontWeight: FontWeight.w700, height: 1.25)),
+                    Text(
+                      p.name,
+                      style: AppTypography.display(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w700,
+                        height: 1.25,
+                        color: AppColors.cardHeading,
+                      ),
+                    ),
                     const SizedBox(height: 10),
-                    Text(p.summary, style: AppTypography.body(fontSize: 14.8, height: 1.6)),
+                    Text(p.summary, style: AppTypography.body(fontSize: 14.8, height: 1.6, color: AppColors.cardBody)),
                     const SizedBox(height: 16),
                     Wrap(spacing: 8, runSpacing: 8, children: [for (final t in p.technologies) TagChip(t)]),
                     const Spacer(),
@@ -671,7 +692,7 @@ class _ProjectActions extends StatelessWidget {
         if (!project.hasDemo)
           Text(
             'Concept · no live demo yet',
-            style: AppTypography.body(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.muted, height: 1.3),
+            style: AppTypography.body(fontSize: 12.5, fontWeight: FontWeight.w600, color: context.tone.muted, height: 1.3),
           ),
       ],
     );
@@ -726,7 +747,7 @@ class _ProjectDetailsBody extends StatelessWidget {
           style: AppTypography.body(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: AppColors.cyan,
+            color: context.tone.accent,
             letterSpacing: 1.3,
             height: 1.2,
           ),
@@ -736,28 +757,31 @@ class _ProjectDetailsBody extends StatelessWidget {
           header: true,
           child: Text(
             project.name,
-            style: AppTypography.display(fontSize: inDialog ? 26 : context.responsive(mobile: 26.0, desktop: 32.0)),
+            style: AppTypography.display(
+              fontSize: inDialog ? 26 : context.responsive(mobile: 26.0, desktop: 32.0),
+              color: context.tone.ink,
+            ),
           ),
         ),
         const SizedBox(height: 14),
-        Text(project.overview, style: AppTypography.body(fontSize: 15.5, height: 1.7)),
+        Text(project.overview, style: AppTypography.body(fontSize: 15.5, height: 1.7, color: context.tone.body)),
         const SizedBox(height: 22),
         Text(
           'Key Features',
-          style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.ink, height: 1.3),
+          style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: context.tone.ink, height: 1.3),
         ),
         const SizedBox(height: 12),
-        CheckList(items: project.features, color: AppColors.cyan, columns: context.isMobile ? 1 : 2),
+        CheckList(items: project.features, color: context.tone.accent, columns: context.isMobile ? 1 : 2),
         const SizedBox(height: 22),
         Text(
           'Technologies',
-          style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.ink, height: 1.3),
+          style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: context.tone.ink, height: 1.3),
         ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: [for (final t in project.technologies) TagChip(t, color: AppColors.cyan, filled: true)],
+          children: [for (final t in project.technologies) TagChip(t, color: context.tone.accent, filled: true)],
         ),
         const SizedBox(height: 22),
         _SampleNotice(project: project),
@@ -789,10 +813,10 @@ class _SampleNotice extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.iceBlue),
+          Icon(Icons.info_outline_rounded, size: 18, color: context.tone.ink),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(text, style: AppTypography.body(fontSize: 13.5, color: AppColors.body, height: 1.55)),
+            child: Text(text, style: AppTypography.body(fontSize: 13.5, color: context.tone.body, height: 1.55)),
           ),
         ],
       ),
@@ -824,47 +848,30 @@ class _FeaturedProject extends StatelessWidget {
     return Reveal(
       child: Container(
         padding: EdgeInsets.all(context.responsive(mobile: 20.0, desktop: 40.0)),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF16244D), AppColors.midnightNavy, AppColors.deepNavy],
-            stops: [0, 0.55, 1],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: 0.35)),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.cyan.withValues(alpha: 0.12),
-              blurRadius: 60,
-              spreadRadius: -10,
-              offset: const Offset(0, 20),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Eyebrow('Project Details', color: AppColors.cyan),
-            ),
-            const SizedBox(height: 24),
-            if (context.isDesktop)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(flex: 11, child: image),
-                  const SizedBox(width: 44),
-                  Expanded(flex: 10, child: details),
-                ],
-              )
-            else ...[
-              image,
-              const SizedBox(height: 28),
-              details,
+        decoration: CardStyle.decoration(radius: AppRadius.xl),
+        child: SurfaceTone(
+          colors: SurfaceColors.inCard,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Align(alignment: Alignment.centerLeft, child: Eyebrow('Project Details')),
+              const SizedBox(height: 24),
+              if (context.isDesktop)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 11, child: image),
+                    const SizedBox(width: 44),
+                    Expanded(flex: 10, child: details),
+                  ],
+                )
+              else ...[
+                image,
+                const SizedBox(height: 28),
+                details,
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -884,7 +891,7 @@ class ServiceProjectCta extends StatelessWidget {
   Widget build(BuildContext context) {
     final others = ServicesContent.services.where((s) => s.id != service.id).toList();
     return SectionShell(
-      background: AppColors.background,
+      background: AppColors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -893,14 +900,14 @@ class ServiceProjectCta extends StatelessWidget {
               padding: EdgeInsets.all(context.responsive(mobile: 28.0, desktop: 56.0)),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [AppColors.primaryDeep, AppColors.electricBlue, Color(0xFF0B8FD0)],
+                  colors: [AppColors.charcoalNavy, AppColors.deepCharcoal],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(AppRadius.xl),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.35),
+                    color: AppColors.charcoalNavy.withValues(alpha: 0.22),
                     blurRadius: 60,
                     spreadRadius: -12,
                     offset: const Offset(0, 24),
@@ -915,7 +922,7 @@ class ServiceProjectCta extends StatelessWidget {
                     style: AppTypography.body(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.white,
+                      color: AppColors.primaryTint,
                       letterSpacing: 1.6,
                       height: 1.2,
                     ),
@@ -937,7 +944,7 @@ class ServiceProjectCta extends StatelessWidget {
                       'Tell us what you have in mind. We will reply with clear next steps, a suggested '
                       'approach and an honest estimate.',
                       textAlign: TextAlign.center,
-                      style: AppTypography.body(fontSize: 16, color: AppColors.white.withValues(alpha: 0.88), height: 1.65),
+                      style: AppTypography.body(fontSize: 16, color: AppColors.onDarkBody, height: 1.65),
                     ),
                   ),
                   const SizedBox(height: 28),
@@ -953,7 +960,7 @@ class ServiceProjectCta extends StatelessWidget {
             style: AppTypography.body(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: AppColors.cyan,
+              color: AppColors.accent,
               letterSpacing: 1.6,
               height: 1.2,
             ),
@@ -985,8 +992,8 @@ class _CtaButton extends StatelessWidget {
       icon: const Icon(Icons.arrow_forward_rounded, size: 18),
       label: Text(label),
       style: FilledButton.styleFrom(
-        backgroundColor: AppColors.white,
-        foregroundColor: AppColors.deepNavy,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
         shape: const StadiumBorder(),
         textStyle: AppTypography.body(fontSize: 15.5, fontWeight: FontWeight.w700, height: 1.2),
@@ -1024,21 +1031,21 @@ class _ServiceLinkState extends State<_ServiceLink> {
             duration: AppMotion.hover,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
             decoration: BoxDecoration(
-              color: _hover ? AppColors.cardRaised : AppColors.card,
+              color: _hover ? AppColors.primarySoft : AppColors.card,
               borderRadius: BorderRadius.circular(AppRadius.pill),
-              border: Border.all(color: AppColors.cyan.withValues(alpha: _hover ? 0.6 : 0.2)),
+              border: Border.all(color: AppColors.accent.withValues(alpha: _hover ? 0.6 : 0.2)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(s.icon, size: 17, color: _hover ? AppColors.cyan : AppColors.iceBlue),
+                Icon(s.icon, size: 17, color: _hover ? AppColors.accent : AppColors.charcoalNavy),
                 const SizedBox(width: 8),
                 Text(
                   s.title,
                   style: AppTypography.body(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: _hover ? AppColors.cyan : AppColors.ink,
+                    color: _hover ? AppColors.accent : AppColors.ink,
                     height: 1.2,
                   ),
                 ),

@@ -1,10 +1,73 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 
-/// Dark glass card that lifts and gains a glowing orange edge on hover.
+/// The site-wide card look: a deep-charcoal tile with a fine champagne edge
+/// and a soft dark shadow. Content inside reads its colours from
+/// [SurfaceColors.inCard] (wrap it in [CardSurface] or use [HoverCard]).
+class CardStyle {
+  CardStyle._();
+
+  static BoxDecoration decoration({double radius = AppRadius.lg, bool hover = false}) => BoxDecoration(
+    color: AppColors.cardSurface,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: hover ? AppColors.cardBorderHover : AppColors.cardBorder),
+    boxShadow: shadow(hover: hover),
+  );
+
+  static List<BoxShadow> shadow({bool hover = false}) => [
+    BoxShadow(
+      color: AppColors.deepCharcoal.withValues(alpha: hover ? 0.26 : 0.16),
+      blurRadius: hover ? 32 : 22,
+      offset: Offset(0, hover ? 16 : 10),
+    ),
+  ];
+}
+
+/// A static card: [CardStyle] decoration with card colours for its content.
+class CardSurface extends StatelessWidget {
+  const CardSurface({super.key, required this.child, this.padding, this.radius = AppRadius.lg, this.hover = false});
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final double radius;
+  final bool hover;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: AppMotion.lift,
+      curve: AppMotion.ease,
+      padding: padding,
+      decoration: CardStyle.decoration(radius: radius, hover: hover),
+      child: SurfaceTone(colors: SurfaceColors.inCard, child: child),
+    );
+  }
+}
+
+/// A [CardSurface] holding a form: fields, chips and menus switch to their
+/// dark, gold-focused style.
+class FormCard extends StatelessWidget {
+  const FormCard({super.key, required this.child, this.padding, this.radius = AppRadius.xl});
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: AppTheme.onCard(Theme.of(context)),
+      child: CardSurface(padding: padding, radius: radius, child: child),
+    );
+  }
+}
+
+/// Card that lifts gently and brightens its gold edge on hover.
 class HoverCard extends StatefulWidget {
   const HoverCard({
     super.key,
@@ -12,8 +75,6 @@ class HoverCard extends StatefulWidget {
     this.onTap,
     this.padding = const EdgeInsets.all(28),
     this.radius = AppRadius.lg,
-    this.color = AppColors.card,
-    this.accent = AppColors.primary,
     this.semanticLabel,
   });
 
@@ -21,8 +82,6 @@ class HoverCard extends StatefulWidget {
   final VoidCallback? onTap;
   final EdgeInsets padding;
   final double radius;
-  final Color color;
-  final Color accent;
   final String? semanticLabel;
 
   @override
@@ -42,23 +101,8 @@ class _HoverCardState extends State<HoverCard> {
       child: AnimatedContainer(
         duration: AppMotion.lift,
         curve: AppMotion.ease,
-        transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
-        decoration: BoxDecoration(
-          color: widget.color == AppColors.card ? null : widget.color,
-          gradient: widget.color == AppColors.card ? AppColors.glassGradient : null,
-          borderRadius: radius,
-          border: Border.all(color: _hover ? widget.accent.withValues(alpha: 0.6) : AppColors.border),
-          boxShadow: _hover
-              ? [
-                  BoxShadow(
-                    color: widget.accent.withValues(alpha: 0.22),
-                    blurRadius: 44,
-                    spreadRadius: -6,
-                    offset: const Offset(0, 18),
-                  ),
-                ]
-              : AppColors.softShadow(0.6),
-        ),
+        transform: Matrix4.translationValues(0, _hover ? -4 : 0, 0),
+        decoration: CardStyle.decoration(radius: widget.radius, hover: _hover),
         child: Material(
           color: Colors.transparent,
           borderRadius: radius,
@@ -67,9 +111,12 @@ class _HoverCardState extends State<HoverCard> {
             onTap: widget.onTap,
             borderRadius: radius,
             hoverColor: Colors.transparent,
-            splashColor: widget.accent.withValues(alpha: 0.06),
-            highlightColor: widget.accent.withValues(alpha: 0.03),
-            child: Padding(padding: widget.padding, child: widget.child),
+            splashColor: AppColors.cardAccent.withValues(alpha: 0.06),
+            highlightColor: AppColors.cardAccent.withValues(alpha: 0.03),
+            child: SurfaceTone(
+              colors: SurfaceColors.inCard,
+              child: Padding(padding: widget.padding, child: widget.child),
+            ),
           ),
         ),
       ),
@@ -88,6 +135,18 @@ class IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (identical(context.tone, SurfaceColors.inCard)) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: AppColors.cardTile,
+          border: Border.all(color: AppColors.cardLine),
+          borderRadius: BorderRadius.circular(size * 0.3),
+        ),
+        child: Icon(icon, size: size * 0.48, color: AppColors.cardAccent),
+      );
+    }
     return Container(
       width: size,
       height: size,
@@ -96,37 +155,54 @@ class IconBadge extends StatelessWidget {
         border: gradient ? null : Border.all(color: color.withValues(alpha: 0.22)),
         gradient: gradient
             ? LinearGradient(
-                colors: [color, Color.lerp(color, AppColors.iceBlue, 0.35)!],
+                colors: [color, Color.lerp(color, context.tone.badgeTint, 0.35)!],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
             : null,
         borderRadius: BorderRadius.circular(size * 0.3),
         boxShadow: gradient
-            ? [BoxShadow(color: color.withValues(alpha: 0.28), blurRadius: 18, offset: const Offset(0, 8))]
+            ? [
+                BoxShadow(
+                  color: color.withValues(alpha: context.tone.isDark ? 0.28 : 0.18),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ]
             : null,
       ),
-      child: Icon(icon, size: size * 0.48, color: gradient ? AppColors.white : color),
+      child: Icon(
+        icon,
+        size: size * 0.48,
+        // Dark glyph on light fills (gold), white on deep ones.
+        color: gradient
+            ? (ThemeData.estimateBrightnessForColor(color) == Brightness.light ? AppColors.onPrimary : AppColors.white)
+            : color,
+      ),
     );
   }
 }
 
 class TagChip extends StatelessWidget {
-  const TagChip(this.label, {super.key, this.color = AppColors.primary, this.icon, this.filled = false});
+  const TagChip(this.label, {super.key, this.color, this.icon, this.filled = false});
 
   final String label;
-  final Color color;
+
+  /// Defaults to the surface's accent.
+  final Color? color;
   final IconData? icon;
   final bool filled;
 
   @override
   Widget build(BuildContext context) {
+    final tone = context.tone;
+    final color = context.readable(this.color ?? tone.accent);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
       decoration: BoxDecoration(
-        color: filled ? color.withValues(alpha: 0.12) : AppColors.card,
+        color: filled ? color.withValues(alpha: tone.isDark ? 0.12 : 0.08) : tone.card,
         borderRadius: BorderRadius.circular(99),
-        border: Border.all(color: filled ? color.withValues(alpha: 0.3) : AppColors.border),
+        border: Border.all(color: filled ? color.withValues(alpha: tone.isDark ? 0.3 : 0.22) : tone.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -139,7 +215,7 @@ class TagChip extends StatelessWidget {
               style: AppTypography.body(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
-                color: filled ? color : AppColors.body,
+                color: filled ? color : tone.body,
                 height: 1.2,
               ),
             ),
@@ -150,7 +226,7 @@ class TagChip extends StatelessWidget {
   }
 }
 
-/// Clips [child] into the brand's orange-red gradient.
+/// Clips [text] into the brand's headline gradient.
 class GradientText extends StatelessWidget {
   const GradientText(this.text, {super.key, required this.style, this.gradient = AppColors.headlineGradient, this.textAlign});
 
@@ -184,8 +260,8 @@ class MediaFrame extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: AppColors.border),
-          boxShadow: AppColors.softShadow(),
+          border: Border.all(color: context.tone.border),
+          boxShadow: context.tone.shadow(),
         ),
         child: ClipRRect(borderRadius: BorderRadius.circular(radius), child: child),
       ),

@@ -124,7 +124,7 @@ class _SupportAssistantDemoState extends State<SupportAssistantDemo> {
                       Container(
                         width: 36,
                         height: 36,
-                        decoration: const BoxDecoration(gradient: AppColors.brandGradient, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: AppColors.electricBlue, shape: BoxShape.circle),
                         child: const Icon(Icons.support_agent_rounded, color: AppColors.white, size: 20),
                       ),
                       const SizedBox(width: 10),
@@ -143,7 +143,7 @@ class _SupportAssistantDemoState extends State<SupportAssistantDemo> {
                             ),
                             Text(
                               _handedOff ? 'Handed off to the support team' : 'Scripted demo · no AI model connected',
-                              style: AppTypography.body(fontSize: 12, color: AppColors.iceBlue, height: 1.3),
+                              style: AppTypography.body(fontSize: 12, color: AppColors.electricBlueTint, height: 1.3),
                             ),
                           ],
                         ),

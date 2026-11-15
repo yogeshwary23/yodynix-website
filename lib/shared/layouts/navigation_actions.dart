@@ -100,7 +100,7 @@ void showClientLoginDialog(BuildContext context) {
     maxWidth: 480,
     builder: (dialogContext) => SiteDialogBody(
       icon: Icons.lock_outline_rounded,
-      title: 'Client Portal — Coming Soon',
+      title: 'Client Portal: Coming Soon',
       description:
           'A secure client portal for project updates, files and communication '
           'is currently being built. Until it launches, our team will keep you updated '

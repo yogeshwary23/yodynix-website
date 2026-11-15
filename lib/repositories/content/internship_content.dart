@@ -110,7 +110,7 @@ class InternshipContent {
   static const paidTitle = 'Paid Internship Opportunities';
   static const paidText =
       'Opportunities with paid terms, when available. Whether this means a stipend or a programme '
-      'fee — and how much — is confirmed for each opportunity before you commit.';
+      'fee, and the amount involved, is confirmed for each opportunity before you commit.';
   static const opportunityNote =
       'Availability and conditions depend on the specific opportunity. Nothing is final '
       'until it is confirmed with you directly.';
@@ -719,7 +719,7 @@ class InternshipContent {
         'AI and automation can remove repetitive work and help businesses respond faster. This programme focuses on '
             'practical, responsible use of these tools rather than theory alone.',
         'You learn how AI APIs and chatbots work, how to write and evaluate prompts, and how to connect tools into '
-            'automated workflows — always checking output for accuracy.',
+            'automated workflows, always checking the output for accuracy.',
       ],
       imageAlt: 'An engineer working on a laptop in an automation and robotics lab.',
       skills: [
@@ -818,7 +818,7 @@ class InternshipContent {
       introduction: [
         'Full stack developers understand how every part of a web application fits together. This programme '
             'takes you from the interface in the browser to the server and the database behind it.',
-        'You build REST APIs with Node.js, design database tables, and connect everything to a working front end — '
+        'You build REST APIs with Node.js, design database tables and connect everything to a working front end, '
             'learning to debug problems wherever they occur.',
       ],
       imageAlt: 'A developer wearing headphones working across multiple monitors of code.',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import 'cards.dart';
@@ -12,7 +13,7 @@ Future<T?> showSiteDialog<T>(BuildContext context, {required WidgetBuilder build
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Close',
-    barrierColor: Colors.black.withValues(alpha: 0.72),
+    barrierColor: AppColors.deepCharcoal.withValues(alpha: 0.6),
     transitionDuration: const Duration(milliseconds: 260),
     pageBuilder: (dialogContext, _, _) {
       final mobile = dialogContext.isMobile;
@@ -26,7 +27,7 @@ Future<T?> showSiteDialog<T>(BuildContext context, {required WidgetBuilder build
                 color: AppColors.card,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(mobile ? 20 : 28),
-                  side: BorderSide(color: AppColors.primary.withValues(alpha: 0.35)),
+                  side: const BorderSide(color: AppColors.lightGrey),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Stack(
@@ -104,7 +105,7 @@ class SiteDialogBody extends StatelessWidget {
 
 /// Bulleted check list used inside dialogs and detail views.
 class CheckList extends StatelessWidget {
-  const CheckList({super.key, required this.items, this.color = AppColors.primary, this.columns = 1});
+  const CheckList({super.key, required this.items, this.color = AppColors.accent, this.columns = 1});
 
   final List<String> items;
   final Color color;
@@ -112,6 +113,7 @@ class CheckList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = context.readable(this.color);
     final tiles = [
       for (final item in items)
         Padding(
@@ -128,7 +130,7 @@ class CheckList extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(item, style: AppTypography.body(fontSize: 14.5, color: AppColors.ink, height: 1.5)),
+                child: Text(item, style: AppTypography.body(fontSize: 14.5, color: context.tone.ink, height: 1.5)),
               ),
             ],
           ),

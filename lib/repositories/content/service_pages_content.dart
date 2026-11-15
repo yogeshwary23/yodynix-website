@@ -36,8 +36,8 @@ class ServicePagesContent {
         'A website is usually the first place a customer checks before they call, visit or buy. '
             'We plan the structure around the questions your customers actually ask, write clear '
             'calls to action and build pages that load quickly on every device.',
-        'Every site is built to be easy to update, search-friendly from the first line of code '
-            'and ready to grow — from a single landing page to a full custom web application.',
+        'Every site is easy to update, search-friendly from the first line of code and ready '
+            'to grow, whether it starts as a single landing page or a full custom web application.',
       ],
       idealFor: [
         'Businesses launching or replacing a website',
@@ -103,7 +103,7 @@ class ServicePagesContent {
           overview:
               'A one-page website for a neighbourhood dental clinic. Visitors can browse '
               'treatments, check opening hours and send an appointment request with validated '
-              'fields — the core of a small-business website in one working page.',
+              'fields. It shows the core of a small-business website in one working page.',
           features: [
             'Responsive one-page layout',
             'Treatment cards',
@@ -274,11 +274,11 @@ class ServicePagesContent {
       heroHeading: 'Mobile Apps People Enjoy Using.',
       heroLead:
           'Polished Android and iOS applications that keep customers engaged and '
-          'teams productive — built from one maintainable codebase.',
+          'teams productive, built from one maintainable codebase.',
       overview: [
         'A good app earns its place on a home screen by saving people time. We focus on the '
-            'few journeys that matter most — booking, ordering, tracking — and make them fast '
-            'and obvious.',
+            'few journeys that matter most, such as booking, ordering and tracking, and make '
+            'them fast and obvious.',
         'Using cross-platform technology such as Flutter, we ship to Android and iOS together, '
             'with secure API integrations and a codebase that stays easy to extend.',
       ],
@@ -331,8 +331,8 @@ class ServicePagesContent {
               'your bookings.',
           overview:
               'A mobile booking demo shown in a phone frame. Members choose a day, pick a '
-              'class with live seat counts, confirm the booking and cancel it from "My Bookings" '
-              '— the core loop of any booking app.',
+              'class with live seat counts, confirm the booking and cancel it from "My Bookings". '
+              'That is the core loop of any booking app.',
           features: ['Day picker', 'Classes with live seat counts', 'Booking confirmation', 'My Bookings with cancel'],
           technologies: ['Flutter Mobile', 'Dart', 'State Management'],
           imageAlt: 'Screenshot of the FitSlot demo booking app.',
@@ -381,14 +381,14 @@ class ServicePagesContent {
     'flutter_development': ServicePageContent(
       heroHeading: 'One Flutter Codebase. Every Screen.',
       heroLead:
-          'Flutter applications for Android, iOS, web and desktop — consistent, fast '
-          'and far easier to maintain than separate builds.',
+          'Flutter applications for Android, iOS, web and desktop that stay consistent, '
+          'perform well and cost far less to maintain than separate builds.',
       overview: [
         'Flutter lets one well-structured codebase run natively on phones, tablets, browsers '
             'and desktops. That means features ship everywhere at once and behave the same on '
             'every platform.',
-        'We build with clean architecture, responsive layouts and predictable state '
-            'management — and we also help teams improve or extend existing Flutter projects.',
+        'Our builds use clean architecture, responsive layouts and predictable state '
+            'management. We also help teams improve or extend Flutter projects already in use.',
       ],
       idealFor: [
         'Products that need mobile and web together',
@@ -470,7 +470,7 @@ class ServicePagesContent {
           summary: 'A café point-of-sale app for tablets with a web back office.',
           overview:
               'Concept for cafés and small shops: a tablet POS for taking orders and a '
-              'web back office for menus, prices and daily sales — the same Flutter codebase.',
+              'web back office for menus, prices and daily sales, both from the same Flutter codebase.',
           features: ['Tablet order screen', 'Menu and price management', 'Daily sales view', 'Works offline'],
           technologies: ['Flutter', 'Flutter Web', 'Firebase'],
           imageAlt: 'A barista using a tablet point-of-sale at a café counter.',
@@ -488,8 +488,8 @@ class ServicePagesContent {
         'Off-the-shelf software makes you adapt your process to the tool. Custom software does '
             'the opposite: it follows the way your team already works and removes the steps '
             'that waste time.',
-        'We start small with the workflow that hurts most, deliver it quickly and grow the '
-            'system with you — with secure access, clean data and reports you can trust.',
+        'We start with the workflow that causes the most friction, deliver it quickly and '
+            'extend the system from there, with secure access, clean data and reliable reports.',
       ],
       idealFor: [
         'Teams running on spreadsheets',
@@ -527,7 +527,7 @@ class ServicePagesContent {
               'pipeline summary and an add-lead form.',
           overview:
               'A compact CRM demo. Search leads, filter by status, add a new lead with '
-              'validation and update a lead’s stage — the pipeline counts and value update '
+              'validation and update a lead’s stage, and the pipeline counts and value change '
               'immediately. Data stays in your browser session only.',
           features: ['Searchable lead table', 'Status filters', 'Pipeline summary', 'Add and update leads'],
           technologies: ['Flutter Web', 'State Management', 'Data Tables'],
@@ -554,7 +554,7 @@ class ServicePagesContent {
           summary: 'Front-desk software for appointments, patient records and billing.',
           overview:
               'Concept for a clinic front desk: a day view of appointments, quick patient '
-              'look-up, visit notes and simple billing — with role-based access for doctors '
+              'look-up, visit notes and simple billing, with role-based access for doctors '
               'and reception staff.',
           features: ['Appointment day view', 'Patient records', 'Billing and receipts', 'Role-based access'],
           technologies: ['Flutter Web', 'Node.js', 'MySQL & PostgreSQL'],
@@ -580,11 +580,11 @@ class ServicePagesContent {
       heroHeading: 'Practical AI That Helps Real People.',
       heroLead:
           'Chatbots and AI features that answer questions, guide customers and support '
-          'your team — implemented responsibly, with a clear hand-off to a person.',
+          'your team, with a person always available when the answer needs one.',
       overview: [
-        'AI is most valuable when it solves a specific problem: answering the same questions '
-            'all day, finding information in documents or summarising feedback. We start from '
-            'that problem, not the technology.',
+        'AI pays off when it targets a specific problem: answering the same questions all '
+            'day, finding information in documents or summarising feedback. We define that '
+            'problem first and choose the technology after.',
         'Assistants answer from your own approved information, show when they are unsure and '
             'hand over to your team when a person is needed.',
       ],
@@ -625,7 +625,7 @@ class ServicePagesContent {
               'A scripted chatbot demo for a software company’s help desk. It recognises '
               'questions about pricing, hours, refunds and support, suggests follow-up topics '
               'and offers to connect a person when it cannot help. This demo uses keyword '
-              'matching — no AI model is connected.',
+              'matching; no AI model is connected.',
           features: ['Suggested questions', 'Topic recognition', 'Typing indicator', 'Hand-off to a person'],
           technologies: ['Flutter Web', 'Conversation Design', 'Intent Matching'],
           imageAlt: 'Screenshot of the HelpDesk Assistant demo chatbot.',
@@ -722,8 +722,8 @@ class ServicePagesContent {
           name: 'FlowRunner',
           category: 'Workflow automation',
           summary:
-              'A working simulation of an enquiry workflow: CRM record, emails, team alert '
-              'and follow-up — with a live run log.',
+              'A working simulation of an enquiry workflow covering the CRM record, emails, '
+              'team alert and follow-up, with a live run log.',
           overview:
               'Submit a sample website enquiry and watch the workflow run step by step: '
               'the lead is saved to the CRM, a confirmation email is queued, the sales team is '
@@ -781,9 +781,9 @@ class ServicePagesContent {
           'Targeted campaigns, search visibility and honest performance analysis that '
           'help your budget work harder.',
       overview: [
-        'Marketing works best when every rupee can be traced to a result. We plan campaigns '
-            'around a clear goal — calls, bookings, sales — and set up tracking before the '
-            'first advert goes live.',
+        'Marketing works best when every rupee can be traced to a result. Each campaign is '
+            'planned around one clear goal, whether calls, bookings or sales, and tracking is '
+            'in place before the first advert goes live.',
         'Across Instagram, Facebook and Google we test, measure and refine, with simple '
             'reports that show what is working and what to change next.',
       ],
@@ -880,13 +880,13 @@ class ServicePagesContent {
     'ui_ux_design': ServicePageContent(
       heroHeading: 'Design That Feels Obvious To Use.',
       heroLead:
-          'Research-led interface design — from user journeys and wireframes to '
-          'interactive prototypes and polished, consistent screens.',
+          'Research-led interface design that moves from user journeys and wireframes '
+          'to interactive prototypes and polished, consistent screens.',
       overview: [
         'Good design removes doubt. We learn how your users think, map the journeys that '
             'matter and test ideas as wireframes and prototypes before anything is built.',
-        'The final interfaces come with a design system — colours, type, components and '
-            'rules — so every future screen stays consistent.',
+        'The final interfaces come with a design system of colours, type, components and '
+            'usage rules, so every future screen stays consistent.',
       ],
       idealFor: [
         'New products before development',
@@ -975,10 +975,10 @@ class ServicePagesContent {
           'Distinctive identities and a consistent presence across your website, social '
           'channels and everything you print.',
       overview: [
-        'A strong brand helps people remember you and trust you. We define what makes your '
+        'Recognition starts with knowing what sets you apart. We define what makes your '
             'business different and express it in a logo, colours, type and tone of voice.',
-        'Then we apply it everywhere customers meet you — website, social profiles, marketing '
-            'creatives and stationery — and document it in clear brand guidelines.',
+        'We then apply it wherever customers meet you, from the website and social profiles '
+            'to marketing creatives and stationery, and record it in clear brand guidelines.',
       ],
       idealFor: [
         'New businesses building an identity',
@@ -1013,7 +1013,7 @@ class ServicePagesContent {
           overview:
               'Type a business name, choose a colour palette and a font pairing, and see '
               'the identity applied instantly to a logo lockup, a business card and a social '
-              'post — the way we explore directions with clients.',
+              'post. It mirrors how we explore directions with clients.',
           features: ['Live name input', 'Palette presets', 'Font pairings', 'Logo, card and social previews'],
           technologies: ['Flutter Web', 'Typography', 'Colour Systems'],
           imageAlt: 'Screenshot of the Brand Kit Builder demo.',

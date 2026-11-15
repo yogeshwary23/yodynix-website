@@ -4,6 +4,7 @@ import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/site_section.dart';
 import '../../repositories/content/internship_content.dart';
@@ -72,7 +73,7 @@ class _InternshipPageState extends State<InternshipPage> {
 
           // 2. Learning benefits
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -83,7 +84,7 @@ class _InternshipPageState extends State<InternshipPage> {
                       'Every programme focuses on doing the work: practical tasks, guidance when you need it and '
                       'honest feedback on what you build.',
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 const InternshipBenefits(),
@@ -95,7 +96,7 @@ class _InternshipPageState extends State<InternshipPage> {
           KeyedSubtree(
             key: _programsKey,
             child: SectionShell(
-              background: AppColors.background,
+              background: AppColors.surface,
               glowAt: const Alignment(1.1, -0.7),
               glowStrength: 0.6,
               child: Column(
@@ -108,7 +109,7 @@ class _InternshipPageState extends State<InternshipPage> {
                         'Seven programmes across development, design, marketing and automation. Open any programme '
                         'to see what you will learn, the tools involved and example practice projects.',
                     centered: true,
-                    eyebrowColor: AppColors.cyan,
+                    eyebrowColor: AppColors.accent,
                   ),
                   SizedBox(height: gap),
                   ResponsiveGrid(
@@ -134,7 +135,7 @@ class _InternshipPageState extends State<InternshipPage> {
 
           // 4. How internship learning works
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -143,7 +144,7 @@ class _InternshipPageState extends State<InternshipPage> {
                   title: 'Two Ways You Learn With Us',
                   lead: InternshipContent.learningModelLead,
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 const LearningModelPair(),
@@ -153,7 +154,7 @@ class _InternshipPageState extends State<InternshipPage> {
 
           // 5. Free and paid opportunities
           SectionShell(
-            background: AppColors.background,
+            background: AppColors.surface,
             glowAt: const Alignment(-1.1, -0.4),
             glowStrength: 0.6,
             child: Column(
@@ -166,7 +167,7 @@ class _InternshipPageState extends State<InternshipPage> {
                       'There is no fixed length or single format. Each opportunity is described clearly before it '
                       'begins, so you know exactly what to expect.',
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 const OpportunityTypes(),
@@ -176,7 +177,7 @@ class _InternshipPageState extends State<InternshipPage> {
 
           // 6. Roadmap
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -187,7 +188,7 @@ class _InternshipPageState extends State<InternshipPage> {
                       'Six stages take you from orientation to a reviewed, finished piece of work. The pace of each '
                       'stage depends on the programme and your progress.',
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 const LearningRoadmap(),
@@ -197,7 +198,7 @@ class _InternshipPageState extends State<InternshipPage> {
 
           // 7. FAQ
           SectionShell(
-            background: AppColors.background,
+            background: AppColors.surface,
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 880),
@@ -208,7 +209,7 @@ class _InternshipPageState extends State<InternshipPage> {
                       eyebrow: 'FAQ',
                       title: 'Frequently Asked Questions',
                       centered: true,
-                      eyebrowColor: AppColors.cyan,
+                      eyebrowColor: AppColors.accent,
                     ),
                     SizedBox(height: gap * 0.8),
                     const FaqList(faqs: InternshipContent.faqs),
@@ -222,7 +223,7 @@ class _InternshipPageState extends State<InternshipPage> {
           KeyedSubtree(
             key: _applyKey,
             child: SectionShell(
-              background: AppColors.surface,
+              background: AppColors.background,
               glowAt: const Alignment(-1.1, 0.6),
               glowStrength: 0.6,
               child: InternshipApplySection(selection: _selection),
@@ -242,23 +243,27 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tone = SurfaceColors.dark;
     final desktop = context.isDesktop;
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Eyebrow(InternshipContent.badge, color: AppColors.cyan),
+        Eyebrow(InternshipContent.badge, color: tone.accent),
         const SizedBox(height: 20),
         Semantics(
           header: true,
           child: Text(
             InternshipContent.heading,
-            style: AppTypography.display(fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0)),
+            style: AppTypography.display(
+              fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0),
+              color: tone.ink,
+            ),
           ),
         ),
         const SizedBox(height: 18),
         Text(
           InternshipContent.description,
-          style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7),
+          style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7, color: tone.body),
         ),
         const SizedBox(height: 24),
         for (final (icon, label) in InternshipContent.highlights)
@@ -270,17 +275,17 @@ class _Hero extends StatelessWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: AppColors.cyan.withValues(alpha: 0.12),
+                    color: AppColors.white.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.cyan.withValues(alpha: 0.35)),
+                    border: Border.all(color: AppColors.darkBorder),
                   ),
-                  child: Icon(icon, size: 18, color: AppColors.cyan),
+                  child: Icon(icon, size: 18, color: tone.accent),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     label,
-                    style: AppTypography.body(fontSize: 15.5, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.4),
+                    style: AppTypography.body(fontSize: 15.5, fontWeight: FontWeight.w600, color: tone.ink, height: 1.4),
                   ),
                 ),
               ],
@@ -305,7 +310,7 @@ class _Hero extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.xl),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.22),
+              color: Colors.black.withValues(alpha: 0.35),
               blurRadius: 70,
               spreadRadius: -12,
               offset: const Offset(0, 24),
@@ -323,12 +328,8 @@ class _Hero extends StatelessWidget {
     return SectionShell(
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
-      gradient: const LinearGradient(
-        colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-        stops: [0, 0.6, 1],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
+      tone: tone,
+      gradient: AppColors.darkBandGradient,
       glowAt: const Alignment(0.8, -0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

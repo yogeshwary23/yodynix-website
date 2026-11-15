@@ -13,7 +13,7 @@ class DemoColors {
   DemoColors._();
 
   static const Color page = AppColors.white;
-  static const Color panel = Color(0xFFF3F6FC); // white tinted toward light grey
+  static const Color panel = Color(0xFFF5F6F8); // white tinted toward light grey
   static const Color line = AppColors.lightGrey;
   static const Color ink = AppColors.midnightNavy;
   static const Color text = AppColors.surfaceNavy;
@@ -37,16 +37,8 @@ class DemoWindow extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.35)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.cyan.withValues(alpha: 0.12),
-            blurRadius: 60,
-            spreadRadius: -12,
-            offset: const Offset(0, 24),
-          ),
-          ...AppColors.softShadow(0.8),
-        ],
+        border: Border.all(color: AppColors.lightGrey),
+        boxShadow: AppColors.softShadow(1.4),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.lg - 1),
@@ -59,7 +51,7 @@ class DemoWindow extends StatelessWidget {
               color: AppColors.surfaceNavy,
               child: Row(
                 children: [
-                  for (final c in [AppColors.blueGrey, AppColors.iceBlue, AppColors.cyan]) ...[
+                  for (final c in [AppColors.blueGrey, AppColors.electricBlueTint, AppColors.electricBlue]) ...[
                     Container(
                       width: 10,
                       height: 10,
@@ -101,16 +93,16 @@ class SampleTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.cyan.withValues(alpha: 0.14),
+        color: AppColors.electricBlue.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.5)),
+        border: Border.all(color: AppColors.electricBlueTint.withValues(alpha: 0.5)),
       ),
       child: Text(
         'SAMPLE DEMO',
         style: AppTypography.body(
           fontSize: 10,
           fontWeight: FontWeight.w700,
-          color: AppColors.cyan,
+          color: AppColors.electricBlueTint,
           letterSpacing: 1,
           height: 1.2,
         ),
@@ -136,10 +128,10 @@ class PhoneFrame extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.deepNavy,
         borderRadius: BorderRadius.circular(44),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4), width: 1.5),
+        border: Border.all(color: AppColors.electricBlue.withValues(alpha: 0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: AppColors.cyan.withValues(alpha: 0.16),
+            color: AppColors.electricBlue.withValues(alpha: 0.16),
             blurRadius: 60,
             spreadRadius: -10,
             offset: const Offset(0, 24),
@@ -224,8 +216,8 @@ class DemoField extends StatelessWidget {
           height: 1.2,
         ),
         errorStyle: AppTypography.body(fontSize: 12, color: AppColors.electricBlue, fontWeight: FontWeight.w600, height: 1.2),
-        border: border(light ? DemoColors.line : AppColors.border),
-        enabledBorder: border(light ? DemoColors.line : AppColors.border),
+        border: border(light ? DemoColors.line : AppColors.darkBorder),
+        enabledBorder: border(light ? DemoColors.line : AppColors.darkBorder),
         focusedBorder: border(AppColors.electricBlue),
         errorBorder: border(AppColors.electricBlue),
         focusedErrorBorder: border(AppColors.electricBlue),
@@ -254,7 +246,7 @@ class DemoChip extends StatelessWidget {
       child: Material(
         color: selected ? AppColors.electricBlue : (light ? DemoColors.panel : AppColors.surfaceNavy),
         shape: StadiumBorder(
-          side: BorderSide(color: selected ? AppColors.electricBlue : (light ? DemoColors.line : AppColors.border)),
+          side: BorderSide(color: selected ? AppColors.electricBlue : (light ? DemoColors.line : AppColors.darkBorder)),
         ),
         child: InkWell(
           customBorder: const StadiumBorder(),

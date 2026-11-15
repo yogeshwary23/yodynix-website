@@ -4,6 +4,7 @@ import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/internship_program.dart';
 import '../../models/site_section.dart';
@@ -68,7 +69,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
 
           // Introduction + what you will learn
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -78,7 +79,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
                   eyebrow: 'What You Will Learn',
                   title: 'Inside the ${p.shortTitle} Programme',
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 ResponsiveGrid(
@@ -99,7 +100,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
 
           // Skills & technologies + learning methodology
           SectionShell(
-            background: AppColors.background,
+            background: AppColors.surface,
             glowAt: const Alignment(-1.1, -0.5),
             glowStrength: 0.6,
             child: Column(
@@ -112,7 +113,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
                   title: 'Mentor-Guided and Project-Based',
                   lead: InternshipContent.learningModelLead,
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 LearningModelPair(program: p),
@@ -122,7 +123,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
 
           // Project examples
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -133,7 +134,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
                       'Illustrative practice projects used for learning in this programme. They are examples, '
                       'not client work, and the exact project depends on the opportunity and your progress.',
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 ResponsiveGrid(
@@ -156,7 +157,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
           KeyedSubtree(
             key: _roadmapKey,
             child: SectionShell(
-              background: AppColors.background,
+              background: AppColors.surface,
               glowAt: const Alignment(1.1, -0.6),
               glowStrength: 0.6,
               child: Column(
@@ -169,7 +170,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
                         'Six stages, each with a focus specific to this programme. The pace depends on the '
                         'opportunity and your progress.',
                     centered: true,
-                    eyebrowColor: AppColors.cyan,
+                    eyebrowColor: AppColors.accent,
                   ),
                   SizedBox(height: gap),
                   LearningRoadmap(focus: p.roadmapFocus),
@@ -180,7 +181,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
 
           // Who can apply + duration / free & paid
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -193,7 +194,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
                       'The duration is flexible, and opportunities may be free or paid depending on what is '
                       'available. Confirmed terms are always shared before anything begins.',
                   centered: true,
-                  eyebrowColor: AppColors.cyan,
+                  eyebrowColor: AppColors.accent,
                 ),
                 SizedBox(height: gap),
                 OpportunityTypes(terms: p.terms),
@@ -203,7 +204,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
 
           // FAQ
           SectionShell(
-            background: AppColors.background,
+            background: AppColors.surface,
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 880),
@@ -214,7 +215,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
                       eyebrow: 'FAQ',
                       title: '${p.shortTitle} Questions',
                       centered: true,
-                      eyebrowColor: AppColors.cyan,
+                      eyebrowColor: AppColors.accent,
                     ),
                     SizedBox(height: gap * 0.8),
                     FaqList(faqs: [...p.faqs, ...InternshipContent.faqs]),
@@ -228,7 +229,7 @@ class _InternshipProgramPageState extends State<InternshipProgramPage> {
           KeyedSubtree(
             key: _applyKey,
             child: SectionShell(
-              background: AppColors.surface,
+              background: AppColors.background,
               glowAt: const Alignment(-1.1, 0.6),
               glowStrength: 0.6,
               child: Column(
@@ -261,22 +262,29 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tone = SurfaceColors.dark;
     final desktop = context.isDesktop;
     final p = program;
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Eyebrow('Internship Program', color: AppColors.cyan),
+        Eyebrow('Internship Program', color: tone.accent),
         const SizedBox(height: 20),
         Semantics(
           header: true,
           child: Text(
             p.title,
-            style: AppTypography.display(fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 48.0)),
+            style: AppTypography.display(
+              fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 48.0),
+              color: tone.ink,
+            ),
           ),
         ),
         const SizedBox(height: 18),
-        Text(p.description, style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7)),
+        Text(
+          p.description,
+          style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7, color: tone.body),
+        ),
         const SizedBox(height: 22),
         Wrap(
           spacing: 8,
@@ -284,13 +292,13 @@ class _Hero extends StatelessWidget {
           children: [
             TagChip(
               'Duration: ${p.terms.duration ?? InternshipConfig.duration}',
-              color: AppColors.cyan,
+              color: tone.accent,
               icon: Icons.schedule_rounded,
               filled: true,
             ),
             if (InternshipConfig.offersFreeOpportunities && InternshipConfig.offersPaidOpportunities)
-              const TagChip('Free & Paid opportunities', color: AppColors.cyan, icon: Icons.payments_outlined, filled: true),
-            const TagChip('Mentor-guided', color: AppColors.cyan, icon: Icons.groups_2_outlined, filled: true),
+              TagChip('Free & Paid opportunities', color: tone.accent, icon: Icons.payments_outlined, filled: true),
+            TagChip('Mentor-guided', color: tone.accent, icon: Icons.groups_2_outlined, filled: true),
           ],
         ),
         const SizedBox(height: 30),
@@ -312,7 +320,7 @@ class _Hero extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.xl),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.22),
+              color: Colors.black.withValues(alpha: 0.35),
               blurRadius: 70,
               spreadRadius: -12,
               offset: const Offset(0, 24),
@@ -330,12 +338,8 @@ class _Hero extends StatelessWidget {
     return SectionShell(
       topPadding: context.responsive(mobile: 20.0, desktop: 32.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
-      gradient: const LinearGradient(
-        colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-        stops: [0, 0.6, 1],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
+      tone: tone,
+      gradient: AppColors.darkBandGradient,
       glowAt: const Alignment(0.8, -0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -376,7 +380,7 @@ class _Introduction extends StatelessWidget {
     final text = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Eyebrow('Introduction', color: AppColors.cyan),
+        const Eyebrow('Introduction', color: AppColors.accent),
         const SizedBox(height: 18),
         Text(
           'About This Programme',
@@ -424,15 +428,17 @@ class _TopicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoverCard(
       padding: const EdgeInsets.all(24),
-      accent: AppColors.cyan,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconBadge(icon: topic.icon, color: AppColors.cyan, size: 46),
+          IconBadge(icon: topic.icon, color: AppColors.cardAccent, size: 46),
           const SizedBox(height: 16),
-          Text(topic.title, style: AppTypography.display(fontSize: 17.5, fontWeight: FontWeight.w700, height: 1.3)),
+          Text(
+            topic.title,
+            style: AppTypography.display(fontSize: 17.5, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+          ),
           const SizedBox(height: 8),
-          Text(topic.description, style: AppTypography.body(fontSize: 14.3, height: 1.6)),
+          Text(topic.description, style: AppTypography.body(fontSize: 14.3, height: 1.6, color: AppColors.cardBody)),
         ],
       ),
     );
@@ -450,30 +456,38 @@ class _SkillsAndTechnologies extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget group(String label, IconData icon, List<String> items, {bool filled = false}) => Container(
       padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 28.0)),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 20, color: AppColors.cyan),
-              const SizedBox(width: 10),
-              Text(label, style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3)),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final s in items) TagChip(s, color: AppColors.cyan, icon: filled ? Icons.check_rounded : null, filled: filled),
-            ],
-          ),
-        ],
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 20, color: AppColors.cardAccent),
+                const SizedBox(width: 10),
+                Text(
+                  label,
+                  style: AppTypography.display(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    height: 1.3,
+                    color: AppColors.cardHeading,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final s in items)
+                  TagChip(s, color: AppColors.cardAccent, icon: filled ? Icons.check_rounded : null, filled: filled),
+              ],
+            ),
+          ],
+        ),
       ),
     );
 
@@ -486,7 +500,7 @@ class _SkillsAndTechnologies extends StatelessWidget {
           eyebrow: 'Skills & Technologies',
           title: 'Skills and Tools You Will Use',
           centered: true,
-          eyebrowColor: AppColors.cyan,
+          eyebrowColor: AppColors.cardAccent,
         ),
         SizedBox(height: context.responsive(mobile: 32.0, desktop: 44.0)),
         if (context.screenWidth >= 860)
@@ -523,22 +537,24 @@ class _ProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoverCard(
       padding: const EdgeInsets.all(24),
-      accent: AppColors.cyan,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconBadge(icon: project.icon, color: AppColors.cyan, size: 46, gradient: true),
+              IconBadge(icon: project.icon, color: AppColors.cardAccent, size: 46, gradient: true),
               const Spacer(),
-              const TagChip('Practice Project', color: AppColors.iceBlue),
+              const TagChip('Practice Project', color: AppColors.charcoalNavy),
             ],
           ),
           const SizedBox(height: 18),
-          Text(project.title, style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3)),
+          Text(
+            project.title,
+            style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+          ),
           const SizedBox(height: 8),
-          Text(project.description, style: AppTypography.body(fontSize: 14.3, height: 1.6)),
+          Text(project.description, style: AppTypography.body(fontSize: 14.3, height: 1.6, color: AppColors.cardBody)),
         ],
       ),
     );
@@ -557,28 +573,30 @@ class _WhoCanApply extends StatelessWidget {
     final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Eyebrow('Who Can Apply', color: AppColors.cyan),
+        const Eyebrow('Who Can Apply', color: AppColors.cardAccent),
         const SizedBox(height: 18),
         Text(
           'Is This Programme Right for You?',
-          style: AppTypography.display(fontSize: context.responsive(mobile: 26.0, tablet: 32.0, desktop: 36.0)),
+          style: AppTypography.display(
+            fontSize: context.responsive(mobile: 26.0, tablet: 32.0, desktop: 36.0),
+            color: AppColors.cardHeading,
+          ),
         ),
         const SizedBox(height: 14),
         Text(
           'You do not need prior professional experience. Specific eligibility, if any, is confirmed with each '
           'opportunity.',
-          style: AppTypography.body(fontSize: 16, height: 1.7),
+          style: AppTypography.body(fontSize: 16, height: 1.7, color: AppColors.cardBody),
         ),
       ],
     );
     final list = Container(
       padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 30.0)),
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: CheckList(items: program.whoCanApply, color: AppColors.cardAccent),
       ),
-      child: CheckList(items: program.whoCanApply, color: AppColors.cyan),
     );
     if (!context.isDesktop) {
       return Column(
@@ -622,7 +640,7 @@ class _OtherPrograms extends StatelessWidget {
           style: AppTypography.body(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: AppColors.cyan,
+            color: AppColors.accent,
             letterSpacing: 1.6,
             height: 1.2,
           ),
@@ -635,7 +653,7 @@ class _OtherPrograms extends StatelessWidget {
           children: [
             for (final p in others)
               ActionChip(
-                avatar: Icon(p.icon, size: 16, color: AppColors.cyan),
+                avatar: Icon(p.icon, size: 16, color: AppColors.accent),
                 label: Text(p.shortTitle),
                 labelStyle: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.2),
                 backgroundColor: AppColors.card,

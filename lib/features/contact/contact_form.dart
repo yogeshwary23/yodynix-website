@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/contact_enquiry.dart';
@@ -129,20 +130,20 @@ class _ContactFormState extends State<ContactForm> {
     final (icon, color, title, message) = switch (result.status) {
       SubmissionStatus.success => (
         Icons.check_circle_outline_rounded,
-        AppColors.success,
+        AppColors.successOnCard,
         'Enquiry Submitted',
         'Thank you! Your enquiry has been submitted successfully. Our team will contact you soon.',
       ),
       SubmissionStatus.backendNotConnected => (
         Icons.mark_email_read_outlined,
-        AppColors.primary,
+        AppColors.cardAccent,
         'Thank you, $firstName!',
         'Your details look complete. Online enquiries are being connected and will be '
             'live shortly, so this message has not been sent yet. Thank you for your patience.',
       ),
       SubmissionStatus.failure => (
         Icons.error_outline_rounded,
-        AppColors.error,
+        AppColors.errorOnCard,
         'Enquiry Not Sent',
         'Unable to submit your enquiry right now. Please try again or contact us by email.',
       ),
@@ -193,9 +194,12 @@ class _ContactFormState extends State<ContactForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Project Enquiry', style: AppTypography.display(fontSize: 24, fontWeight: FontWeight.w700)),
+            Text(
+              'Project Enquiry',
+              style: AppTypography.display(fontSize: 24, fontWeight: FontWeight.w700, color: context.tone.ink),
+            ),
             const SizedBox(height: 6),
-            Text('Fields marked * are required.', style: AppTypography.body(fontSize: 13.5, color: AppColors.muted)),
+            Text('Fields marked * are required.', style: AppTypography.body(fontSize: 13.5, color: context.tone.muted)),
             const SizedBox(height: 26),
             pair(
               _field(
@@ -300,7 +304,7 @@ class _ContactFormState extends State<ContactForm> {
             const SizedBox(height: 14),
             Text(
               'Preferred Contact Method *',
-              style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.ink),
+              style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: context.tone.ink),
             ),
             const SizedBox(height: 10),
             Wrap(
@@ -317,7 +321,7 @@ class _ContactFormState extends State<ContactForm> {
                         _ => Icons.call_outlined,
                       },
                       size: 17,
-                      color: _contactMethod == method ? AppColors.primary : AppColors.muted,
+                      color: _contactMethod == method ? context.tone.accent : context.tone.muted,
                     ),
                     showCheckmark: false,
                     selected: _contactMethod == method,
@@ -327,8 +331,8 @@ class _ContactFormState extends State<ContactForm> {
                     }),
                     side: BorderSide(
                       color: _contactMethod == method
-                          ? AppColors.primary
-                          : (_contactMethodError ? AppColors.error : AppColors.border),
+                          ? context.tone.accent
+                          : (_contactMethodError ? AppColors.errorOnCard : context.tone.border),
                     ),
                   ),
               ],
@@ -337,7 +341,7 @@ class _ContactFormState extends State<ContactForm> {
               const SizedBox(height: 8),
               Text(
                 'Please choose how you would like us to contact you',
-                style: AppTypography.body(fontSize: 13, color: AppColors.error),
+                style: AppTypography.body(fontSize: 13, color: AppColors.errorOnCard),
               ),
             ],
             const SizedBox(height: 28),
@@ -353,12 +357,12 @@ class _ContactFormState extends State<ContactForm> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.lock_outline_rounded, size: 15, color: AppColors.muted),
+                Icon(Icons.lock_outline_rounded, size: 15, color: context.tone.muted),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Your details are used only to respond to your enquiry.',
-                    style: AppTypography.body(fontSize: 13, color: AppColors.muted, height: 1.4),
+                    style: AppTypography.body(fontSize: 13, color: context.tone.muted, height: 1.4),
                   ),
                 ),
               ],

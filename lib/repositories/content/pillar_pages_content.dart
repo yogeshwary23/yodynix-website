@@ -29,9 +29,9 @@ class PillarPagesContent {
     eyebrow: 'Business Solutions',
     heroHeading: 'Digital Solutions That Move Your Business Forward.',
     heroLead:
-        'From your first website to custom software and automated workflows, we plan, '
-        'design and build digital products around how your business actually works — so '
-        'technology supports your goals instead of getting in the way.',
+        'Whether you need a first website, custom software or automated workflows, we plan, '
+        'design and build around how your business really operates, so the technology '
+        'supports your goals instead of getting in the way.',
     heroImage: AssetPaths.business('hero'),
     heroImageAlt: 'Business professionals discussing a digital project around a meeting table.',
     highlights: const [
@@ -40,7 +40,7 @@ class PillarPagesContent {
       (Icons.support_agent_rounded, 'Clear communication from planning to launch'),
     ],
     offeringsEyebrow: 'What We Build',
-    offeringsHeading: 'Six Ways We Help Businesses Grow Digitally',
+    offeringsHeading: 'Six Ways to Grow Your Business Digitally',
     offeringsLead:
         'Each engagement starts with your goals and your customers. Choose a single '
         'service or combine several into one connected digital solution.',
@@ -96,8 +96,8 @@ class PillarPagesContent {
         title: 'Mobile Application Development',
         tagline: 'Apps your customers and teams will actually use.',
         description:
-            'We design and develop mobile applications for Android and iOS — often with '
-            'Flutter, so one codebase serves both platforms. We focus on intuitive navigation, '
+            'We design and develop mobile applications for Android and iOS, often with '
+            'Flutter so one codebase serves both platforms. We focus on intuitive navigation, '
             'reliable performance and connections to the services your business already uses.',
         icon: Icons.phone_iphone_rounded,
         image: AssetPaths.business('mobile_app_development'),
@@ -116,7 +116,7 @@ class PillarPagesContent {
       ),
       PillarOffering(
         title: 'Custom Software Development',
-        tagline: 'Software shaped around your process — not a template.',
+        tagline: 'Software shaped around your process, not a template.',
         description:
             'When off-the-shelf tools do not fit, we build web-based software tailored to '
             'your workflow: dashboards, management systems, portals and internal tools that '
@@ -140,8 +140,8 @@ class PillarPagesContent {
         title: 'Business Automation',
         tagline: 'Let software handle the repetitive work.',
         description:
-            'We identify repetitive, rule-based tasks — data entry, notifications, '
-            'reports, follow-ups — and automate them by connecting the tools you already use. '
+            'We identify repetitive, rule-based tasks such as data entry, notifications, '
+            'reports and follow-ups, and automate them by connecting the tools you already use. '
             'Every automation is mapped and tested with your team before it goes live.',
         icon: Icons.settings_suggest_outlined,
         image: AssetPaths.business('business_automation'),
@@ -162,9 +162,9 @@ class PillarPagesContent {
         title: 'Digital Transformation',
         tagline: 'A practical roadmap from manual to digital.',
         description:
-            'We help you review how work happens today, identify where digital tools '
-            'will make the biggest difference and move there step by step — choosing the '
-            'right technology, planning the rollout and supporting your team through the change.',
+            'Together we review how work happens today, find where digital tools will make '
+            'the biggest difference and get there step by step. That means choosing the right '
+            'technology, planning the rollout and supporting your team through the change.',
         icon: Icons.transform_rounded,
         image: AssetPaths.business('digital_transformation'),
         imageAlt: 'A team discussing digital plans in a meeting with laptops open.',
@@ -216,9 +216,9 @@ class PillarPagesContent {
     eyebrow: 'Technology & Innovation',
     heroHeading: 'Building Smarter Solutions Through Technology.',
     heroLead:
-        'We apply modern, well-supported technologies — AI services, Flutter, web '
-        'frameworks, automation platforms and APIs — where they solve a real problem, and '
-        'we explain the trade-offs in plain language before anything is built.',
+        'AI services, Flutter, web frameworks, automation platforms and APIs are applied '
+        'only where they solve a real problem, and the trade-offs are explained in plain '
+        'language before anything is built.',
     heroImage: AssetPaths.technology('hero'),
     heroImageAlt: 'A technology team discussing work around desks in a modern office.',
     highlights: const [
@@ -240,8 +240,8 @@ class PillarPagesContent {
         tagline: 'Helpful assistants built on established AI services.',
         description:
             'We integrate established AI language-model APIs into websites, apps and '
-            'internal tools — for example, a chatbot that answers common customer questions '
-            'from your own approved content. We design clear hand-off to a human and review '
+            'internal tools. A typical example is a chatbot that answers common customer '
+            'questions from your own approved content. We design a clear hand-off to a human and review '
             'responses carefully, because AI output can be wrong and needs sensible limits.',
         icon: Icons.smart_toy_outlined,
         image: AssetPaths.technology('ai_chatbots'),
@@ -284,8 +284,8 @@ class PillarPagesContent {
         title: 'Web Application Development',
         tagline: 'Browser-based software, available anywhere.',
         description:
-            'We build interactive web applications — portals, booking systems, dashboards '
-            'and admin panels — with secure authentication, well-structured data and interfaces '
+            'We build interactive web applications, including portals, booking systems, '
+            'dashboards and admin panels, with secure authentication, well-structured data and interfaces '
             'that work on any modern browser without installation.',
         icon: Icons.web_rounded,
         image: AssetPaths.technology('web_applications'),
@@ -330,7 +330,7 @@ class PillarPagesContent {
         description:
             'APIs allow separate systems to share data securely. We connect websites and '
             'apps with payment gateways, messaging services, maps, CRMs and other third-party '
-            'platforms — handling authentication, errors and data mapping carefully.',
+            'platforms, with careful handling of authentication, errors and data mapping.',
         icon: Icons.hub_outlined,
         image: AssetPaths.technology('api_integration'),
         imageAlt: 'Network cables connected to server equipment in a data centre.',
@@ -384,7 +384,7 @@ class PillarPagesContent {
     stepsImageAlt: 'A team working together on laptops around a shared table.',
     note:
         'We describe technology honestly. AI tools can make mistakes, automation needs '
-        'monitoring and every integration depends on third-party services — we explain these '
+        'monitoring and every integration depends on third-party services. We explain these '
         'limits up front and design around them.',
     noteIcon: Icons.info_outline_rounded,
     form: PillarFormConfig(

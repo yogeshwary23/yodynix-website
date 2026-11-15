@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
 import '../../services/asset_registry.dart';
+import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
 
@@ -22,10 +24,9 @@ class WhyChooseSection extends StatelessWidget {
         children: [
           const SectionHeader(
             eyebrow: 'Why Choose Yodynix',
-            eyebrowColor: AppColors.cyan,
             title: CompanyContent.whyChooseHeading,
             lead:
-                'What working with us feels like — a partner that cares about the outcome, '
+                'What it is like to work with a partner that cares about the outcome, '
                 'not just the deliverable.',
             centered: true,
           ),
@@ -73,50 +74,47 @@ class _PhotoCardState extends State<_PhotoCard> {
         duration: AppMotion.lift,
         curve: AppMotion.ease,
         transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
-        decoration: BoxDecoration(
-          gradient: AppColors.glassGradient,
-          borderRadius: radius,
-          border: Border.all(
-            color: _hover ? AppColors.cyan.withValues(alpha: 0.7) : AppColors.electricBlue.withValues(alpha: 0.24),
-          ),
-          boxShadow: _hover
-              ? [...AppColors.glowShadow(1.1), ...AppColors.softShadow(0.8)]
-              : AppColors.softShadow(0.6),
-        ),
-        child: ClipRRect(
-          borderRadius: radius,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ~2:1 keeps the photo at roughly 40–45% of the card height.
-              AspectRatio(
-                aspectRatio: 2,
-                child: _CardPhoto(basePath: point.image ?? '', semanticLabel: point.imageAlt ?? point.title, active: _hover),
-              ),
-              Container(height: 1, color: AppColors.electricBlue.withValues(alpha: 0.22)),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(26, 24, 26, 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AnimatedContainer(
-                      duration: AppMotion.lift,
-                      curve: AppMotion.ease,
-                      width: _hover ? 44 : 28,
-                      height: 3,
-                      decoration: BoxDecoration(
-                        gradient: AppColors.brandGradient,
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(point.title, style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 10),
-                    Text(point.description, style: AppTypography.body(fontSize: 15)),
-                  ],
+        decoration: CardStyle.decoration(radius: AppRadius.lg, hover: _hover),
+        child: SurfaceTone(
+          colors: SurfaceColors.inCard,
+          child: ClipRRect(
+            borderRadius: radius,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ~2:1 keeps the photo at roughly 40–45% of the card height.
+                AspectRatio(
+                  aspectRatio: 2,
+                  child: _CardPhoto(basePath: point.image ?? '', semanticLabel: point.imageAlt ?? point.title, active: _hover),
                 ),
-              ),
-            ],
+                Container(height: 1, color: AppColors.cardLine),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(26, 24, 26, 28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedContainer(
+                        duration: AppMotion.lift,
+                        curve: AppMotion.ease,
+                        width: _hover ? 44 : 28,
+                        height: 3,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.brandGradient,
+                          borderRadius: BorderRadius.circular(AppRadius.pill),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        point.title,
+                        style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.cardHeading),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(point.description, style: AppTypography.body(fontSize: 15, color: AppColors.cardBody)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -159,7 +157,7 @@ class _CardPhoto extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) => const _PhotoFallback(),
                 ),
         ),
-        // Navy grade so the photos sit within the palette; lifts on hover.
+        // Charcoal grade so the photos sit within the palette; lifts on hover.
         IgnorePointer(
           child: AnimatedOpacity(
             duration: AppMotion.lift,
@@ -167,10 +165,7 @@ class _CardPhoto extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    AppColors.midnightNavy.withValues(alpha: 0.08),
-                    AppColors.deepNavy.withValues(alpha: 0.5),
-                  ],
+                  colors: [AppColors.midnightNavy.withValues(alpha: 0.04), AppColors.deepNavy.withValues(alpha: 0.28)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

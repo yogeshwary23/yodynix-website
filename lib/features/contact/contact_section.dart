@@ -36,14 +36,9 @@ class ContactSection extends StatelessWidget {
 
     final form = Reveal(
       delay: const Duration(milliseconds: 120),
-      child: Container(
+      child: FormCard(
         padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 40.0)),
-        decoration: BoxDecoration(
-          gradient: AppColors.glassGradient,
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
-          boxShadow: [...AppColors.softShadow(1.2), ...AppColors.glowShadow(0.5)],
-        ),
+        radius: 28,
         child: ContactForm(repository: repository),
       ),
     );
@@ -79,7 +74,7 @@ class _ContactChannels extends StatelessWidget {
         icon: Icons.mail_outline_rounded,
         label: 'Email',
         lines: [_ChannelLine(email, () => LinkService.email(email, subject: 'Project enquiry'))],
-        color: AppColors.primary,
+        color: AppColors.accent,
       ),
       _Channel(
         icon: Icons.call_outlined,
@@ -106,9 +101,7 @@ class _ContactChannels extends StatelessWidget {
           icon: social.first.platform.icon,
           leading: social.first.platform == SocialPlatform.instagram ? const _InstagramLogo(size: 42) : null,
           label: social.first.platform.label,
-          lines: [
-            _ChannelLine(social.first.handle ?? social.first.platform.label, () => LinkService.open(social.first.url)),
-          ],
+          lines: [_ChannelLine(social.first.handle ?? social.first.platform.label, () => LinkService.open(social.first.url))],
           color: AppColors.accent,
           external: true,
         ),
@@ -123,7 +116,7 @@ class _ContactChannels extends StatelessWidget {
           icon: Icons.location_on_outlined,
           label: 'Office Address',
           lines: const [_ChannelLine(ContactConfig.address, null, wrap: true)],
-          color: AppColors.iceBlue,
+          color: AppColors.charcoalNavy,
           action: _ChannelLine('Get Directions', () => LinkService.open(ContactConfig.directionsUrl)),
         ),
       ],
@@ -173,7 +166,6 @@ class _Channel extends StatelessWidget {
     return HoverCard(
       padding: const EdgeInsets.all(18),
       radius: 18,
-      accent: color,
       onTap: cardTap,
       child: Row(
         crossAxisAlignment: lines.length > 1 || action != null ? CrossAxisAlignment.start : CrossAxisAlignment.center,
@@ -184,10 +176,10 @@ class _Channel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: AppTypography.body(fontSize: 12.5, color: AppColors.muted, height: 1.3)),
+                Text(label, style: AppTypography.body(fontSize: 12.5, color: AppColors.cardMuted, height: 1.3)),
                 const SizedBox(height: 3),
                 if (lines.isEmpty)
-                  Text('Coming soon', style: _valueStyle(AppColors.muted))
+                  Text('Coming soon', style: _valueStyle(AppColors.cardMuted))
                 else
                   for (final line in lines)
                     cardTap != null || line.onTap == null
@@ -195,19 +187,19 @@ class _Channel extends StatelessWidget {
                             line.text,
                             maxLines: line.wrap ? null : 1,
                             overflow: line.wrap ? null : TextOverflow.ellipsis,
-                            style: _valueStyle(AppColors.ink),
+                            style: _valueStyle(AppColors.cardHeading),
                           )
-                        : _LineLink(line: line, color: AppColors.ink),
+                        : _LineLink(line: line, color: AppColors.cardHeading),
                 if (action != null) ...[
                   const SizedBox(height: 8),
-                  _LineLink(line: action!, color: color, icon: Icons.north_east_rounded),
+                  _LineLink(line: action!, color: AppColors.cardAccent, icon: Icons.north_east_rounded),
                 ],
               ],
             ),
           ),
           if (external) ...[
             const SizedBox(width: 8),
-            Icon(Icons.north_east_rounded, size: 16, color: color.withValues(alpha: 0.85)),
+            Icon(Icons.north_east_rounded, size: 16, color: AppColors.cardAccent.withValues(alpha: 0.85)),
           ],
         ],
       ),
@@ -215,8 +207,7 @@ class _Channel extends StatelessWidget {
   }
 }
 
-TextStyle _valueStyle(Color color) =>
-    AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: color, height: 1.45);
+TextStyle _valueStyle(Color color) => AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: color, height: 1.45);
 
 class _LineLink extends StatefulWidget {
   const _LineLink({required this.line, required this.color, this.icon});
@@ -234,7 +225,7 @@ class _LineLinkState extends State<_LineLink> {
 
   @override
   Widget build(BuildContext context) {
-    final color = _hover ? AppColors.cyan : widget.color;
+    final color = _hover ? AppColors.cardAccent : widget.color;
     return Semantics(
       link: true,
       child: MouseRegion(

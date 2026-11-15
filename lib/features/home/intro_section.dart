@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
+import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
 import '../../shared/widgets/tinted_photo.dart';
@@ -23,14 +25,7 @@ class IntroSection extends StatelessWidget {
     );
 
     return SectionShell(
-      // Deep navy at the top to meet the hero, easing into the About band.
-      gradient: const LinearGradient(
-        colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-        stops: [0, 0.6, 1],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-      decoration: const _Ambient(),
+      background: AppColors.background,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -63,62 +58,6 @@ class IntroSection extends StatelessWidget {
   }
 }
 
-/// Soft blue and cyan light pools plus a hairline that separates the section
-/// from the hero above.
-class _Ambient extends StatelessWidget {
-  const _Ambient();
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0.85, -0.65),
-                  radius: 0.75,
-                  colors: [AppColors.cyan.withValues(alpha: 0.09), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(-1.0, 0.35),
-                  radius: 0.85,
-                  colors: [AppColors.primary.withValues(alpha: 0.13), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 1,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    AppColors.primary.withValues(alpha: 0.35),
-                    AppColors.cyan.withValues(alpha: 0.35),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _IntroCopy extends StatelessWidget {
   const _IntroCopy();
 
@@ -133,7 +72,7 @@ class _IntroCopy extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Reveal(child: Eyebrow('Who We Are', color: AppColors.accent)),
+        const Reveal(child: Eyebrow('Who We Are')),
         const SizedBox(height: 20),
         Reveal(
           child: Semantics(
@@ -150,7 +89,7 @@ class _IntroCopy extends StatelessWidget {
                         baseline: TextBaseline.alphabetic,
                         child: ShaderMask(
                           blendMode: BlendMode.srcIn,
-                          shaderCallback: AppColors.headlineGradient.createShader,
+                          shaderCallback: AppColors.headlineGradientLight.createShader,
                           child: Text(heading.substring(split), style: titleStyle),
                         ),
                       ),
@@ -212,102 +151,75 @@ class _BeliefsCard extends StatelessWidget {
     final radius = BorderRadius.circular(AppRadius.xl);
     return Reveal(
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: radius,
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.28)),
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF17244A).withValues(alpha: 0.78),
-              const Color(0xFF0F1934).withValues(alpha: 0.62),
-              AppColors.accentSoft.withValues(alpha: 0.7),
-            ],
-            stops: const [0, 0.6, 1],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            ...AppColors.softShadow(0.6),
-            BoxShadow(color: AppColors.primary.withValues(alpha: 0.10), blurRadius: 60, spreadRadius: -10),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: radius,
-          child: Stack(
-            children: [
-              // Glass highlight along the top edge.
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.transparent, AppColors.cyan.withValues(alpha: 0.55), Colors.transparent],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(context.responsive(mobile: 22.0, tablet: 32.0, desktop: 40.0)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        const _CyanIcon(icon: Icons.favorite_rounded, size: 46),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            'What we believe',
-                            style: AppTypography.display(
-                              fontSize: context.responsive(mobile: 20.0, desktop: 24.0),
-                              fontWeight: FontWeight.w700,
+        decoration: CardStyle.decoration(radius: AppRadius.xl),
+        child: SurfaceTone(
+          colors: SurfaceColors.inCard,
+          child: ClipRRect(
+            borderRadius: radius,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(context.responsive(mobile: 22.0, tablet: 32.0, desktop: 40.0)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          const _AccentIcon(icon: Icons.favorite_rounded, size: 46),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              'Our principles',
+                              style: AppTypography.display(
+                                fontSize: context.responsive(mobile: 20.0, desktop: 24.0),
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.cardHeading,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      height: 1,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary.withValues(alpha: 0.45), AppColors.border.withValues(alpha: 0)],
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        height: 1,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.softGrey.withValues(alpha: 0.7), AppColors.cardLine.withValues(alpha: 0)],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    ResponsiveGrid(
-                      minItemWidth: 280,
-                      maxColumns: 3,
-                      spacing: 28,
-                      runSpacing: 22,
-                      equalHeight: false,
-                      children: [
-                        for (final (i, belief) in CompanyContent.introBeliefs.indexed)
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _CyanIcon(icon: _beliefIcons[i % _beliefIcons.length], size: 38),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 7),
-                                  child: Text(
-                                    belief,
-                                    style: AppTypography.body(fontSize: 15.5, color: AppColors.ink, height: 1.55),
+                      const SizedBox(height: 24),
+                      ResponsiveGrid(
+                        minItemWidth: 280,
+                        maxColumns: 3,
+                        spacing: 28,
+                        runSpacing: 22,
+                        equalHeight: false,
+                        children: [
+                          for (final (i, belief) in CompanyContent.introBeliefs.indexed)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _AccentIcon(icon: _beliefIcons[i % _beliefIcons.length], size: 38),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 7),
+                                    child: Text(
+                                      belief,
+                                      style: AppTypography.body(fontSize: 15.5, color: AppColors.cardHeading, height: 1.55),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ],
+                              ],
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -315,9 +227,9 @@ class _BeliefsCard extends StatelessWidget {
   }
 }
 
-/// Cyan outline icon tile used consistently in the beliefs card.
-class _CyanIcon extends StatelessWidget {
-  const _CyanIcon({required this.icon, required this.size});
+/// Accent icon tile used consistently in the beliefs card.
+class _AccentIcon extends StatelessWidget {
+  const _AccentIcon({required this.icon, required this.size});
 
   final IconData icon;
   final double size;
@@ -327,12 +239,8 @@ class _CyanIcon extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: AppColors.cyan.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(size * 0.3),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
-      ),
-      child: Icon(icon, size: size * 0.5, color: AppColors.cyan),
+      decoration: BoxDecoration(color: AppColors.cardTile, borderRadius: BorderRadius.circular(size * 0.3)),
+      child: Icon(icon, size: size * 0.5, color: AppColors.cardAccent),
     );
   }
 }
@@ -401,95 +309,83 @@ class _PillarCardState extends State<_PillarCard> {
         duration: AppMotion.lift,
         curve: AppMotion.ease,
         transform: Matrix4.translationValues(0, _active ? -8 : 0, 0),
-        decoration: BoxDecoration(
-          borderRadius: radius,
-          gradient: const LinearGradient(
-            colors: [Color(0xFF16244C), Color(0xFF0E1834), AppColors.deepNavy],
-            stops: [0, 0.55, 1],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          border: Border.all(color: _active ? AppColors.cyan.withValues(alpha: 0.55) : AppColors.border),
-          boxShadow: [
-            if (_active)
-              BoxShadow(
-                color: AppColors.cyan.withValues(alpha: 0.16),
-                blurRadius: 48,
-                spreadRadius: -6,
-                offset: const Offset(0, 20),
-              ),
-            ...AppColors.softShadow(0.6),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: radius,
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: _open,
-            onHover: (v) => setState(() => _hover = v),
-            onFocusChange: (v) => setState(() => _focus = v),
+        decoration: CardStyle.decoration(radius: AppRadius.xl, hover: _active),
+        child: SurfaceTone(
+          colors: SurfaceColors.inCard,
+          child: Material(
+            color: Colors.transparent,
             borderRadius: radius,
-            hoverColor: Colors.transparent,
-            focusColor: Colors.transparent,
-            splashColor: AppColors.cyan.withValues(alpha: 0.06),
-            highlightColor: AppColors.cyan.withValues(alpha: 0.03),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _artwork(number, pillar),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(14, 22, 14, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 1),
-                                  child: Icon(pillar.icon, size: 15, color: AppColors.cyan),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    pillar.title.toUpperCase(),
-                                    style: AppTypography.body(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.cyan,
-                                      letterSpacing: 1.3,
-                                      height: 1.4,
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: _open,
+              onHover: (v) => setState(() => _hover = v),
+              onFocusChange: (v) => setState(() => _focus = v),
+              borderRadius: radius,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              splashColor: AppColors.cardAccent.withValues(alpha: 0.06),
+              highlightColor: AppColors.cardAccent.withValues(alpha: 0.03),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _artwork(number, pillar),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(14, 22, 14, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 1),
+                                    child: Icon(pillar.icon, size: 15, color: AppColors.cardAccent),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      pillar.title.toUpperCase(),
+                                      style: AppTypography.body(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.cardAccent,
+                                        letterSpacing: 1.3,
+                                        height: 1.4,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              pillar.headline,
-                              style: AppTypography.display(
-                                fontSize: context.responsive(mobile: 22.0, desktop: 23.0),
-                                fontWeight: FontWeight.w700,
-                                height: 1.25,
+                                ],
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(pillar.description, style: AppTypography.body(fontSize: 14.5, height: 1.65)),
-                          ],
+                              const SizedBox(height: 14),
+                              Text(
+                                pillar.headline,
+                                style: AppTypography.display(
+                                  fontSize: context.responsive(mobile: 22.0, desktop: 23.0),
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.25,
+                                  color: AppColors.cardHeading,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                pillar.description,
+                                style: AppTypography.body(fontSize: 14.5, height: 1.65, color: AppColors.cardBody),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(padding: const EdgeInsets.only(top: 22), child: _action(pillar.actionLabel)),
-                ],
+                      ],
+                    ),
+                    Padding(padding: const EdgeInsets.only(top: 22), child: _action(pillar.actionLabel)),
+                  ],
+                ),
               ),
             ),
           ),
@@ -516,7 +412,7 @@ class _PillarCardState extends State<_PillarCard> {
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.transparent, Color(0x660A1022)],
+                  colors: [Colors.transparent, Color(0x40151B26)],
                   stops: [0.6, 1],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -535,12 +431,15 @@ class _PillarCardState extends State<_PillarCard> {
               right: 14,
               child: Text(
                 number,
-                style: AppTypography.display(fontSize: 44, fontWeight: FontWeight.w800, height: 1).copyWith(
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = 1.2
-                    ..color = _active ? AppColors.cyan.withValues(alpha: 0.75) : AppColors.white.withValues(alpha: 0.28),
-                ),
+                style: AppTypography.display(fontSize: 44, fontWeight: FontWeight.w800, height: 1, color: AppColors.cardHeading)
+                    .copyWith(
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 1.2
+                        ..color = _active
+                            ? AppColors.cardAccent.withValues(alpha: 0.75)
+                            : AppColors.white.withValues(alpha: 0.28),
+                    ),
               ),
             ),
           ],
@@ -553,7 +452,7 @@ class _PillarCardState extends State<_PillarCard> {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 6, 6),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: AppColors.white.withValues(alpha: 0.07))),
+        border: const Border(top: BorderSide(color: AppColors.cardLine)),
       ),
       child: Row(
         children: [
@@ -563,7 +462,7 @@ class _PillarCardState extends State<_PillarCard> {
               style: AppTypography.body(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: _active ? AppColors.cyan : AppColors.ink,
+                color: _active ? AppColors.cardAccent : AppColors.cardHeading,
                 height: 1.3,
               ),
               child: Text(label),
@@ -577,16 +476,15 @@ class _PillarCardState extends State<_PillarCard> {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: _active ? AppColors.brandGradient : null,
-              color: _active ? null : AppColors.white.withValues(alpha: 0.04),
-              border: Border.all(color: _active ? AppColors.cyan.withValues(alpha: 0) : AppColors.border),
+              color: _active ? AppColors.primary : AppColors.cardTile,
+              border: Border.all(color: _active ? AppColors.primary : AppColors.cardLine),
               boxShadow: _active ? AppColors.glowShadow(0.6) : null,
             ),
             child: AnimatedSlide(
               duration: AppMotion.lift,
               curve: AppMotion.ease,
               offset: Offset(_active ? 0.08 : 0, 0),
-              child: Icon(Icons.arrow_forward_rounded, size: 17, color: _active ? AppColors.white : AppColors.cyan),
+              child: Icon(Icons.arrow_forward_rounded, size: 17, color: _active ? AppColors.onPrimary : AppColors.cardAccent),
             ),
           ),
         ],

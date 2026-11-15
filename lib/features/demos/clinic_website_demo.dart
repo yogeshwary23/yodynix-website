@@ -195,7 +195,7 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.electricBlue, AppColors.cyan],
+          colors: [AppColors.electricBlue, AppColors.electricBlue],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

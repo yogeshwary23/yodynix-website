@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/team_member.dart';
+import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 
 /// Two-row team layout: the leadership pair first, then the development
@@ -112,7 +114,7 @@ class _GroupHeading extends StatelessWidget {
       child: Container(
         height: 1,
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: from, end: -from, colors: [Colors.transparent, AppColors.cyan.withValues(alpha: 0.55)]),
+          gradient: LinearGradient(begin: from, end: -from, colors: [Colors.transparent, AppColors.softGrey]),
         ),
       ),
     );
@@ -130,7 +132,7 @@ class _GroupHeading extends StatelessWidget {
               style: AppTypography.display(
                 fontSize: context.responsive(mobile: 15.0, desktop: 17.0),
                 fontWeight: FontWeight.w700,
-                color: AppColors.cyan,
+                color: AppColors.accent,
                 letterSpacing: 3,
                 height: 1.3,
               ),
@@ -244,26 +246,8 @@ class _CardShellState extends State<_CardShell> {
         curve: AppMotion.ease,
         transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
         padding: EdgeInsets.all(context.responsive(mobile: 14.0, desktop: 16.0)),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF17264F), AppColors.midnightNavy, AppColors.deepNavy],
-            stops: [0, 0.6, 1],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: _hover ? 0.7 : 0.28), width: 1.2),
-          boxShadow: [
-            BoxShadow(
-              color: (_hover ? AppColors.cyan : AppColors.electricBlue).withValues(alpha: _hover ? 0.24 : 0.10),
-              blurRadius: _hover ? 52 : 36,
-              spreadRadius: -8,
-              offset: const Offset(0, 18),
-            ),
-            ...AppColors.softShadow(0.6),
-          ],
-        ),
-        child: widget.builder(_hover),
+        decoration: CardStyle.decoration(radius: AppRadius.xl, hover: _hover),
+        child: SurfaceTone(colors: SurfaceColors.inCard, child: widget.builder(_hover)),
       ),
     );
   }
@@ -286,7 +270,7 @@ class _Portrait extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: active ? 0.55 : 0.22)),
+          border: Border.all(color: active ? AppColors.accent.withValues(alpha: 0.45) : AppColors.lightGrey),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radius - 1),
@@ -329,7 +313,12 @@ class _Details extends StatelessWidget {
         Text(
           member.name,
           textAlign: textAlign,
-          style: AppTypography.display(fontSize: nameSize, fontWeight: FontWeight.w700, height: 1.25),
+          style: AppTypography.display(
+            fontSize: nameSize,
+            fontWeight: FontWeight.w700,
+            height: 1.25,
+            color: AppColors.cardHeading,
+          ),
         ),
         const SizedBox(height: 12),
         _DesignationPill(member.designation),
@@ -340,7 +329,11 @@ class _Details extends StatelessWidget {
           decoration: BoxDecoration(gradient: AppColors.brandGradient, borderRadius: BorderRadius.circular(AppRadius.pill)),
         ),
         const SizedBox(height: 16),
-        Text(member.introduction, textAlign: textAlign, style: AppTypography.body(fontSize: 15, height: 1.7)),
+        Text(
+          member.introduction,
+          textAlign: textAlign,
+          style: AppTypography.body(fontSize: 15, height: 1.7, color: AppColors.cardBody),
+        ),
       ],
     );
   }
@@ -355,17 +348,13 @@ class _DesignationPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-      decoration: BoxDecoration(
-        color: AppColors.electricBlue.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4)),
-      ),
+      decoration: BoxDecoration(color: AppColors.cardTile, borderRadius: BorderRadius.circular(AppRadius.pill)),
       child: Text(
         text.toUpperCase(),
         style: AppTypography.body(
           fontSize: 11.5,
           fontWeight: FontWeight.w700,
-          color: AppColors.iceBlue,
+          color: AppColors.cardAccent,
           letterSpacing: 1.2,
           height: 1.2,
         ),

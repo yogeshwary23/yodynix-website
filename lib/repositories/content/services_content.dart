@@ -8,9 +8,9 @@ class ServicesContent {
 
   static const heading = 'Digital Solutions Built Around Your Vision.';
   static const lead =
-      'Ten focused service areas, one consistent standard. Whether you need a single '
-      'landing page or a complete digital system, every engagement is planned around your '
-      'goals and delivered with care.';
+      'Ten service areas held to one standard. A single landing page or a complete '
+      'digital system, each engagement is planned around your goals and delivered with '
+      'care.';
 
   static const services = [
     ServiceOffering(
@@ -21,9 +21,9 @@ class ServicesContent {
           'with clarity and credibility.',
       description:
           'Your website is often the first conversation a customer has with your '
-          'business. We design and build websites that load quickly, look polished on every '
-          'screen and guide visitors toward meaningful action — from a simple landing page to '
-          'a complete custom web application, plus redesigns and ongoing maintenance.',
+          'business. We build sites that load quickly, look polished on every screen and '
+          'lead visitors to take action. The work ranges from a simple landing page to a '
+          'full custom web application, and includes redesigns and ongoing maintenance.',
       capabilities: [
         'Business Websites',
         'Corporate Websites',
@@ -36,7 +36,7 @@ class ServicesContent {
         'Website Maintenance',
       ],
       icon: Icons.language_rounded,
-      color: AppColors.primary,
+      color: AppColors.accent,
       imageAlt: 'Modern business website interface displayed on a laptop screen',
     ),
     ServiceOffering(
@@ -46,10 +46,9 @@ class ServicesContent {
           'Online stores with smooth product discovery, secure checkout and simple '
           'back-office management.',
       description:
-          'We build online stores that make buying easy for customers and running '
-          'the shop easy for you. From product catalogues and carts to payment integration, '
-          'inventory and order management, every part of the storefront is designed for '
-          'trust and conversion.',
+          'An online store should be easy to buy from and easy to run. We build the '
+          'product catalogue, cart and checkout, connect payments, and set up inventory '
+          'and order management, with every step designed to earn trust and convert.',
       capabilities: [
         'Online Stores',
         'Product Management',
@@ -70,10 +69,10 @@ class ServicesContent {
           'Polished Android and iOS applications that keep your customers and teams '
           'connected on the go.',
       description:
-          'We create mobile applications that feel natural to use and are built to '
-          'last. Using cross-platform technology such as Flutter, we deliver Android and iOS '
-          'apps from a single, maintainable codebase — for bookings, customer engagement, '
-          'internal operations and more, with secure API integrations.',
+          'Mobile apps should feel natural to use and stay easy to maintain. With '
+          'cross-platform tools such as Flutter, we ship Android and iOS apps from one '
+          'codebase. Typical uses include bookings, customer engagement and internal '
+          'operations, connected to your systems through secure APIs.',
       capabilities: [
         'Android Applications',
         'iOS Applications',
@@ -91,13 +90,13 @@ class ServicesContent {
       id: 'flutter_development',
       title: 'Flutter Development',
       summary:
-          'One Flutter codebase for Android, iOS, web and desktop — consistent, fast '
-          'and easier to maintain.',
+          'One Flutter codebase for Android, iOS, web and desktop. Consistent, fast and '
+          'easier to maintain.',
       description:
-          'Flutter lets a single, well-structured codebase run natively on mobile, '
-          'web and desktop. We build Flutter applications with clean architecture, '
-          'responsive layouts and smooth animations, integrate them with your APIs and '
-          'backend services, and help you extend or improve existing Flutter projects.',
+          'Flutter runs one well-structured codebase natively on mobile, web and '
+          'desktop. Our Flutter apps use clean architecture, responsive layouts and smooth '
+          'animation, and connect to your APIs and backend services. We also extend and '
+          'improve existing Flutter projects.',
       capabilities: [
         'Cross-platform Apps',
         'Flutter Web',
@@ -108,7 +107,7 @@ class ServicesContent {
         'Existing App Improvements',
       ],
       icon: Icons.flutter_dash,
-      color: AppColors.sky,
+      color: AppColors.accent,
       imageAlt: 'Flutter code editor rendering the same interface on web, phone and desktop',
     ),
     ServiceOffering(
@@ -118,10 +117,9 @@ class ServicesContent {
           'Tailored business systems, dashboards and portals that fit the way your '
           'organisation really works.',
       description:
-          'Off-the-shelf tools rarely fit perfectly. We design and develop custom '
-          'software — CRMs, management systems, admin dashboards, portals and workflow tools — '
-          'that match your processes, reduce manual effort and give you clear visibility of '
-          'your operations.',
+          'Off-the-shelf tools rarely fit perfectly. We build CRMs, management systems, '
+          'admin dashboards, portals and workflow tools around your own processes, so '
+          'manual effort drops and you can see clearly how your operations are running.',
       capabilities: [
         'CRM Systems',
         'Business Management Systems',
@@ -141,10 +139,10 @@ class ServicesContent {
           'AI assistants and chatbots that answer questions, guide customers and '
           'support your team around the clock.',
       description:
-          'Artificial intelligence is most valuable when it is practical. We build '
-          'AI chatbots that answer from your own information, add intelligent features such '
-          'as smart search, summaries and content assistance to your applications, and '
-          'integrate proven AI APIs — implemented responsibly, with a clear hand-off to a person.',
+          'AI earns its place when it is practical. We build chatbots that answer from '
+          'your own information, add features such as smart search, summaries and writing '
+          'help to your applications, and integrate proven AI APIs. Every assistant is '
+          'implemented responsibly, with a clear hand-off to a person.',
       capabilities: [
         'AI Chatbots',
         'Website & WhatsApp Assistants',
@@ -153,7 +151,7 @@ class ServicesContent {
         'Intelligent App Features',
       ],
       icon: Icons.smart_toy_outlined,
-      color: AppColors.primary,
+      color: AppColors.accent,
       imageAlt: 'AI assistant chat window beside its knowledge sources',
     ),
     ServiceOffering(
@@ -163,10 +161,10 @@ class ServicesContent {
           'Automated workflows that remove repetitive tasks and keep your tools in '
           'sync.',
       description:
-          'Many hours are lost to copying data, sending reminders and updating '
-          'spreadsheets. We map your processes and automate them — connecting forms, CRMs, '
-          'email, scheduling and reporting — so work moves forward reliably with less '
-          'manual effort.',
+          'Hours disappear into copying data, sending reminders and updating '
+          'spreadsheets. We map those processes and automate them by connecting your forms, '
+          'CRM, email, scheduling and reporting, so the work keeps moving without the manual '
+          'effort.',
       capabilities: [
         'Workflow Automation',
         'Email & Notification Flows',
@@ -186,10 +184,10 @@ class ServicesContent {
           'Targeted campaigns, SEO and performance analysis that help the right '
           'customers find you.',
       description:
-          'Great products deserve to be discovered. We plan and manage campaigns '
-          'across Instagram, Facebook and Google, strengthen your search visibility and build '
-          'lead-generation funnels — then review performance data regularly so budgets are '
-          'spent where they make the most difference.',
+          'A good product still needs to be found. We plan and run campaigns on '
+          'Instagram, Facebook and Google, improve your search visibility and build '
+          'lead-generation funnels. Performance is reviewed regularly, so the budget goes '
+          'where it makes the most difference.',
       capabilities: [
         'Instagram Marketing',
         'Facebook Advertising',
@@ -210,13 +208,12 @@ class ServicesContent {
           'Research-led interface design that makes digital products intuitive and '
           'enjoyable to use.',
       description:
-          'Good design is how a product feels to use. We research your users, map '
-          'their journeys and turn insights into wireframes, interactive prototypes and '
-          'polished interfaces — supported by design systems that keep every future screen '
-          'consistent.',
+          'Design is how a product feels to use. We research your users, map their '
+          'journeys and turn what we learn into wireframes, interactive prototypes and '
+          'finished interfaces. A design system then keeps every future screen consistent.',
       capabilities: ['User Research', 'Wireframes', 'Prototypes', 'Interface Design', 'User Journey', 'Design Systems'],
       icon: Icons.draw_outlined,
-      color: AppColors.sky,
+      color: AppColors.accent,
       imageAlt: 'Interface design workspace with wireframes, prototypes and colour palette',
     ),
     ServiceOffering(
@@ -226,10 +223,10 @@ class ServicesContent {
           'A distinctive identity and a consistent presence across your website and '
           'social channels.',
       description:
-          'A strong brand helps people remember you and trust you. We create logos '
-          'and complete brand identities, design marketing creatives, and set up consistent '
-          'social media profiles and content — documented in clear brand guidelines so your '
-          'business looks the same everywhere it appears.',
+          'A strong brand helps people remember you and trust you. We design logos, '
+          'full brand identities and marketing creatives, and set up consistent social '
+          'media profiles and content. Clear brand guidelines keep your business looking the '
+          'same wherever it appears.',
       capabilities: [
         'Logo Design',
         'Brand Identity',
@@ -239,7 +236,7 @@ class ServicesContent {
         'Online Presence Setup',
       ],
       icon: Icons.auto_fix_high_outlined,
-      color: AppColors.sun,
+      color: AppColors.charcoalNavy,
       imageAlt: 'Brand identity board with colour swatches, typography and stationery',
     ),
   ];

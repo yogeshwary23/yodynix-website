@@ -6,6 +6,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
+import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
 import '../../shared/widgets/tinted_photo.dart';
@@ -102,20 +103,27 @@ class _PhilosophyCardState extends State<_PhilosophyCard> {
           width: d.icon,
           height: d.icon,
           decoration: BoxDecoration(
-            gradient: _hover ? AppColors.brandGradient : null,
-            color: _hover ? null : AppColors.deepNavy.withValues(alpha: 0.7),
+            color: _hover ? AppColors.primary : AppColors.cardTile,
             borderRadius: BorderRadius.circular(d.icon * 0.3),
-            border: Border.all(color: AppColors.cyan.withValues(alpha: _hover ? 0 : 0.45)),
+            border: Border.all(color: _hover ? AppColors.primary : AppColors.cardLine),
           ),
-          child: Icon(item.icon, size: d.icon / 2, color: _hover ? AppColors.white : AppColors.cyan),
+          child: Icon(item.icon, size: d.icon / 2, color: _hover ? AppColors.onPrimary : AppColors.cardAccent),
         ),
         SizedBox(height: d.padding * 0.64),
         Text(
           item.title,
-          style: AppTypography.display(fontSize: d.title, fontWeight: FontWeight.w700, height: 1.25),
+          style: AppTypography.display(
+            fontSize: d.title,
+            fontWeight: FontWeight.w700,
+            height: 1.25,
+            color: AppColors.cardHeading,
+          ),
         ),
         const SizedBox(height: 8),
-        Text(item.description, style: AppTypography.body(fontSize: d.body, height: 1.55)),
+        Text(
+          item.description,
+          style: AppTypography.body(fontSize: d.body, height: 1.55, color: AppColors.cardBody),
+        ),
       ],
     );
     final copy = copyOf(item);
@@ -124,12 +132,12 @@ class _PhilosophyCardState extends State<_PhilosophyCard> {
       if (item.image != null)
         TintedPhoto(basePath: item.image!, semanticLabel: item.imageAlt ?? item.title, active: _hover, strength: 0.6)
       else
-        const DecoratedBox(decoration: BoxDecoration(gradient: AppColors.glassGradient)),
-      // Readability scrim: clear at the top, deep navy behind the copy.
+        const DecoratedBox(decoration: BoxDecoration(gradient: AppColors.darkGlassGradient)),
+      // Readability scrim: clear at the top, deep charcoal behind the copy.
       DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: const [Color(0x000A1022), Color(0x990A1022), Color(0xF20A1022)],
+            colors: const [Color(0x00151B26), Color(0x99151B26), Color(0xF2151B26)],
             stops: fixedAspect ? const [0.15, 0.5, 0.82] : const [0.12, 0.4, 0.62],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -145,7 +153,7 @@ class _PhilosophyCardState extends State<_PhilosophyCard> {
             foreground: Paint()
               ..style = PaintingStyle.stroke
               ..strokeWidth = 1.2
-              ..color = _hover ? AppColors.cyan : AppColors.white.withValues(alpha: 0.55),
+              ..color = _hover ? AppColors.accent : AppColors.white.withValues(alpha: 0.55),
           ),
         ),
       ),
@@ -210,20 +218,7 @@ class _PhilosophyCardState extends State<_PhilosophyCard> {
           duration: AppMotion.lift,
           curve: AppMotion.ease,
           transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(color: AppColors.cyan.withValues(alpha: _hover ? 0.7 : 0.16)),
-            boxShadow: [
-              if (_hover)
-                BoxShadow(
-                  color: AppColors.cyan.withValues(alpha: 0.18),
-                  blurRadius: 44,
-                  spreadRadius: -6,
-                  offset: const Offset(0, 18),
-                ),
-              ...AppColors.softShadow(0.6),
-            ],
-          ),
+          decoration: CardStyle.decoration(radius: AppRadius.lg, hover: _hover),
           child: ClipRRect(borderRadius: BorderRadius.circular(AppRadius.lg - 1), child: body),
         ),
       ),

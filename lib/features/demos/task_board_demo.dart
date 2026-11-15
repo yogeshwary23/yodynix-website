@@ -100,7 +100,10 @@ class _TaskBoardDemoState extends State<TaskBoardDemo> {
                   decoration: BoxDecoration(
                     color: DemoColors.panel,
                     borderRadius: BorderRadius.circular(_device == _Device.phone ? 28 : AppRadius.md),
-                    border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4), width: _device == _Device.phone ? 6 : 1),
+                    border: Border.all(
+                      color: AppColors.electricBlue.withValues(alpha: 0.4),
+                      width: _device == _Device.phone ? 6 : 1,
+                    ),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: _board(width),

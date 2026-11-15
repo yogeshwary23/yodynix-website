@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../models/content_models.dart';
 import '../../models/site_section.dart';
 import '../../providers/section_navigator.dart';
@@ -19,7 +20,7 @@ class ExpertiseSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = ExpertiseContent.categories;
     return SectionShell(
-      background: AppColors.background,
+      tone: SurfaceColors.dark,
       glowAt: const Alignment(-1, -0.8),
       decoration: IgnorePointer(
         child: CustomPaint(painter: GridPainter(color: AppColors.white.withValues(alpha: 0.03), step: 40)),
@@ -70,12 +71,15 @@ class _CategoryCard extends StatelessWidget {
               IconBadge(icon: category.icon, color: AppColors.primary, size: 42, gradient: true),
               const SizedBox(width: 14),
               Expanded(
-                child: Text(category.name, style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700)),
+                child: Text(
+                  category.name,
+                  style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.white),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(category.description, style: AppTypography.body(fontSize: 14)),
+          Text(category.description, style: AppTypography.body(fontSize: 14, color: AppColors.onDarkBody)),
           const SizedBox(height: 18),
           for (final item in category.items)
             Padding(
@@ -92,7 +96,7 @@ class _CategoryCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item.name,
-                      style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.3),
+                      style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: AppColors.white, height: 1.3),
                     ),
                   ),
                 ],
@@ -109,46 +113,49 @@ class _TalkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A solid champagne panel; its outlined button reads as on a light surface.
     return Container(
       padding: const EdgeInsets.all(26),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primaryDeep, AppColors.electricBlue, AppColors.cyan],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 30, offset: const Offset(0, 14))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 30, offset: const Offset(0, 14))],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(color: AppColors.white.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(13)),
-            child: const Icon(Icons.forum_outlined, color: AppColors.white, size: 21),
-          ),
-          const SizedBox(height: 18),
-          Text(
-            'Have a specific technology in mind?',
-            style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.white, height: 1.3),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            "Tell us about your existing systems and preferences — we'll recommend the "
-            'most practical approach for your project.',
-            style: AppTypography.body(fontSize: 14, color: AppColors.white.withValues(alpha: 0.88)),
-          ),
-          const Spacer(),
-          const SizedBox(height: 18),
-          SecondaryButton(
-            label: "Let's Talk",
-            size: ButtonSize.small,
-            icon: Icons.arrow_forward_rounded,
-            onPressed: () => SectionNavigatorScope.read(context).scrollTo(SiteSection.contact),
-          ),
-        ],
+      child: SurfaceTone(
+        colors: SurfaceColors.light,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: AppColors.deepCharcoal.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: const Icon(Icons.forum_outlined, color: AppColors.onPrimary, size: 21),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              'Have a specific technology in mind?',
+              style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.onPrimary, height: 1.3),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "Tell us about your existing systems and preferences, and we'll recommend the "
+              'most practical approach for your project.',
+              style: AppTypography.body(fontSize: 14, color: AppColors.onPrimary.withValues(alpha: 0.85)),
+            ),
+            const Spacer(),
+            const SizedBox(height: 18),
+            SecondaryButton(
+              label: "Let's Talk",
+              size: ButtonSize.small,
+              icon: Icons.arrow_forward_rounded,
+              onPressed: () => SectionNavigatorScope.read(context).scrollTo(SiteSection.contact),
+            ),
+          ],
+        ),
       ),
     );
   }

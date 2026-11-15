@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/contact_enquiry.dart' show SubmissionResult, SubmissionStatus;
@@ -113,20 +114,20 @@ class _PillarEnquiryFormState extends State<PillarEnquiryForm> {
     final (icon, color, title, message) = switch (result.status) {
       SubmissionStatus.success => (
         Icons.check_circle_outline_rounded,
-        AppColors.success,
+        AppColors.successOnCard,
         'Thank you, $firstName!',
         'Your $noun has been received. We will reply by email soon.',
       ),
       SubmissionStatus.backendNotConnected => (
         Icons.mark_email_read_outlined,
-        AppColors.primary,
+        AppColors.cardAccent,
         'Thank you, $firstName!',
         'Your details look complete. Online submissions are being connected and will be '
             'live shortly, so this $noun has not been sent yet. Thank you for your patience.',
       ),
       SubmissionStatus.failure => (
         Icons.error_outline_rounded,
-        AppColors.error,
+        AppColors.errorOnCard,
         'Something went wrong',
         result.message ?? 'Your $noun could not be sent. Please try again in a moment.',
       ),
@@ -169,9 +170,12 @@ class _PillarEnquiryFormState extends State<PillarEnquiryForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(config.title, style: AppTypography.display(fontSize: 24, fontWeight: FontWeight.w700)),
+            Text(
+              config.title,
+              style: AppTypography.display(fontSize: 24, fontWeight: FontWeight.w700, color: context.tone.ink),
+            ),
             const SizedBox(height: 6),
-            Text('Fields marked * are required.', style: AppTypography.body(fontSize: 13.5, color: AppColors.muted)),
+            Text('Fields marked * are required.', style: AppTypography.body(fontSize: 13.5, color: context.tone.muted)),
             const SizedBox(height: 26),
             pair(
               _field(
@@ -318,11 +322,11 @@ class _InfoLine extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 1),
-          child: Icon(icon, size: 15, color: AppColors.muted),
+          child: Icon(icon, size: 15, color: context.tone.muted),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(text, style: AppTypography.body(fontSize: 13, color: AppColors.muted, height: 1.4)),
+          child: Text(text, style: AppTypography.body(fontSize: 13, color: context.tone.muted, height: 1.4)),
         ),
       ],
     );

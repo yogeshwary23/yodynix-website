@@ -47,14 +47,6 @@ class _IntroVisualState extends State<IntroVisual> with SingleTickerProviderStat
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // Ambient light pooling behind the stack.
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: AppColors.glow(center: const Alignment(0, 0.1), radius: 0.6, strength: 1.2),
-                  ),
-                ),
-              ),
               Positioned.fill(
                 child: RepaintBoundary(child: CustomPaint(painter: _StackPainter(_clock))),
               ),
@@ -66,12 +58,12 @@ class _IntroVisualState extends State<IntroVisual> with SingleTickerProviderStat
               const Positioned(
                 right: 22,
                 top: 58,
-                child: _Chip(icon: Icons.auto_awesome_rounded, color: AppColors.accent, phase: 0.25),
+                child: _Chip(icon: Icons.auto_awesome_rounded, color: AppColors.primaryTint, phase: 0.25),
               ),
               const Positioned(
                 left: 40,
                 bottom: 96,
-                child: _Chip(icon: Icons.school_rounded, color: AppColors.accent, phase: 0.5),
+                child: _Chip(icon: Icons.school_rounded, color: AppColors.primaryTint, phase: 0.5),
               ),
               const Positioned(
                 right: 34,
@@ -105,7 +97,7 @@ class _Chip extends StatelessWidget {
         height: 62,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color(0xFF1A2A55).withValues(alpha: 0.92), AppColors.deepNavy.withValues(alpha: 0.92)],
+            colors: [const Color(0xFF2A3243).withValues(alpha: 0.92), AppColors.deepNavy.withValues(alpha: 0.92)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -113,7 +105,7 @@ class _Chip extends StatelessWidget {
           border: Border.all(color: color.withValues(alpha: 0.45)),
           boxShadow: [
             BoxShadow(color: color.withValues(alpha: 0.22), blurRadius: 26, spreadRadius: -4),
-            const BoxShadow(color: Color(0x80020510), blurRadius: 20, offset: Offset(0, 12)),
+            const BoxShadow(color: Color(0x8005070C), blurRadius: 20, offset: Offset(0, 12)),
           ],
         ),
         child: Icon(icon, size: 28, color: color),
@@ -175,7 +167,7 @@ class _StackPainter extends CustomPainter {
       rect,
       Paint()
         ..shader = RadialGradient(
-          colors: [AppColors.primary.withValues(alpha: 0.35), AppColors.cyan.withValues(alpha: 0.06), Colors.transparent],
+          colors: [AppColors.primary.withValues(alpha: 0.35), AppColors.primaryTint.withValues(alpha: 0.06), Colors.transparent],
           stops: const [0, 0.55, 1],
         ).createShader(rect),
     );
@@ -188,8 +180,8 @@ class _StackPainter extends CustomPainter {
     // Visible sides: front-left (corner 3 → 2) and front-right (2 → 1).
     final leftFace = Path()..addPolygon([top[3], top[2], bottom[2], bottom[3]], true);
     final rightFace = Path()..addPolygon([top[2], top[1], bottom[1], bottom[2]], true);
-    canvas.drawPath(leftFace, Paint()..color = const Color(0xFF14224A));
-    canvas.drawPath(rightFace, Paint()..color = const Color(0xFF0C1631));
+    canvas.drawPath(leftFace, Paint()..color = const Color(0xFF262E3E));
+    canvas.drawPath(rightFace, Paint()..color = const Color(0xFF1A202C));
 
     final topFace = Path()..addPolygon(top, true);
     final bounds = topFace.getBounds();
@@ -197,7 +189,7 @@ class _StackPainter extends CustomPainter {
       topFace,
       Paint()
         ..shader = LinearGradient(
-          colors: [const Color(0xFF1E3170).withValues(alpha: 0.95), const Color(0xFF111D42).withValues(alpha: 0.95)],
+          colors: [const Color(0xFF323B4E).withValues(alpha: 0.95), const Color(0xFF202735).withValues(alpha: 0.95)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ).createShader(bounds),
@@ -205,7 +197,7 @@ class _StackPainter extends CustomPainter {
 
     // Faint grid on the top surface.
     final grid = Paint()
-      ..color = AppColors.iceBlue.withValues(alpha: 0.07)
+      ..color = AppColors.primaryTint.withValues(alpha: 0.07)
       ..strokeWidth = 1;
     const divisions = 6;
     for (var k = 1; k < divisions; k++) {
@@ -223,7 +215,7 @@ class _StackPainter extends CustomPainter {
     final rim = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8
-      ..shader = const LinearGradient(colors: [AppColors.primary, AppColors.cyan, AppColors.primary])
+      ..shader = const LinearGradient(colors: [AppColors.primary, AppColors.primaryTint, AppColors.primary])
           .createShader(Rect.fromPoints(top[3], top[1]));
     canvas.drawPath(Path()..addPolygon([top[3], top[2], top[1]], false), rim);
     canvas.drawLine(
@@ -244,7 +236,7 @@ class _StackPainter extends CustomPainter {
       top[2],
       bottom[2],
       Paint()
-        ..color = AppColors.cyan.withValues(alpha: 0.5)
+        ..color = AppColors.primaryTint.withValues(alpha: 0.5)
         ..strokeWidth = 1.2,
     );
   }
@@ -252,7 +244,7 @@ class _StackPainter extends CustomPainter {
   /// Circuit traces radiating from the centre with light travelling outwards.
   void _paintCircuits(Canvas canvas, double a, double z, double t) {
     final trace = Paint()
-      ..color = AppColors.cyan.withValues(alpha: 0.28)
+      ..color = AppColors.primaryTint.withValues(alpha: 0.28)
       ..strokeWidth = 1.4
       ..style = PaintingStyle.stroke;
     final inner = a * 0.25;
@@ -270,14 +262,14 @@ class _StackPainter extends CustomPainter {
       }
       canvas.drawPath(path, trace);
       final endPt = _p(end.dx, end.dy, z);
-      canvas.drawCircle(endPt, 3, Paint()..color = AppColors.cyan.withValues(alpha: 0.7));
+      canvas.drawCircle(endPt, 3, Paint()..color = AppColors.primaryTint.withValues(alpha: 0.7));
 
       // Travelling pulse.
       final metric = path.computeMetrics().first;
       final pos = metric.getTangentForOffset(metric.length * ((t * 2 + i / 4) % 1))?.position;
       if (pos != null) {
-        canvas.drawCircle(pos, 6, Paint()..color = AppColors.cyan.withValues(alpha: 0.18));
-        canvas.drawCircle(pos, 2.4, Paint()..color = AppColors.cyan);
+        canvas.drawCircle(pos, 6, Paint()..color = AppColors.primaryTint.withValues(alpha: 0.18));
+        canvas.drawCircle(pos, 2.4, Paint()..color = AppColors.primaryTint);
       }
     }
   }
@@ -293,7 +285,7 @@ class _StackPainter extends CustomPainter {
       final topFace = [_p(x0, y0, z + h), _p(x0 + size, y0, z + h), _p(x0 + size, y0 + size, z + h), _p(x0, y0 + size, z + h)];
       final left = [topFace[3], topFace[2], _p(x0 + size, y0 + size, z), _p(x0, y0 + size, z)];
       final right = [topFace[2], topFace[1], _p(x0 + size, y0, z), _p(x0 + size, y0 + size, z)];
-      final color = i == 1 || i == 2 ? AppColors.cyan : AppColors.primary;
+      final color = i == 1 || i == 2 ? AppColors.primaryTint : AppColors.primary;
       canvas.drawPath(Path()..addPolygon(left, true), Paint()..color = color.withValues(alpha: 0.22));
       canvas.drawPath(Path()..addPolygon(right, true), Paint()..color = color.withValues(alpha: 0.14));
       canvas.drawPath(Path()..addPolygon(topFace, true), Paint()..color = color.withValues(alpha: 0.32));
@@ -317,7 +309,7 @@ class _StackPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.3
-          ..color = AppColors.cyan.withValues(alpha: alpha + 0.12 * pulse),
+          ..color = AppColors.primaryTint.withValues(alpha: alpha + 0.12 * pulse),
       );
     }
     final orb = Rect.fromCircle(center: center.translate(0, -18), radius: 22);
@@ -327,7 +319,7 @@ class _StackPainter extends CustomPainter {
       Paint()
         ..shader = RadialGradient(
           colors: [
-            AppColors.cyan.withValues(alpha: 0.35 + 0.15 * pulse),
+            AppColors.primaryTint.withValues(alpha: 0.35 + 0.15 * pulse),
             Colors.transparent,
           ],
         ).createShader(Rect.fromCircle(center: orb.center, radius: 40)),
@@ -338,7 +330,7 @@ class _StackPainter extends CustomPainter {
       Paint()
         ..shader = const RadialGradient(
           center: Alignment(-0.35, -0.35),
-          colors: [AppColors.white, AppColors.cyan, AppColors.primary],
+          colors: [AppColors.white, AppColors.primaryTint, AppColors.primary],
           stops: [0, 0.4, 1],
         ).createShader(orb),
     );
@@ -356,7 +348,7 @@ class _StackPainter extends CustomPainter {
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            AppColors.cyan.withValues(alpha: 0.22),
+            AppColors.primaryTint.withValues(alpha: 0.22),
             AppColors.primary.withValues(alpha: fadeOut ? 0 : 0.16),
           ],
         ).createShader(rect),
@@ -370,8 +362,8 @@ class _StackPainter extends CustomPainter {
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            AppColors.cyan.withValues(alpha: 0.8),
-            AppColors.cyan.withValues(alpha: fadeOut ? 0 : 0.5),
+            AppColors.primaryTint.withValues(alpha: 0.8),
+            AppColors.primaryTint.withValues(alpha: fadeOut ? 0 : 0.5),
           ],
         ).createShader(rect),
     );
@@ -379,7 +371,7 @@ class _StackPainter extends CustomPainter {
       final p = (t * 4 + k / 3) % 1;
       final pos = Offset.lerp(a, b, p)!;
       final alpha = math.sin(p * math.pi);
-      canvas.drawCircle(pos, 2.6, Paint()..color = AppColors.cyan.withValues(alpha: 0.9 * alpha));
+      canvas.drawCircle(pos, 2.6, Paint()..color = AppColors.primaryTint.withValues(alpha: 0.9 * alpha));
     }
   }
 
@@ -390,7 +382,7 @@ class _StackPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2
-      ..color = AppColors.iceBlue.withValues(alpha: back ? 0.12 : 0.22);
+      ..color = AppColors.primaryTint.withValues(alpha: back ? 0.12 : 0.22);
     canvas.drawArc(rect, back ? math.pi : 0, math.pi, false, paint);
 
     // A light point riding the orbit.
@@ -398,8 +390,8 @@ class _StackPainter extends CustomPainter {
     final onBack = math.sin(angle) < 0;
     if (onBack != back) return;
     final pos = Offset(center.dx + math.cos(angle) * rect.width / 2, center.dy + math.sin(angle) * rect.height / 2);
-    canvas.drawCircle(pos, 8, Paint()..color = AppColors.cyan.withValues(alpha: back ? 0.08 : 0.2));
-    canvas.drawCircle(pos, 3, Paint()..color = AppColors.cyan.withValues(alpha: back ? 0.5 : 1));
+    canvas.drawCircle(pos, 8, Paint()..color = AppColors.primaryTint.withValues(alpha: back ? 0.08 : 0.2));
+    canvas.drawCircle(pos, 3, Paint()..color = AppColors.primaryTint.withValues(alpha: back ? 0.5 : 1));
   }
 
   @override

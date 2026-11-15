@@ -9,8 +9,23 @@ import '../../../core/theme/app_typography.dart';
 /// laid out on a fixed design canvas and scaled with [VisualCanvas], so the
 /// numbers below are design-space pixels.
 
+/// Illustrations are drawn as dark charcoal "screens" whatever section they
+/// sit in, so they use their own fixed tones rather than the light defaults.
+class VizColors {
+  VizColors._();
+
+  static const Color base = AppColors.deepCharcoal;
+  static const Color card = AppColors.charcoalNavy;
+  static const Color raised = AppColors.charcoalRaised;
+  static const Color line = AppColors.darkBorder;
+  static const Color text = AppColors.onDark;
+  static const Color body = AppColors.onDarkBody;
+  static const Color muted = AppColors.onDarkMuted;
+  static const Color skeleton = Color(0xFF3A4354);
+}
+
 class Skel extends StatelessWidget {
-  const Skel({super.key, required this.width, this.height = 7, this.color = AppColors.skeleton, this.radius = 99});
+  const Skel({super.key, required this.width, this.height = 7, this.color = VizColors.skeleton, this.radius = 99});
 
   final double width;
   final double height;
@@ -34,7 +49,7 @@ class Panel extends StatelessWidget {
     this.height,
     required this.child,
     this.radius = 14,
-    this.color = AppColors.card,
+    this.color = VizColors.card,
     this.padding = const EdgeInsets.all(12),
     this.elevation = 1,
     this.gradient,
@@ -81,12 +96,22 @@ class Panel extends StatelessWidget {
 }
 
 class BrowserFrame extends StatelessWidget {
-  const BrowserFrame({super.key, required this.width, required this.height, required this.child, this.elevation = 1});
+  const BrowserFrame({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.child,
+    this.elevation = 1,
+    this.dotColors = const [Color(0xFFFF6B6B), Color(0xFFFFC94D), Color(0xFF3DD68C)],
+  });
 
   final double width;
   final double height;
   final Widget child;
   final double elevation;
+
+  /// The three window-control dots in the title bar.
+  final List<Color> dotColors;
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +128,10 @@ class BrowserFrame extends StatelessWidget {
             Container(
               height: 24,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              color: AppColors.cardRaised,
+              color: VizColors.raised,
               child: Row(
                 children: [
-                  for (final c in const [Color(0xFFFF6B6B), Color(0xFFFFC94D), Color(0xFF3DD68C)])
+                  for (final c in dotColors)
                     Container(
                       width: 7,
                       height: 7,
@@ -118,9 +143,9 @@ class BrowserFrame extends StatelessWidget {
                     child: Container(
                       height: 11,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
+                        color: VizColors.base,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(color: VizColors.line),
                       ),
                     ),
                   ),
@@ -142,13 +167,17 @@ class PhoneFrame extends StatelessWidget {
     required this.width,
     required this.height,
     required this.child,
-    this.screenColor = AppColors.card,
+    this.screenColor = VizColors.card,
+    this.edgeColor = AppColors.primary,
   });
 
   final double width;
   final double height;
   final Widget child;
   final Color screenColor;
+
+  /// Bezel outline and its soft shadow.
+  final Color edgeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -157,10 +186,10 @@ class PhoneFrame extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A2850),
+        color: const Color(0xFF2A3243),
         borderRadius: BorderRadius.circular(width * 0.17),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.22), blurRadius: 34, offset: const Offset(0, 12))],
+        border: Border.all(color: edgeColor.withValues(alpha: 0.35)),
+        boxShadow: [BoxShadow(color: edgeColor.withValues(alpha: 0.22), blurRadius: 34, offset: const Offset(0, 12))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(width * 0.14),
@@ -172,7 +201,7 @@ class PhoneFrame extends StatelessWidget {
               Container(
                 width: width * 0.3,
                 height: 7,
-                decoration: BoxDecoration(color: const Color(0xFF1A2850), borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(color: const Color(0xFF2A3243), borderRadius: BorderRadius.circular(8)),
               ),
               Expanded(child: child),
             ],
@@ -219,7 +248,7 @@ class Avatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.6)]),
-        border: Border.all(color: AppColors.card, width: 2),
+        border: Border.all(color: VizColors.card, width: 2),
       ),
       child: Icon(Icons.person_rounded, size: size * 0.6, color: AppColors.white),
     );
@@ -280,8 +309,8 @@ class VisualCanvas extends StatelessWidget {
     super.key,
     required this.child,
     this.designSize = const Size(600, 400),
-    this.tones = const [Color(0xFF0B1328), Color(0xFF0F1D3D)],
-    this.blobs = const [AppColors.primary, AppColors.iceBlue],
+    this.tones = const [Color(0xFF151B26), Color(0xFF1B2230)],
+    this.blobs = const [AppColors.primary, AppColors.primaryTint],
     this.showGrid = true,
     this.fit = BoxFit.cover,
   });
@@ -473,7 +502,7 @@ class DonutPainter extends CustomPainter {
       math.pi * 2,
       false,
       Paint()
-        ..color = AppColors.skeleton
+        ..color = VizColors.skeleton
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke,
     );
@@ -505,7 +534,7 @@ class NetworkPainter extends CustomPainter {
     required this.nodes,
     required this.links,
     required this.color,
-    this.accent = AppColors.accent,
+    this.accent = AppColors.primaryTint,
     this.pulse = 0,
   });
 
@@ -614,7 +643,7 @@ class ArrowPainter extends CustomPainter {
   bool shouldRepaint(covariant ArrowPainter oldDelegate) => false;
 }
 
-Text vLabel(String text, {double size = 11, Color color = AppColors.ink, FontWeight weight = FontWeight.w600}) {
+Text vLabel(String text, {double size = 11, Color color = VizColors.text, FontWeight weight = FontWeight.w600}) {
   return Text(
     text,
     maxLines: 1,

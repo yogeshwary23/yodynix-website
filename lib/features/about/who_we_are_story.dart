@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/asset_paths.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../repositories/content/company_content.dart';
@@ -47,7 +48,7 @@ class WhoWeAreStory extends StatelessWidget {
             icon: Icons.visibility_outlined,
             title: 'Our Vision',
             text: CompanyContent.vision,
-            color: AppColors.primary,
+            color: AppColors.accent,
           ),
         ),
         const SizedBox(height: 16),
@@ -65,7 +66,7 @@ class WhoWeAreStory extends StatelessWidget {
             icon: Icons.route_outlined,
             title: 'Our Approach',
             text: CompanyContent.approach,
-            color: AppColors.iceBlue,
+            color: AppColors.charcoalNavy,
           ),
         ),
       ],
@@ -96,43 +97,48 @@ class _StatementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppColors.softShadow(0.5),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(19),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Accent strip along the leading edge.
-              Container(width: 4, color: color),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      IconBadge(icon: icon, color: color, size: 44),
-                      const SizedBox(width: 18),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(title, style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700)),
-                            const SizedBox(height: 8),
-                            Text(text, style: AppTypography.body(fontSize: 15.5, color: AppColors.ink)),
-                          ],
+      decoration: CardStyle.decoration(radius: 20),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(19),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Accent strip along the leading edge.
+                Container(width: 4, color: color),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        IconBadge(icon: icon, color: color, size: 44),
+                        const SizedBox(width: 18),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: AppTypography.display(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.cardHeading,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(text, style: AppTypography.body(fontSize: 15.5, color: AppColors.cardHeading)),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -4,6 +4,7 @@ import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/internship_program.dart';
 import '../../models/pillar_page.dart' show PillarStep;
@@ -49,7 +50,6 @@ class _InternshipProgramCardState extends State<InternshipProgramCard> {
       onExit: (_) => setState(() => _hover = false),
       child: HoverCard(
         padding: EdgeInsets.zero,
-        accent: AppColors.cyan,
         semanticLabel: p.title,
         onTap: widget.onOpen,
         child: Column(
@@ -69,9 +69,9 @@ class _InternshipProgramCardState extends State<InternshipProgramCard> {
                       decoration: BoxDecoration(
                         color: AppColors.deepNavy.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(AppRadius.sm),
-                        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.45)),
+                        border: Border.all(color: AppColors.cardLine),
                       ),
-                      child: Icon(p.icon, size: 18, color: AppColors.cyan),
+                      child: Icon(p.icon, size: 18, color: AppColors.cardAccent),
                     ),
                   ),
                 ],
@@ -89,23 +89,31 @@ class _InternshipProgramCardState extends State<InternshipProgramCard> {
                         style: AppTypography.body(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.cyan,
+                          color: AppColors.cardAccent,
                           letterSpacing: 1.4,
                           height: 1.2,
                         ),
                       ),
                       const SizedBox(height: 8),
                     ],
-                    Text(p.title, style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3)),
+                    Text(
+                      p.title,
+                      style: AppTypography.display(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        height: 1.3,
+                        color: AppColors.cardHeading,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    Text(p.description, style: AppTypography.body(fontSize: 14.2, height: 1.6)),
+                    Text(p.description, style: AppTypography.body(fontSize: 14.2, height: 1.6, color: AppColors.cardBody)),
                     const SizedBox(height: 14),
                     Text(
                       'KEY SKILLS',
                       style: AppTypography.body(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.muted,
+                        color: AppColors.cardMuted,
                         letterSpacing: 1.2,
                         height: 1.2,
                       ),
@@ -116,12 +124,12 @@ class _InternshipProgramCardState extends State<InternshipProgramCard> {
                       runSpacing: 6,
                       children: [
                         for (final s in p.skills.take(shown)) TagChip(s),
-                        if (more > 0) TagChip('+$more more', color: AppColors.cyan, filled: true),
+                        if (more > 0) TagChip('+$more more', color: AppColors.cardAccent, filled: true),
                       ],
                     ),
                     const Spacer(),
                     const SizedBox(height: 18),
-                    ArrowLink(label: 'Explore Program', color: AppColors.cyan, onPressed: widget.onOpen),
+                    ArrowLink(label: 'Explore Program', color: AppColors.cardAccent, onPressed: widget.onOpen),
                   ],
                 ),
               ),
@@ -163,36 +171,34 @@ class InternshipAtAGlanceCard extends StatelessWidget {
     ];
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF14256B), AppColors.card],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const IconBadge(icon: Icons.event_note_outlined, color: AppColors.cardAccent, size: 48),
+            const SizedBox(height: 18),
+            Text(
+              title,
+              style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Terms depend on each specific opportunity and are confirmed with you before it begins.',
+              style: AppTypography.body(fontSize: 14, height: 1.6, color: AppColors.cardBody),
+            ),
+            const SizedBox(height: 18),
+            for (final (icon, label, value) in rows) _TermRow(icon: icon, label: label, value: value),
+            if (fill) const Spacer(),
+            const SizedBox(height: 16),
+            PrimaryButton(
+              label: InternshipConfig.applicationsOpen ? 'Apply Now' : 'Register Interest',
+              size: ButtonSize.small,
+              onPressed: onApply,
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const IconBadge(icon: Icons.event_note_outlined, color: AppColors.cyan, size: 48),
-          const SizedBox(height: 18),
-          Text(title, style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3)),
-          const SizedBox(height: 8),
-          Text(
-            'Terms depend on each specific opportunity and are confirmed with you before it begins.',
-            style: AppTypography.body(fontSize: 14, height: 1.6),
-          ),
-          const SizedBox(height: 18),
-          for (final (icon, label, value) in rows) _TermRow(icon: icon, label: label, value: value),
-          if (fill) const Spacer(),
-          const SizedBox(height: 16),
-          PrimaryButton(
-            label: InternshipConfig.applicationsOpen ? 'Apply Now' : 'Register Interest',
-            size: ButtonSize.small,
-            onPressed: onApply,
-          ),
-        ],
       ),
     );
   }
@@ -212,18 +218,22 @@ class _TermRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: AppColors.cyan),
+          Icon(icon, size: 16, color: AppColors.cardAccent),
           const SizedBox(width: 10),
           Text(
             label,
-            style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.3),
+            style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.cardHeading, height: 1.3),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: AppTypography.body(fontSize: 13.5, color: pending ? AppColors.muted : AppColors.ink, height: 1.3),
+              style: AppTypography.body(
+                fontSize: 13.5,
+                color: pending ? AppColors.cardMuted : AppColors.cardHeading,
+                height: 1.3,
+              ),
             ),
           ),
         ],
@@ -249,15 +259,22 @@ class InternshipBenefits extends StatelessWidget {
             delay: Duration(milliseconds: 60 * i),
             child: HoverCard(
               padding: const EdgeInsets.all(24),
-              accent: AppColors.cyan,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconBadge(icon: icon, color: AppColors.cyan, size: 46),
+                  IconBadge(icon: icon, color: AppColors.cardAccent, size: 46),
                   const SizedBox(height: 16),
-                  Text(title, style: AppTypography.display(fontSize: 17.5, fontWeight: FontWeight.w700, height: 1.3)),
+                  Text(
+                    title,
+                    style: AppTypography.display(
+                      fontSize: 17.5,
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
+                      color: AppColors.cardHeading,
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  Text(text, style: AppTypography.body(fontSize: 14.2, height: 1.6)),
+                  Text(text, style: AppTypography.body(fontSize: 14.2, height: 1.6, color: AppColors.cardBody)),
                 ],
               ),
             ),
@@ -296,70 +313,78 @@ class LearningModelCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
-      ),
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: TintedPhoto(basePath: image, semanticLabel: imageAlt, strength: 0.45),
-          ),
-          Padding(
-            padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 30.0)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label.toUpperCase(),
-                  style: AppTypography.body(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.cyan,
-                    letterSpacing: 1.4,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  title,
-                  style: AppTypography.display(fontSize: context.responsive(mobile: 21.0, desktop: 24.0), height: 1.25),
-                ),
-                const SizedBox(height: 10),
-                Text(summary, style: AppTypography.body(fontSize: 15, height: 1.65)),
-                const SizedBox(height: 18),
-                CheckList(items: points, color: AppColors.cyan),
-                if (focus.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: AppColors.primarySoft,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          focusHeading ?? 'In this programme',
-                          style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.ink, height: 1.3),
-                        ),
-                        const SizedBox(height: 12),
-                        CheckList(items: focus, color: AppColors.iceBlue),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: TintedPhoto(basePath: image, semanticLabel: imageAlt, strength: 0.45),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 30.0)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label.toUpperCase(),
+                    style: AppTypography.body(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.cardAccent,
+                      letterSpacing: 1.4,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    title,
+                    style: AppTypography.display(
+                      fontSize: context.responsive(mobile: 21.0, desktop: 24.0),
+                      height: 1.25,
+                      color: AppColors.cardHeading,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(summary, style: AppTypography.body(fontSize: 15, height: 1.65, color: AppColors.cardBody)),
+                  const SizedBox(height: 18),
+                  CheckList(items: points, color: AppColors.cardAccent),
+                  if (focus.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardTile,
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            focusHeading ?? 'In this programme',
+                            style: AppTypography.body(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.cardHeading,
+                              height: 1.3,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          CheckList(items: focus, color: AppColors.charcoalNavy),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -452,21 +477,28 @@ class OpportunityTypes extends StatelessWidget {
                 delay: Duration(milliseconds: 70 * i),
                 child: HoverCard(
                   padding: const EdgeInsets.all(26),
-                  accent: AppColors.cyan,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          IconBadge(icon: icon, color: AppColors.cyan, size: 46, gradient: i == 0),
+                          IconBadge(icon: icon, color: AppColors.cardAccent, size: 46, gradient: i == 0),
                           const Spacer(),
-                          TagChip(tag, color: AppColors.cyan, filled: true),
+                          TagChip(tag, color: AppColors.cardAccent, filled: true),
                         ],
                       ),
                       const SizedBox(height: 18),
-                      Text(title, style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, height: 1.3)),
+                      Text(
+                        title,
+                        style: AppTypography.display(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                          height: 1.3,
+                          color: AppColors.cardHeading,
+                        ),
+                      ),
                       const SizedBox(height: 10),
-                      Text(text, style: AppTypography.body(fontSize: 14.5, height: 1.65)),
+                      Text(text, style: AppTypography.body(fontSize: 14.5, height: 1.65, color: AppColors.cardBody)),
                     ],
                   ),
                 ),
@@ -493,11 +525,17 @@ class ProgramTermsPanel extends StatelessWidget {
     final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Programme Details', style: AppTypography.display(fontSize: 21, fontWeight: FontWeight.w700, height: 1.3)),
+        Text(
+          'Programme Details',
+          style: AppTypography.display(fontSize: 21, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+        ),
         const SizedBox(height: 10),
-        Text(InternshipContent.opportunityNote, style: AppTypography.body(fontSize: 14.5, height: 1.65)),
+        Text(
+          InternshipContent.opportunityNote,
+          style: AppTypography.body(fontSize: 14.5, height: 1.65, color: AppColors.cardBody),
+        ),
         const SizedBox(height: 10),
-        Text(InternshipContent.disclaimer, style: AppTypography.body(fontSize: 13.5, color: AppColors.muted, height: 1.6)),
+        Text(InternshipContent.disclaimer, style: AppTypography.body(fontSize: 13.5, color: AppColors.cardMuted, height: 1.6)),
       ],
     );
     final list = Column(
@@ -506,7 +544,7 @@ class ProgramTermsPanel extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 11),
             decoration: BoxDecoration(
-              border: i == 0 ? null : const Border(top: BorderSide(color: AppColors.divider)),
+              border: i == 0 ? null : const Border(top: BorderSide(color: AppColors.cardLine)),
             ),
             child: _TermRow(icon: icon, label: label, value: value),
           ),
@@ -514,21 +552,20 @@ class ProgramTermsPanel extends StatelessWidget {
     );
     return Container(
       padding: EdgeInsets.all(wide ? 32 : 22),
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: wide
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 5, child: heading),
+                  const SizedBox(width: 40),
+                  Expanded(flex: 6, child: list),
+                ],
+              )
+            : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [heading, const SizedBox(height: 18), list]),
       ),
-      child: wide
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 5, child: heading),
-                const SizedBox(width: 40),
-                Expanded(flex: 6, child: list),
-              ],
-            )
-          : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [heading, const SizedBox(height: 18), list]),
     );
   }
 }
@@ -571,7 +608,6 @@ class _StageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoverCard(
       padding: const EdgeInsets.all(24),
-      accent: AppColors.cyan,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -590,29 +626,32 @@ class _StageCard extends StatelessWidget {
                 style: AppTypography.body(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.cyan,
+                  color: AppColors.cardAccent,
                   letterSpacing: 1.4,
                   height: 1.2,
                 ),
               ),
               const Spacer(),
-              Icon(stage.icon, size: 22, color: AppColors.muted),
+              Icon(stage.icon, size: 22, color: AppColors.cardMuted),
             ],
           ),
           const SizedBox(height: 16),
-          Text(stage.title, style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3)),
+          Text(
+            stage.title,
+            style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+          ),
           const SizedBox(height: 8),
-          Text(stage.description, style: AppTypography.body(fontSize: 14.3, height: 1.6)),
+          Text(stage.description, style: AppTypography.body(fontSize: 14.3, height: 1.6, color: AppColors.cardBody)),
           if (focus != null) ...[
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
               decoration: BoxDecoration(
-                color: AppColors.primarySoft,
+                color: AppColors.cardTile,
                 borderRadius: BorderRadius.circular(AppRadius.sm),
-                border: Border(left: BorderSide(color: AppColors.cyan.withValues(alpha: 0.8), width: 3)),
+                border: Border(left: BorderSide(color: AppColors.cardAccent.withValues(alpha: 0.8), width: 3)),
               ),
-              child: Text(focus!, style: AppTypography.body(fontSize: 13.5, color: AppColors.ink, height: 1.55)),
+              child: Text(focus!, style: AppTypography.body(fontSize: 13.5, color: AppColors.cardHeading, height: 1.55)),
             ),
           ],
         ],
@@ -662,53 +701,57 @@ class _FaqTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: AppMotion.hover,
-      decoration: BoxDecoration(
-        color: open ? AppColors.cardRaised : AppColors.card,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: open ? AppColors.cyan.withValues(alpha: 0.4) : AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Semantics(
-            button: true,
-            expanded: open,
-            child: InkWell(
-              onTap: onToggle,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        faq.question,
-                        style: AppTypography.body(fontSize: 15.5, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.4),
+      decoration: CardStyle.decoration(radius: AppRadius.md, hover: open),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Semantics(
+              button: true,
+              expanded: open,
+              child: InkWell(
+                onTap: onToggle,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          faq.question,
+                          style: AppTypography.body(
+                            fontSize: 15.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.cardHeading,
+                            height: 1.4,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    AnimatedRotation(
-                      turns: open ? 0.5 : 0,
-                      duration: AppMotion.hover,
-                      child: Icon(Icons.expand_more_rounded, color: open ? AppColors.cyan : AppColors.muted),
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      AnimatedRotation(
+                        turns: open ? 0.5 : 0,
+                        duration: AppMotion.hover,
+                        child: Icon(Icons.expand_more_rounded, color: open ? AppColors.cardAccent : AppColors.cardMuted),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          AnimatedSize(
-            duration: AppMotion.lift,
-            curve: AppMotion.ease,
-            alignment: Alignment.topCenter,
-            child: open
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    child: Text(faq.answer, style: AppTypography.body(fontSize: 14.8, height: 1.7)),
-                  )
-                : const SizedBox(width: double.infinity),
-          ),
-        ],
+            AnimatedSize(
+              duration: AppMotion.lift,
+              curve: AppMotion.ease,
+              alignment: Alignment.topCenter,
+              child: open
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      child: Text(faq.answer, style: AppTypography.body(fontSize: 14.8, height: 1.7, color: AppColors.cardBody)),
+                    )
+                  : const SizedBox(width: double.infinity),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -732,7 +775,7 @@ class InternshipApplySection extends StatelessWidget {
     final intro = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Eyebrow(open ? 'Apply Now' : 'Register Interest', color: AppColors.cyan),
+        Eyebrow(open ? 'Apply Now' : 'Register Interest', color: AppColors.accent),
         const SizedBox(height: 18),
         Semantics(
           header: true,
@@ -750,7 +793,7 @@ class InternshipApplySection extends StatelessWidget {
             'Tell us whether you prefer a free or paid opportunity',
             'We share confirmed terms before anything begins',
           ],
-          color: AppColors.cyan,
+          color: AppColors.accent,
         ),
         if (desktop) ...[
           const SizedBox(height: 20),
@@ -766,14 +809,8 @@ class InternshipApplySection extends StatelessWidget {
         ],
       ],
     );
-    final form = Container(
+    final form = FormCard(
       padding: EdgeInsets.all(context.responsive(mobile: 20.0, desktop: 36.0)),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppColors.softShadow(0.8),
-      ),
       child: InternshipApplicationForm(selection: selection),
     );
     return desktop
@@ -804,7 +841,7 @@ class InternshipBreadcrumb extends StatelessWidget {
       icon: Icon(icon, size: 16),
       label: Text(label),
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.body,
+        foregroundColor: context.tone.body,
         textStyle: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.2),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         minimumSize: const Size(0, 36),
@@ -814,10 +851,10 @@ class InternshipBreadcrumb extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Text(
         label,
-        style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.cyan, height: 1.2),
+        style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: context.tone.accent, height: 1.2),
       ),
     );
-    const separator = Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.muted);
+    final separator = Icon(Icons.chevron_right_rounded, size: 16, color: context.tone.muted);
 
     return Semantics(
       container: true,
@@ -859,7 +896,7 @@ class BackToProgramsLink extends StatelessWidget {
         icon: const Icon(Icons.arrow_back_rounded, size: 18),
         label: const Text('Back to Internship Programs'),
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.cyan,
+          foregroundColor: AppColors.accent,
           textStyle: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w700, height: 1.2),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         ),

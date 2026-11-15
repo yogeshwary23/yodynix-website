@@ -132,7 +132,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
           decoration: BoxDecoration(
             color: AppColors.deepNavy,
             borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppColors.darkBorder),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,7 +163,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
                       line,
                       style: AppTypography.body(
                         fontSize: 12.5,
-                        color: AppColors.iceBlue,
+                        color: AppColors.electricBlueTint,
                         height: 1.45,
                       ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
                     ),
@@ -171,7 +171,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: AppColors.primarySoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
+                decoration: BoxDecoration(color: AppColors.electricBlueSoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
                 child: Text(
                   'Estimated manual time avoided: about $saved minutes per enquiry (illustrative).',
                   style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.white, height: 1.45),
@@ -205,13 +205,13 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
       decoration: BoxDecoration(
-        color: active ? AppColors.primarySoft : AppColors.card,
+        color: active ? AppColors.electricBlue.withValues(alpha: 0.16) : AppColors.surfaceNavy,
         borderRadius: BorderRadius.circular(AppRadius.sm),
-        border: Border.all(color: active ? AppColors.cyan : AppColors.border),
+        border: Border.all(color: active ? AppColors.electricBlue : AppColors.darkBorder),
       ),
       child: Row(
         children: [
-          Icon(s.icon, color: s.enabled ? AppColors.cyan : AppColors.blueGrey, size: 22),
+          Icon(s.icon, color: s.enabled ? AppColors.electricBlue : AppColors.blueGrey, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

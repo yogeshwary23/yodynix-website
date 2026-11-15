@@ -61,8 +61,8 @@ class _YodynixAppState extends State<YodynixApp> with WidgetsBindingObserver {
       child: MaterialApp(
         title: '${SiteConfig.brandName} | ${SiteConfig.brandCategory}',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark(),
-        themeMode: ThemeMode.dark,
+        theme: AppTheme.light(),
+        themeMode: ThemeMode.light,
         navigatorKey: _navigatorKey,
         navigatorObservers: [_HomeTitleObserver()],
         initialRoute: AppRoutes.home,

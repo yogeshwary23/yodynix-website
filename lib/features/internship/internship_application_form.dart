@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
@@ -158,15 +159,15 @@ class _InternshipApplicationFormState extends State<InternshipApplicationForm> {
           children: [
             Text(
               InternshipConfig.applicationsOpen ? 'Internship Application' : 'Register Your Interest',
-              style: AppTypography.display(fontSize: 24, fontWeight: FontWeight.w700),
+              style: AppTypography.display(fontSize: 24, fontWeight: FontWeight.w700, color: context.tone.ink),
             ),
             const SizedBox(height: 6),
-            Text('Fields marked * are required.', style: AppTypography.body(fontSize: 13.5, color: AppColors.muted)),
+            Text('Fields marked * are required.', style: AppTypography.body(fontSize: 13.5, color: context.tone.muted)),
             if (!widget.repository.isConnected) ...[
               const SizedBox(height: 18),
-              const _StatusPanel(
+              _StatusPanel(
                 icon: Icons.cloud_off_rounded,
-                color: AppColors.iceBlue,
+                color: context.tone.ink,
                 title: 'Online applications are not connected yet',
                 text:
                     'This form needs a backend integration before it can send applications. You can '
@@ -363,7 +364,7 @@ class _TypeSelector extends StatelessWidget {
         children: [
           Text(
             'Internship Type *',
-            style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.3),
+            style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: context.tone.ink, height: 1.3),
           ),
           const SizedBox(height: 10),
           Wrap(
@@ -376,23 +377,28 @@ class _TypeSelector extends StatelessWidget {
                   selected: value == t,
                   onSelected: (_) => onChanged(t),
                   showCheckmark: true,
-                  checkmarkColor: AppColors.white,
-                  selectedColor: AppColors.primary,
-                  backgroundColor: AppColors.cardRaised,
-                  side: BorderSide(color: value == t ? AppColors.primary : (error ? AppColors.error : AppColors.border)),
-                  labelStyle: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.2),
+                  checkmarkColor: AppColors.cardAccent,
+                  selectedColor: AppColors.cardTile,
+                  backgroundColor: AppColors.cardField,
+                  side: BorderSide(
+                    color: value == t ? context.tone.accent : (error ? AppColors.errorOnCard : context.tone.border),
+                  ),
+                  labelStyle: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w600, color: context.tone.ink, height: 1.2),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 ),
             ],
           ),
           if (error) ...[
             const SizedBox(height: 8),
-            Text('Please choose free or paid', style: AppTypography.body(fontSize: 12.5, color: AppColors.error, height: 1.3)),
+            Text(
+              'Please choose free or paid',
+              style: AppTypography.body(fontSize: 12.5, color: AppColors.errorOnCard, height: 1.3),
+            ),
           ],
           const SizedBox(height: 8),
           Text(
             'Availability and terms depend on the specific opportunity and are confirmed with you first.',
-            style: AppTypography.body(fontSize: 12.5, color: AppColors.muted, height: 1.4),
+            style: AppTypography.body(fontSize: 12.5, color: context.tone.muted, height: 1.4),
           ),
         ],
       ),
@@ -412,13 +418,13 @@ class _ResultPanel extends StatelessWidget {
     return switch (result.status) {
       SubmissionStatus.success => _StatusPanel(
         icon: Icons.check_circle_outline_rounded,
-        color: AppColors.success,
+        color: AppColors.successOnCard,
         title: 'Thank you, $firstName!',
         text: 'Your registration has been received. We will contact you by email about suitable opportunities.',
       ),
       SubmissionStatus.backendNotConnected => _StatusPanel(
         icon: Icons.info_outline_rounded,
-        color: AppColors.iceBlue,
+        color: context.tone.ink,
         title: 'Not sent: online applications are not connected yet',
         text:
             'Your details look complete, but this form cannot send them yet, so nothing was received or '
@@ -432,7 +438,7 @@ class _ResultPanel extends StatelessWidget {
       ),
       SubmissionStatus.failure => _StatusPanel(
         icon: Icons.error_outline_rounded,
-        color: AppColors.error,
+        color: AppColors.errorOnCard,
         title: 'Something went wrong',
         text: result.message ?? 'Your registration could not be sent. Your details are still in the form, so please try again.',
       ),
@@ -471,10 +477,10 @@ class _StatusPanel extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w700, color: AppColors.ink, height: 1.35),
+                    style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w700, color: context.tone.ink, height: 1.35),
                   ),
                   const SizedBox(height: 4),
-                  Text(text, style: AppTypography.body(fontSize: 13.5, height: 1.55)),
+                  Text(text, style: AppTypography.body(fontSize: 13.5, height: 1.55, color: context.tone.body)),
                   if (action != null) ...[const SizedBox(height: 12), action!],
                 ],
               ),
@@ -499,11 +505,11 @@ class _InfoLine extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 1),
-          child: Icon(icon, size: 15, color: AppColors.muted),
+          child: Icon(icon, size: 15, color: context.tone.muted),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(text, style: AppTypography.body(fontSize: 13, color: AppColors.muted, height: 1.45)),
+          child: Text(text, style: AppTypography.body(fontSize: 13, color: context.tone.muted, height: 1.45)),
         ),
       ],
     );

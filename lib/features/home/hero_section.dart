@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/asset_paths.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/site_section.dart';
 import '../../providers/section_navigator.dart';
@@ -41,7 +42,7 @@ class HeroSection extends StatelessWidget {
     return SectionShell(
       topPadding: context.responsive(mobile: 40.0, tablet: 64.0, desktop: 64.0),
       bottomPadding: context.responsive(mobile: 56.0, tablet: 72.0, desktop: 88.0),
-      background: AppColors.background,
+      tone: SurfaceColors.dark,
       decoration: const _HeroBackdrop(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,13 +83,16 @@ class _HeroCopy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nav = SectionNavigatorScope.read(context);
+    final tone = context.tone;
     final size = context.responsive(mobile: 40.0, tablet: 56.0, desktop: 58.0);
-    final style = AppTypography.display(fontSize: size, height: 1.04, fontWeight: FontWeight.w800);
+    final style = AppTypography.display(fontSize: size, height: 1.04, fontWeight: FontWeight.w800, color: tone.ink);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Reveal(child: Eyebrow(CompanyContent.heroEyebrow)),
+        Reveal(
+          child: Eyebrow(CompanyContent.heroEyebrow, color: AppColors.softChampagne, ornament: AppColors.steelBlue),
+        ),
         const SizedBox(height: 26),
         Reveal(
           delay: const Duration(milliseconds: 80),
@@ -117,7 +121,7 @@ class _HeroCopy extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 560),
             child: Text(
               CompanyContent.heroDescription,
-              style: AppTypography.body(fontSize: context.responsive(mobile: 16.5, desktop: 18.0), height: 1.7),
+              style: AppTypography.body(fontSize: context.responsive(mobile: 16.5, desktop: 18.0), height: 1.7, color: tone.body),
             ),
           ),
         ),
@@ -128,7 +132,12 @@ class _HeroCopy extends StatelessWidget {
             spacing: 14,
             runSpacing: 14,
             children: [
-              PrimaryButton(label: 'Start Your Project', size: ButtonSize.large, onPressed: () => nav.startEnquiry()),
+              PrimaryButton(
+                label: 'Start Your Project',
+                size: ButtonSize.large,
+                fill: AppColors.softChampagne,
+                onPressed: () => nav.startEnquiry(),
+              ),
               SecondaryButton(
                 label: 'Explore Our Services',
                 size: ButtonSize.large,
@@ -143,7 +152,7 @@ class _HeroCopy extends StatelessWidget {
   }
 }
 
-/// Orange-gradient text with a soft light bloom behind it.
+/// Accent-gradient text with a soft light bloom behind it.
 class _GlowText extends StatelessWidget {
   const _GlowText(this.text, {required this.style});
 
@@ -157,11 +166,15 @@ class _GlowText extends StatelessWidget {
         Text(
           text,
           style: style.copyWith(
-            color: AppColors.electricBlue.withValues(alpha: 0.0),
-            shadows: [Shadow(color: AppColors.electricBlue.withValues(alpha: 0.55), blurRadius: 36)],
+            color: AppColors.champagneGold.withValues(alpha: 0.0),
+            shadows: [Shadow(color: AppColors.champagneGold.withValues(alpha: 0.12), blurRadius: 24)],
           ),
         ),
-        GradientText(text, style: style),
+        GradientText(
+          text,
+          style: style,
+          gradient: const LinearGradient(colors: [AppColors.champagneGold, AppColors.softChampagne]),
+        ),
       ],
     );
   }
@@ -186,19 +199,19 @@ class _HeroBackdrop extends StatelessWidget {
               child: CustomPaint(painter: GridPainter(color: AppColors.white.withValues(alpha: 0.045), step: 56)),
             ),
           ),
-          // Main orange-red light behind the visual.
+          // Main light behind the visual.
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(gradient: AppColors.glow(center: const Alignment(0.75, -0.2), radius: 0.9)),
             ),
           ),
-          // Low warm bounce light on the left.
+          // Low bounce light on the left.
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(gradient: AppColors.glow(center: const Alignment(-1.1, 1.1), radius: 0.8, strength: 0.6)),
             ),
           ),
-          // Fade to black at the bottom edge so the next section joins seamlessly.
+          // Settle into solid charcoal at the bottom edge.
           const Positioned(
             left: 0,
             right: 0,
@@ -209,7 +222,7 @@ class _HeroBackdrop extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, AppColors.background],
+                  colors: [Colors.transparent, AppColors.deepCharcoal],
                 ),
               ),
             ),

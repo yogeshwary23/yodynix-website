@@ -26,9 +26,9 @@ class _Palette {
 
 class _BrandKitDemoState extends State<BrandKitDemo> {
   static const _palettes = [
-    _Palette('Electric', AppColors.electricBlue, AppColors.cyan, AppColors.midnightNavy),
-    _Palette('Glacier', AppColors.iceBlue, AppColors.lightGrey, AppColors.surfaceNavy),
-    _Palette('Midnight', AppColors.cyan, AppColors.iceBlue, AppColors.deepNavy),
+    _Palette('Electric', AppColors.electricBlue, AppColors.electricBlue, AppColors.midnightNavy),
+    _Palette('Glacier', AppColors.electricBlueTint, AppColors.lightGrey, AppColors.surfaceNavy),
+    _Palette('Midnight', AppColors.electricBlue, AppColors.electricBlueTint, AppColors.deepNavy),
   ];
 
   // Heading/body pairings, both already used by the site (no new fonts).

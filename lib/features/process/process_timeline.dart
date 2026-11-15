@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
@@ -135,7 +136,7 @@ class _Line extends StatelessWidget {
         width: 2,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primary.withValues(alpha: 0.55), AppColors.cyan.withValues(alpha: 0.35)],
+            colors: [AppColors.softGrey, AppColors.lightGrey],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -159,9 +160,9 @@ class _Node extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: AppColors.brandGradient,
-        border: Border.all(color: AppColors.surface, width: 4),
-        boxShadow: AppColors.glowShadow(0.9),
+        color: AppColors.charcoalNavy,
+        border: Border.all(color: AppColors.background, width: 4),
+        boxShadow: AppColors.softShadow(0.6),
       ),
       child: Text(
         step.number,
@@ -194,11 +195,11 @@ class _StepPhotoState extends State<_StepPhoto> {
         curve: AppMotion.ease,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: _hover ? 0.6 : 0.16)),
+          border: Border.all(color: _hover ? AppColors.accent.withValues(alpha: 0.45) : AppColors.lightGrey),
           boxShadow: [
             if (_hover)
               BoxShadow(
-                color: AppColors.cyan.withValues(alpha: 0.16),
+                color: AppColors.charcoalNavy.withValues(alpha: 0.14),
                 blurRadius: 44,
                 spreadRadius: -6,
                 offset: const Offset(0, 18),
@@ -222,12 +223,12 @@ class _StepPhotoState extends State<_StepPhoto> {
                     decoration: BoxDecoration(
                       color: AppColors.deepNavy.withValues(alpha: 0.78),
                       borderRadius: BorderRadius.circular(AppRadius.pill),
-                      border: Border.all(color: AppColors.cyan.withValues(alpha: 0.35)),
+                      border: Border.all(color: AppColors.white.withValues(alpha: 0.16)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(step.icon, size: 15, color: AppColors.cyan),
+                        Icon(step.icon, size: 15, color: AppColors.primaryTint),
                         const SizedBox(width: 8),
                         Text(
                           'STEP ${step.number}',
@@ -280,7 +281,7 @@ class _StepCopy extends StatelessWidget {
           alignment: alignEnd ? WrapAlignment.end : WrapAlignment.start,
           spacing: 8,
           runSpacing: 8,
-          children: [for (final a in step.activities) TagChip(a, color: AppColors.cyan, filled: true)],
+          children: [for (final a in step.activities) TagChip(a, color: AppColors.accent, filled: true)],
         ),
       ],
     );
@@ -303,53 +304,51 @@ class _OngoingCard extends StatelessWidget {
           style: AppTypography.body(
             fontSize: 11.5,
             fontWeight: FontWeight.w700,
-            color: AppColors.cyan,
+            color: AppColors.cardAccent,
             letterSpacing: 1.4,
             height: 1.2,
           ),
         ),
         const SizedBox(height: 8),
-        Text(step.title, style: AppTypography.display(fontSize: 22, fontWeight: FontWeight.w700, height: 1.25)),
+        Text(
+          step.title,
+          style: AppTypography.display(fontSize: 22, fontWeight: FontWeight.w700, height: 1.25, color: AppColors.cardHeading),
+        ),
         const SizedBox(height: 6),
-        Text(step.description, style: AppTypography.body(fontSize: 15.5, height: 1.6)),
+        Text(step.description, style: AppTypography.body(fontSize: 15.5, height: 1.6, color: AppColors.cardBody)),
       ],
     );
     final chips = Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: [for (final a in step.activities) TagChip(a, color: AppColors.cyan, filled: true)],
+      children: [for (final a in step.activities) TagChip(a, color: AppColors.cardAccent, filled: true)],
     );
     return Container(
       padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 28.0)),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF16244C), AppColors.accentSoft],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.25)),
+      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: context.screenWidth >= 900
+            ? Row(
+                children: [
+                  IconBadge(icon: step.icon, color: AppColors.cardAccent, gradient: true, size: 56),
+                  const SizedBox(width: 22),
+                  Expanded(flex: 3, child: details),
+                  const SizedBox(width: 28),
+                  Expanded(flex: 2, child: chips),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconBadge(icon: step.icon, color: AppColors.cardAccent, gradient: true, size: 50),
+                  const SizedBox(height: 16),
+                  details,
+                  const SizedBox(height: 16),
+                  chips,
+                ],
+              ),
       ),
-      child: context.screenWidth >= 900
-          ? Row(
-              children: [
-                IconBadge(icon: step.icon, color: AppColors.cyan, gradient: true, size: 56),
-                const SizedBox(width: 22),
-                Expanded(flex: 3, child: details),
-                const SizedBox(width: 28),
-                Expanded(flex: 2, child: chips),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                IconBadge(icon: step.icon, color: AppColors.cyan, gradient: true, size: 50),
-                const SizedBox(height: 16),
-                details,
-                const SizedBox(height: 16),
-                chips,
-              ],
-            ),
     );
   }
 }

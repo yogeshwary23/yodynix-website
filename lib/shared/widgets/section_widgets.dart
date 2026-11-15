@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import 'reveal.dart';
 
@@ -26,11 +26,13 @@ class MaxWidth extends StatelessWidget {
   }
 }
 
-/// A full-width homepage section with consistent vertical rhythm.
+/// A full-width homepage section with consistent vertical rhythm. [tone]
+/// decides whether the content below reads as a light or a dark surface.
 class SectionShell extends StatelessWidget {
   const SectionShell({
     super.key,
     required this.child,
+    this.tone = SurfaceColors.light,
     this.background,
     this.gradient,
     this.topPadding,
@@ -41,6 +43,7 @@ class SectionShell extends StatelessWidget {
   });
 
   final Widget child;
+  final SurfaceColors tone;
   final Color? background;
   final Gradient? gradient;
   final double? topPadding;
@@ -49,7 +52,8 @@ class SectionShell extends StatelessWidget {
   /// Optional decorative layer painted behind the content.
   final Widget? decoration;
 
-  /// Paints a soft orange-red light pool at this position behind the content.
+  /// Paints a soft light pool at this position behind the content. Dark
+  /// surfaces only: light sections stay clean.
   final Alignment? glowAt;
   final double glowStrength;
 
@@ -57,12 +61,12 @@ class SectionShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final pad = context.sectionPadding;
     final layers = [
-      if (glowAt != null)
+      if (glowAt != null && tone.isDark)
         Positioned.fill(
           child: IgnorePointer(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: AppColors.glow(center: glowAt!, radius: 0.9, strength: 0.55 * glowStrength),
+                gradient: tone.glow(center: glowAt!, radius: 0.9, strength: 0.55 * glowStrength),
               ),
             ),
           ),
@@ -73,28 +77,41 @@ class SectionShell extends StatelessWidget {
       padding: EdgeInsets.only(top: topPadding ?? pad, bottom: bottomPadding ?? pad),
       child: MaxWidth(child: child),
     );
-    return DecoratedBox(
-      decoration: BoxDecoration(color: background, gradient: gradient),
-      child: layers.isEmpty ? content : Stack(children: [...layers, content]),
+    return SurfaceTone(
+      colors: tone,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: background ?? tone.background, gradient: gradient),
+        child: layers.isEmpty ? content : Stack(children: [...layers, content]),
+      ),
     );
   }
 }
 
 /// Small uppercase label shown above section headings.
 class Eyebrow extends StatelessWidget {
-  const Eyebrow(this.text, {super.key, this.color = AppColors.primary});
+  const Eyebrow(this.text, {super.key, this.color, this.ornament});
 
   final String text;
-  final Color color;
+
+  /// Defaults to the surface's accent.
+  final Color? color;
+
+  /// Dot and outline colour; defaults to the surface's ornament.
+  final Color? ornament;
 
   @override
   Widget build(BuildContext context) {
+    final tone = context.tone;
+    final color = context.readable(this.color ?? tone.accent);
+    final ornament = this.ornament ?? tone.ornament;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: color.withValues(alpha: ornament == color ? 0.10 : 0.08),
         borderRadius: BorderRadius.circular(99),
-        border: Border.all(color: color.withValues(alpha: 0.32)),
+        // A gold outline stays fine-lined; when the label is already in the
+        // ornament colour (dark bands) a lighter edge is enough.
+        border: Border.all(color: ornament.withValues(alpha: ornament == color ? 0.32 : 0.55)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -102,11 +119,7 @@ class Eyebrow extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: color.withValues(alpha: 0.8), blurRadius: 8)],
-            ),
+            decoration: BoxDecoration(color: ornament, shape: BoxShape.circle),
           ),
           const SizedBox(width: 8),
           Flexible(
@@ -136,7 +149,7 @@ class SectionHeader extends StatelessWidget {
     this.lead,
     this.centered = false,
     this.maxWidth = 760,
-    this.eyebrowColor = AppColors.primary,
+    this.eyebrowColor,
     this.titleSize,
   });
 
@@ -145,7 +158,9 @@ class SectionHeader extends StatelessWidget {
   final String? lead;
   final bool centered;
   final double maxWidth;
-  final Color eyebrowColor;
+
+  /// Defaults to the surface's accent.
+  final Color? eyebrowColor;
   final double? titleSize;
 
   @override
@@ -153,6 +168,7 @@ class SectionHeader extends StatelessWidget {
     final double size = titleSize ?? context.responsive<double>(mobile: 30, tablet: 38, desktop: 46);
     final align = centered ? CrossAxisAlignment.center : CrossAxisAlignment.start;
     final textAlign = centered ? TextAlign.center : TextAlign.start;
+    final tone = context.tone;
     return Reveal(
       child: Align(
         alignment: centered ? Alignment.center : Alignment.centerLeft,
@@ -161,14 +177,14 @@ class SectionHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: align,
             children: [
-              Eyebrow(eyebrow, color: eyebrowColor),
+              Eyebrow(eyebrow, color: eyebrowColor ?? tone.accent),
               const SizedBox(height: 18),
               Semantics(
                 header: true,
                 child: Text(
                   title,
                   textAlign: textAlign,
-                  style: AppTypography.display(fontSize: size),
+                  style: AppTypography.display(fontSize: size, color: tone.ink),
                 ),
               ),
               if (lead != null) ...[
@@ -176,7 +192,11 @@ class SectionHeader extends StatelessWidget {
                 Text(
                   lead!,
                   textAlign: textAlign,
-                  style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7),
+                  style: AppTypography.body(
+                    fontSize: context.responsive(mobile: 16.0, desktop: 18.0),
+                    height: 1.7,
+                    color: tone.body,
+                  ),
                 ),
               ],
             ],

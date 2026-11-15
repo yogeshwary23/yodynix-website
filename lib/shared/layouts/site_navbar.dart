@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/about_page.dart';
 import '../../models/content_models.dart';
@@ -36,110 +37,113 @@ class SiteNavbar extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       height: height,
       decoration: BoxDecoration(
-        color: AppColors.background.withValues(alpha: nav.isScrolled ? 0.96 : 1),
-        border: Border(
-          bottom: BorderSide(color: nav.isScrolled ? AppColors.primary.withValues(alpha: 0.28) : AppColors.background),
-        ),
+        color: AppColors.deepCharcoal.withValues(alpha: nav.isScrolled ? 0.97 : 1),
+        border: Border(bottom: BorderSide(color: AppColors.champagneGold.withValues(alpha: 0.8))),
         boxShadow: nav.isScrolled
-            ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.10), blurRadius: 28, offset: const Offset(0, 6))]
+            ? [BoxShadow(color: AppColors.deepCharcoal.withValues(alpha: 0.18), blurRadius: 24, offset: const Offset(0, 6))]
             : null,
       ),
-      child: Semantics(
-        container: true,
-        explicitChildNodes: true,
-        label: 'Main navigation',
-        child: MaxWidth(
-          child: Row(
-            children: [
-              Semantics(
-                button: true,
-                label: 'YODYNIX home',
-                excludeSemantics: true,
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => goToSection(context, SiteSection.home),
-                    child: BrandLogo(height: context.isMobile ? 38 : 44),
+      // The bar is a dark band: the wordmark reads its colours from it.
+      child: SurfaceTone(
+        colors: SurfaceColors.dark,
+        child: Semantics(
+          container: true,
+          explicitChildNodes: true,
+          label: 'Main navigation',
+          child: MaxWidth(
+            child: Row(
+              children: [
+                Semantics(
+                  button: true,
+                  label: 'YODYNIX home',
+                  excludeSemantics: true,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () => goToSection(context, SiteSection.home),
+                      child: BrandLogo(height: context.isMobile ? 38 : 44),
+                    ),
                   ),
                 ),
-              ),
-              const Spacer(),
-              if (!compact) ...[
-                // Scales down rather than overflowing (e.g. while fonts load).
-                Flexible(
-                  flex: 12,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      children: [
-                        for (final section in SiteSection.navigation)
-                          if (section == SiteSection.about)
-                            _DropdownNavItem(
-                              label: 'About',
-                              active: isActive(section),
-                              onTitleTap: () => openAboutPage(context, AboutPage.defaultPage),
-                              menuBuilder: (run) =>
-                                  _AboutMenu(current: aboutPage, onSelect: (page) => run(() => openAboutPage(context, page))),
-                            )
-                          else if (section == SiteSection.services)
-                            _DropdownNavItem(
-                              label: 'Services',
-                              active: isActive(section),
-                              onTitleTap: () => goToSection(context, SiteSection.services),
-                              menuBuilder: (run) => _ServicesMenu(
-                                current: service,
-                                onSelect: (s) => run(() => openServicePage(context, s)),
-                                onViewAll: () => run(() => goToSection(context, SiteSection.services)),
+                const Spacer(),
+                if (!compact) ...[
+                  // Scales down rather than overflowing (e.g. while fonts load).
+                  Flexible(
+                    flex: 12,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        children: [
+                          for (final section in SiteSection.navigation)
+                            if (section == SiteSection.about)
+                              _DropdownNavItem(
+                                label: 'About',
+                                active: isActive(section),
+                                onTitleTap: () => openAboutPage(context, AboutPage.defaultPage),
+                                menuBuilder: (run) =>
+                                    _AboutMenu(current: aboutPage, onSelect: (page) => run(() => openAboutPage(context, page))),
+                              )
+                            else if (section == SiteSection.services)
+                              _DropdownNavItem(
+                                label: 'Services',
+                                active: isActive(section),
+                                onTitleTap: () => goToSection(context, SiteSection.services),
+                                menuBuilder: (run) => _ServicesMenu(
+                                  current: service,
+                                  onSelect: (s) => run(() => openServicePage(context, s)),
+                                  onViewAll: () => run(() => goToSection(context, SiteSection.services)),
+                                ),
+                              )
+                            else
+                              _NavItem(
+                                label: section.navLabel!,
+                                active: isActive(section),
+                                onTap: () => section == SiteSection.internship
+                                    ? openInternshipPage(context)
+                                    : goToSection(context, section),
                               ),
-                            )
-                          else
-                            _NavItem(
-                              label: section.navLabel!,
-                              active: isActive(section),
-                              onTap: () =>
-                                  section == SiteSection.internship ? openInternshipPage(context) : goToSection(context, section),
-                            ),
-                        const SizedBox(width: 20),
-                        _ClientLoginButton(onTap: () => showClientLoginDialog(context)),
-                        const SizedBox(width: 12),
-                        PrimaryButton(
-                          label: 'Get Started',
-                          size: ButtonSize.small,
-                          onPressed: () => goToSection(context, SiteSection.contact),
+                          const SizedBox(width: 20),
+                          _ClientLoginButton(onTap: () => showClientLoginDialog(context)),
+                          const SizedBox(width: 12),
+                          PrimaryButton(
+                            label: 'Get Started',
+                            size: ButtonSize.small,
+                            onPressed: () => goToSection(context, SiteSection.contact),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  if (!context.isMobile) ...[
+                    PrimaryButton(
+                      label: 'Get Started',
+                      size: ButtonSize.small,
+                      onPressed: () => goToSection(context, SiteSection.contact),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Builder(
+                    builder: (context) => Tooltip(
+                      message: 'Open menu',
+                      child: Material(
+                        color: AppColors.charcoalRaised,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(14)),
+                          side: BorderSide(color: AppColors.champagneGold.withValues(alpha: 0.35)),
                         ),
-                      ],
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () => Scaffold.of(context).openEndDrawer(),
+                          child: const SizedBox(width: 46, height: 46, child: Icon(Icons.menu_rounded, color: AppColors.white)),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ] else ...[
-                if (!context.isMobile) ...[
-                  PrimaryButton(
-                    label: 'Get Started',
-                    size: ButtonSize.small,
-                    onPressed: () => goToSection(context, SiteSection.contact),
-                  ),
-                  const SizedBox(width: 12),
                 ],
-                Builder(
-                  builder: (context) => Tooltip(
-                    message: 'Open menu',
-                    child: Material(
-                      color: AppColors.card,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(14)),
-                        side: BorderSide(color: AppColors.border),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: () => Scaffold.of(context).openEndDrawer(),
-                        child: const SizedBox(width: 46, height: 46, child: Icon(Icons.menu_rounded, color: AppColors.ink)),
-                      ),
-                    ),
-                  ),
-                ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -209,7 +213,7 @@ class _NavItemState extends State<_NavItem> {
                   style: AppTypography.body(
                     fontSize: 14.5,
                     fontWeight: widget.active ? FontWeight.w700 : FontWeight.w500,
-                    color: widget.active ? AppColors.primary : (hover ? AppColors.cyan : AppColors.ink),
+                    color: widget.active || hover ? AppColors.champagneGold : AppColors.white,
                     height: 1.2,
                   ),
                   child: Row(
@@ -227,9 +231,8 @@ class _NavItemState extends State<_NavItem> {
                   height: 3,
                   width: widget.active ? 22 : (hover ? 12 : 0),
                   decoration: BoxDecoration(
-                    gradient: AppColors.brandGradient,
+                    color: widget.active ? AppColors.champagneGold : AppColors.champagneGold.withValues(alpha: 0.45),
                     borderRadius: BorderRadius.circular(3),
-                    boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.7), blurRadius: 8)],
                   ),
                 ),
               ],
@@ -369,7 +372,7 @@ class _DropdownNavItemState extends State<_DropdownNavItem> with SingleTickerPro
                   child: Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 18,
-                    color: widget.active ? AppColors.primary : (_isOpen ? AppColors.cyan : AppColors.muted),
+                    color: widget.active || _isOpen ? AppColors.champagneGold : AppColors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -397,16 +400,11 @@ class _AboutMenu extends StatelessWidget {
         width: 360,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF16234A), AppColors.card],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: 0.22)),
+          border: Border.all(color: AppColors.goldLine),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 40, offset: const Offset(0, 22)),
-            BoxShadow(color: AppColors.primary.withValues(alpha: 0.16), blurRadius: 50, spreadRadius: -10),
+            BoxShadow(color: AppColors.charcoalNavy.withValues(alpha: 0.14), blurRadius: 40, offset: const Offset(0, 22)),
           ],
         ),
         child: Material(
@@ -422,7 +420,7 @@ class _AboutMenu extends StatelessWidget {
                   style: AppTypography.body(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.cyan,
+                    color: AppColors.accent,
                     letterSpacing: 1.4,
                     height: 1.2,
                   ),
@@ -470,13 +468,13 @@ class _AboutMenuItemState extends State<_AboutMenuItem> {
         borderRadius: BorderRadius.circular(AppRadius.md),
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
-        splashColor: AppColors.cyan.withValues(alpha: 0.08),
+        splashColor: AppColors.accent.withValues(alpha: 0.08),
         child: AnimatedContainer(
           duration: AppMotion.hover,
           curve: AppMotion.ease,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: active ? AppColors.primarySoft : (_hover ? AppColors.cardRaised.withValues(alpha: 0.7) : Colors.transparent),
+            color: active ? AppColors.primarySoft : (_hover ? AppColors.warmIvory : Colors.transparent),
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(color: active ? AppColors.primary.withValues(alpha: 0.45) : Colors.transparent),
           ),
@@ -487,12 +485,11 @@ class _AboutMenuItemState extends State<_AboutMenuItem> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  gradient: lit ? AppColors.brandGradient : null,
-                  color: lit ? null : AppColors.cyan.withValues(alpha: 0.10),
+                  color: lit ? AppColors.primary : AppColors.warmIvory,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.cyan.withValues(alpha: lit ? 0 : 0.28)),
+                  border: Border.all(color: lit ? AppColors.primary : AppColors.lightGrey),
                 ),
-                child: Icon(page.icon, size: 19, color: lit ? AppColors.white : AppColors.cyan),
+                child: Icon(page.icon, size: 19, color: lit ? AppColors.onPrimary : AppColors.ink),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -504,7 +501,7 @@ class _AboutMenuItemState extends State<_AboutMenuItem> {
                       style: AppTypography.body(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: active ? AppColors.white : (_hover ? AppColors.cyan : AppColors.ink),
+                        color: lit ? AppColors.accent : AppColors.ink,
                         height: 1.25,
                       ),
                     ),
@@ -523,11 +520,7 @@ class _AboutMenuItemState extends State<_AboutMenuItem> {
                 Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(
-                    color: AppColors.cyan,
-                    shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: AppColors.cyan.withValues(alpha: 0.8), blurRadius: 8)],
-                  ),
+                  decoration: const BoxDecoration(color: AppColors.accent, shape: BoxShape.circle),
                 )
               else
                 AnimatedSlide(
@@ -536,7 +529,7 @@ class _AboutMenuItemState extends State<_AboutMenuItem> {
                   child: AnimatedOpacity(
                     duration: AppMotion.hover,
                     opacity: _hover ? 1 : 0,
-                    child: const Icon(Icons.arrow_forward_rounded, size: 16, color: AppColors.cyan),
+                    child: const Icon(Icons.arrow_forward_rounded, size: 16, color: AppColors.accent),
                   ),
                 ),
             ],
@@ -574,16 +567,11 @@ class _ServicesMenu extends StatelessWidget {
         width: 620,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF16234A), AppColors.card],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: 0.22)),
+          border: Border.all(color: AppColors.goldLine),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 40, offset: const Offset(0, 22)),
-            BoxShadow(color: AppColors.primary.withValues(alpha: 0.16), blurRadius: 50, spreadRadius: -10),
+            BoxShadow(color: AppColors.charcoalNavy.withValues(alpha: 0.14), blurRadius: 40, offset: const Offset(0, 22)),
           ],
         ),
         child: Material(
@@ -599,7 +587,7 @@ class _ServicesMenu extends StatelessWidget {
                   style: AppTypography.body(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.cyan,
+                    color: AppColors.accent,
                     letterSpacing: 1.4,
                     height: 1.2,
                   ),
@@ -619,7 +607,7 @@ class _ServicesMenu extends StatelessWidget {
                   icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                   label: const Text('View all services'),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.cyan,
+                    foregroundColor: AppColors.accent,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                     textStyle: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w700, height: 1.2),
                   ),
@@ -664,13 +652,13 @@ class _ServicesMenuItemState extends State<_ServicesMenuItem> {
         borderRadius: BorderRadius.circular(AppRadius.md),
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
-        splashColor: AppColors.cyan.withValues(alpha: 0.08),
+        splashColor: AppColors.accent.withValues(alpha: 0.08),
         child: AnimatedContainer(
           duration: AppMotion.hover,
           curve: AppMotion.ease,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
           decoration: BoxDecoration(
-            color: active ? AppColors.primarySoft : (_hover ? AppColors.cardRaised.withValues(alpha: 0.7) : Colors.transparent),
+            color: active ? AppColors.primarySoft : (_hover ? AppColors.warmIvory : Colors.transparent),
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(color: active ? AppColors.primary.withValues(alpha: 0.45) : Colors.transparent),
           ),
@@ -681,12 +669,11 @@ class _ServicesMenuItemState extends State<_ServicesMenuItem> {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  gradient: lit ? AppColors.brandGradient : null,
-                  color: lit ? null : AppColors.cyan.withValues(alpha: 0.10),
+                  color: lit ? AppColors.primary : AppColors.warmIvory,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.cyan.withValues(alpha: lit ? 0 : 0.28)),
+                  border: Border.all(color: lit ? AppColors.primary : AppColors.lightGrey),
                 ),
-                child: Icon(s.icon, size: 17, color: lit ? AppColors.white : AppColors.cyan),
+                child: Icon(s.icon, size: 17, color: lit ? AppColors.onPrimary : AppColors.ink),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -695,7 +682,7 @@ class _ServicesMenuItemState extends State<_ServicesMenuItem> {
                   style: AppTypography.body(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: active ? AppColors.white : (_hover ? AppColors.cyan : AppColors.ink),
+                    color: lit ? AppColors.accent : AppColors.ink,
                     height: 1.3,
                   ),
                 ),
@@ -718,7 +705,8 @@ class _ClientLoginButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.ink,
+        foregroundColor: AppColors.white,
+        overlayColor: AppColors.champagneGold,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         shape: const StadiumBorder(),
         textStyle: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, height: 1.2),
@@ -863,12 +851,12 @@ class _DrawerItem extends StatelessWidget {
                   style: AppTypography.body(
                     fontSize: 16,
                     fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-                    color: active ? AppColors.primary : AppColors.ink,
+                    color: active ? AppColors.accent : AppColors.ink,
                     height: 1.2,
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.chevron_right_rounded, color: active ? AppColors.primary : AppColors.muted),
+                Icon(Icons.chevron_right_rounded, color: active ? AppColors.accent : AppColors.muted),
               ],
             ),
           ),
@@ -920,7 +908,7 @@ class _DrawerGroupState extends State<_DrawerGroup> {
                         style: AppTypography.body(
                           fontSize: 16,
                           fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-                          color: active ? AppColors.primary : AppColors.ink,
+                          color: active ? AppColors.accent : AppColors.ink,
                           height: 1.2,
                         ),
                       ),
@@ -931,7 +919,7 @@ class _DrawerGroupState extends State<_DrawerGroup> {
                         curve: AppMotion.ease,
                         child: Icon(
                           Icons.keyboard_arrow_down_rounded,
-                          color: active || _expanded ? AppColors.primary : AppColors.muted,
+                          color: active || _expanded ? AppColors.accent : AppColors.muted,
                         ),
                       ),
                     ],
@@ -951,7 +939,7 @@ class _DrawerGroupState extends State<_DrawerGroup> {
                       margin: const EdgeInsets.fromLTRB(22, 6, 0, 6),
                       padding: const EdgeInsets.only(left: 10),
                       decoration: BoxDecoration(
-                        border: Border(left: BorderSide(color: AppColors.cyan.withValues(alpha: 0.25), width: 2)),
+                        border: const Border(left: BorderSide(color: AppColors.lightGrey, width: 2)),
                       ),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: widget.children),
                     ),
@@ -985,7 +973,7 @@ class _DrawerSubItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
               children: [
-                Icon(icon, size: 18, color: active ? AppColors.cyan : AppColors.muted),
+                Icon(icon, size: 18, color: active ? AppColors.accent : AppColors.muted),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -993,7 +981,7 @@ class _DrawerSubItem extends StatelessWidget {
                     style: AppTypography.body(
                       fontSize: 15,
                       fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-                      color: active ? AppColors.cyan : AppColors.body,
+                      color: active ? AppColors.accent : AppColors.body,
                       height: 1.2,
                     ),
                   ),

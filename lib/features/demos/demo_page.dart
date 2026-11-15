@@ -36,23 +36,13 @@ class DemoPage extends StatelessWidget {
           SectionShell(
             topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
             bottomPadding: context.responsive(mobile: 48.0, desktop: 72.0),
-            gradient: const LinearGradient(
-              colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-              stops: [0, 0.5, 1],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-            glowAt: const Alignment(0.9, -0.7),
-            glowStrength: 0.7,
+            background: AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ServiceBreadcrumb(service: service, current: 'Live Demo'),
                 SizedBox(height: context.responsive(mobile: 22.0, desktop: 34.0)),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Eyebrow('${service.title} · Live Demo', color: AppColors.cyan),
-                ),
+                Align(alignment: Alignment.centerLeft, child: Eyebrow('${service.title} · Live Demo')),
                 const SizedBox(height: 16),
                 Semantics(
                   header: true,
@@ -73,7 +63,7 @@ class DemoPage extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: [for (final t in project.technologies) TagChip(t, color: AppColors.cyan, filled: true)],
+                  children: [for (final t in project.technologies) TagChip(t, color: AppColors.accent, filled: true)],
                 ),
                 const SizedBox(height: 22),
                 const _Notice(),
@@ -112,12 +102,12 @@ class _Notice extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.primarySoft,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded, color: AppColors.cyan, size: 20),
+          const Icon(Icons.info_outline_rounded, color: AppColors.accent, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

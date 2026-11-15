@@ -31,11 +31,11 @@ class _HandloomStoreDemoState extends State<HandloomStoreDemo> {
   static const _categories = ['All', 'Sarees', 'Stoles', 'Home'];
   static const _products = [
     _Product('Indigo Cotton Saree', 'Sarees', 2450, [AppColors.electricBlue, AppColors.midnightNavy]),
-    _Product('Ice-Blue Chanderi Saree', 'Sarees', 3200, [AppColors.iceBlue, AppColors.electricBlue]),
-    _Product('Handwoven Silk Stole', 'Stoles', 1150, [AppColors.cyan, AppColors.surfaceNavy]),
+    _Product('Ice-Blue Chanderi Saree', 'Sarees', 3200, [AppColors.electricBlueTint, AppColors.electricBlue]),
+    _Product('Handwoven Silk Stole', 'Stoles', 1150, [AppColors.electricBlue, AppColors.surfaceNavy]),
     _Product('Khadi Check Stole', 'Stoles', 690, [AppColors.lightGrey, AppColors.blueGrey]),
     _Product('Ikat Cushion Cover', 'Home', 540, [AppColors.blueGrey, AppColors.midnightNavy]),
-    _Product('Woven Table Runner', 'Home', 820, [AppColors.iceBlue, AppColors.surfaceNavy]),
+    _Product('Woven Table Runner', 'Home', 820, [AppColors.electricBlueTint, AppColors.surfaceNavy]),
   ];
 
   String _category = 'All';

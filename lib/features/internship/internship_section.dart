@@ -4,6 +4,7 @@ import '../../core/constants/asset_paths.dart';
 import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../repositories/content/internship_content.dart';
 import '../../shared/layouts/navigation_actions.dart';
@@ -83,7 +84,7 @@ class _InternshipBanner extends StatelessWidget {
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Eyebrow(InternshipContent.badge, color: AppColors.white),
+        const Eyebrow(InternshipContent.badge, color: AppColors.primaryTint),
         const SizedBox(height: 20),
         Semantics(
           header: true,
@@ -98,7 +99,7 @@ class _InternshipBanner extends StatelessWidget {
         const SizedBox(height: 18),
         Text(
           InternshipContent.description,
-          style: AppTypography.body(fontSize: mobile ? 16 : 18, color: AppColors.white.withValues(alpha: 0.9)),
+          style: AppTypography.body(fontSize: mobile ? 16 : 18, color: AppColors.onDarkBody),
         ),
         const SizedBox(height: 26),
         for (final (icon, label) in InternshipContent.highlights)
@@ -110,10 +111,10 @@ class _InternshipBanner extends StatelessWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.16),
+                    color: AppColors.white.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, size: 18, color: AppColors.white),
+                  child: Icon(icon, size: 18, color: AppColors.primaryTint),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -166,21 +167,26 @@ class _InternshipBanner extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF0A1330), Color(0xFF14256B), Color(0xFF1E4FD8)],
-          stops: [0, 0.55, 1],
+          colors: [AppColors.charcoalNavy, AppColors.deepCharcoal],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(mobile ? 26 : 36),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.45)),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 70, spreadRadius: -10)],
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.charcoalNavy.withValues(alpha: 0.22),
+            blurRadius: 60,
+            offset: const Offset(0, 24),
+            spreadRadius: -12,
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(mobile ? 26 : 36),
         child: Stack(
           children: [
             Positioned.fill(
-              child: CustomPaint(painter: GridPainter(color: AppColors.white.withValues(alpha: 0.06), step: 36)),
+              child: CustomPaint(painter: GridPainter(color: AppColors.white.withValues(alpha: 0.04), step: 36)),
             ),
             Positioned(
               right: -120,
@@ -190,22 +196,30 @@ class _InternshipBanner extends StatelessWidget {
                 height: 460,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: RadialGradient(colors: [AppColors.cyan.withValues(alpha: 0.45), AppColors.cyan.withValues(alpha: 0)]),
+                  gradient: RadialGradient(
+                    colors: [AppColors.accent.withValues(alpha: 0.18), AppColors.accent.withValues(alpha: 0)],
+                  ),
                 ),
               ),
             ),
             Padding(
               padding: EdgeInsets.all(context.responsive(mobile: 26.0, tablet: 44.0, desktop: 64.0)),
-              child: desktop
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(flex: 6, child: copy),
-                        const SizedBox(width: 48),
-                        Expanded(flex: 5, child: visual),
-                      ],
-                    )
-                  : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [copy, const SizedBox(height: 36), visual]),
+              child: SurfaceTone(
+                colors: SurfaceColors.dark,
+                child: desktop
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(flex: 6, child: copy),
+                          const SizedBox(width: 48),
+                          Expanded(flex: 5, child: visual),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [copy, const SizedBox(height: 36), visual],
+                      ),
+              ),
             ),
           ],
         ),

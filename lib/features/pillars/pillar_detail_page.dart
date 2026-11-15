@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../models/pillar_page.dart';
@@ -74,7 +75,7 @@ class _PillarDetailPageState extends State<PillarDetailPage> {
           KeyedSubtree(
             key: _offeringsKey,
             child: SectionShell(
-              background: AppColors.surface,
+              background: AppColors.background,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -134,22 +135,29 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tone = SurfaceColors.dark;
     final desktop = context.isDesktop;
 
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Eyebrow(content.eyebrow, color: AppColors.cyan),
+        Eyebrow(content.eyebrow, color: tone.accent),
         const SizedBox(height: 20),
         Semantics(
           header: true,
           child: Text(
             content.heroHeading,
-            style: AppTypography.display(fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0)),
+            style: AppTypography.display(
+              fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0),
+              color: tone.ink,
+            ),
           ),
         ),
         const SizedBox(height: 18),
-        Text(content.heroLead, style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7)),
+        Text(
+          content.heroLead,
+          style: AppTypography.body(fontSize: context.responsive(mobile: 16.0, desktop: 18.0), height: 1.7, color: tone.body),
+        ),
         const SizedBox(height: 24),
         for (final (icon, label) in content.highlights)
           Padding(
@@ -160,17 +168,17 @@ class _Hero extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: AppColors.cyan.withValues(alpha: 0.1),
+                    color: AppColors.white.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.cyan.withValues(alpha: 0.28)),
+                    border: Border.all(color: AppColors.darkBorder),
                   ),
-                  child: Icon(icon, size: 17, color: AppColors.cyan),
+                  child: Icon(icon, size: 17, color: tone.accent),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     label,
-                    style: AppTypography.body(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.35),
+                    style: AppTypography.body(fontSize: 15, fontWeight: FontWeight.w600, color: tone.ink, height: 1.35),
                   ),
                 ),
               ],
@@ -195,7 +203,7 @@ class _Hero extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.xl),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.22),
+              color: Colors.black.withValues(alpha: 0.35),
               blurRadius: 70,
               spreadRadius: -12,
               offset: const Offset(0, 24),
@@ -213,12 +221,8 @@ class _Hero extends StatelessWidget {
     return SectionShell(
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
-      gradient: const LinearGradient(
-        colors: [AppColors.background, Color(0xFF0C1430), AppColors.surface],
-        stops: [0, 0.6, 1],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
+      tone: tone,
+      gradient: AppColors.darkBandGradient,
       glowAt: const Alignment(0.8, -0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -269,13 +273,13 @@ class _Breadcrumb extends StatelessWidget {
       icon: Icon(icon ?? Icons.chevron_left_rounded, size: 16),
       label: Text(label),
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.body,
+        foregroundColor: context.tone.body,
         textStyle: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.2),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         minimumSize: const Size(0, 36),
       ),
     );
-    const separator = Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.muted);
+    final separator = Icon(Icons.chevron_right_rounded, size: 16, color: context.tone.muted);
 
     return Semantics(
       container: true,
@@ -293,7 +297,7 @@ class _Breadcrumb extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               current,
-              style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.cyan, height: 1.2),
+              style: AppTypography.body(fontSize: 13.5, fontWeight: FontWeight.w600, color: context.tone.accent, height: 1.2),
             ),
           ),
         ],
@@ -318,13 +322,14 @@ class _JumpChipState extends State<_JumpChip> {
 
   @override
   Widget build(BuildContext context) {
+    final tone = context.tone;
     return Semantics(
       button: true,
       label: 'Jump to ${widget.label}',
       excludeSemantics: true,
       child: Material(
-        color: _hover ? AppColors.primarySoft : AppColors.white.withValues(alpha: 0.04),
-        shape: StadiumBorder(side: BorderSide(color: _hover ? AppColors.cyan.withValues(alpha: 0.6) : AppColors.border)),
+        color: _hover ? tone.ghostHoverFill : tone.ghostFill,
+        shape: StadiumBorder(side: BorderSide(color: _hover ? AppColors.accent.withValues(alpha: 0.6) : tone.border)),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: widget.onTap,
@@ -334,7 +339,7 @@ class _JumpChipState extends State<_JumpChip> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(widget.icon, size: 16, color: AppColors.cyan),
+                Icon(widget.icon, size: 16, color: tone.accent),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
@@ -343,7 +348,7 @@ class _JumpChipState extends State<_JumpChip> {
                     style: AppTypography.body(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
-                      color: _hover ? AppColors.white : AppColors.body,
+                      color: _hover ? tone.ink : tone.body,
                       height: 1.2,
                     ),
                   ),
@@ -412,11 +417,11 @@ class _OfferingPhotoState extends State<_OfferingPhoto> {
         curve: AppMotion.ease,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: _hover ? AppColors.cyan.withValues(alpha: 0.5) : AppColors.border),
+          border: Border.all(color: _hover ? AppColors.accent.withValues(alpha: 0.45) : AppColors.border),
           boxShadow: [
             if (_hover)
               BoxShadow(
-                color: AppColors.cyan.withValues(alpha: 0.16),
+                color: AppColors.charcoalNavy.withValues(alpha: 0.14),
                 blurRadius: 48,
                 spreadRadius: -6,
                 offset: const Offset(0, 20),
@@ -440,12 +445,12 @@ class _OfferingPhotoState extends State<_OfferingPhoto> {
                     decoration: BoxDecoration(
                       color: AppColors.deepNavy.withValues(alpha: 0.78),
                       borderRadius: BorderRadius.circular(AppRadius.pill),
-                      border: Border.all(color: AppColors.cyan.withValues(alpha: 0.35)),
+                      border: Border.all(color: AppColors.white.withValues(alpha: 0.16)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(widget.offering.icon, size: 16, color: AppColors.cyan),
+                        Icon(widget.offering.icon, size: 16, color: AppColors.primaryTint),
                         const SizedBox(width: 8),
                         Text(
                           widget.number,
@@ -480,13 +485,8 @@ class _OfferingDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lists = [
-      _PointList(label: content.primaryLabel, items: offering.primaryPoints, icon: Icons.check_rounded, color: AppColors.cyan),
-      _PointList(
-        label: content.secondaryLabel,
-        items: offering.secondaryPoints,
-        icon: Icons.trending_up_rounded,
-        color: AppColors.primary,
-      ),
+      _PointList(label: content.primaryLabel, items: offering.primaryPoints, icon: Icons.check_rounded),
+      _PointList(label: content.secondaryLabel, items: offering.secondaryPoints, icon: Icons.trending_up_rounded),
     ];
 
     return Column(
@@ -510,7 +510,7 @@ class _OfferingDetails extends StatelessWidget {
         const SizedBox(height: 14),
         Text(
           offering.tagline,
-          style: AppTypography.body(fontSize: 16.5, fontWeight: FontWeight.w600, color: AppColors.iceBlue, height: 1.5),
+          style: AppTypography.body(fontSize: 16.5, fontWeight: FontWeight.w600, color: AppColors.charcoalNavy, height: 1.5),
         ),
         const SizedBox(height: 12),
         Text(offering.description, style: AppTypography.body(fontSize: 15.5, height: 1.75)),
@@ -543,7 +543,7 @@ class _OfferingDetails extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: [for (final s in offering.skills) TagChip(s, color: AppColors.cyan, filled: true)],
+            children: [for (final s in offering.skills) TagChip(s, color: AppColors.accent, filled: true)],
           ),
         ],
         const SizedBox(height: 26),
@@ -554,52 +554,56 @@ class _OfferingDetails extends StatelessWidget {
 }
 
 class _PointList extends StatelessWidget {
-  const _PointList({required this.label, required this.items, required this.icon, required this.color});
+  const _PointList({required this.label, required this.items, required this.icon});
 
   final String label;
   final List<String> items;
   final IconData icon;
-  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: AppTypography.body(fontSize: 11.5, fontWeight: FontWeight.w700, color: color, letterSpacing: 1.3, height: 1.2),
-          ),
-          const SizedBox(height: 14),
-          for (final item in items)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 2),
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
-                    child: Icon(icon, size: 12, color: color),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(item, style: AppTypography.body(fontSize: 14.2, color: AppColors.ink, height: 1.5)),
-                  ),
-                ],
+      decoration: CardStyle.decoration(radius: AppRadius.md),
+      child: SurfaceTone(
+        colors: SurfaceColors.inCard,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label.toUpperCase(),
+              style: AppTypography.body(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: AppColors.cardAccent,
+                letterSpacing: 1.3,
+                height: 1.2,
               ),
             ),
-        ],
+            const SizedBox(height: 14),
+            for (final item in items)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 2),
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(color: AppColors.cardAccent.withValues(alpha: 0.12), shape: BoxShape.circle),
+                      child: Icon(icon, size: 12, color: AppColors.cardAccent),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(item, style: AppTypography.body(fontSize: 14.2, color: AppColors.cardHeading, height: 1.5)),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -629,7 +633,7 @@ class _StepsSection extends StatelessWidget {
     );
 
     return SectionShell(
-      background: AppColors.background,
+      background: AppColors.surface,
       glowAt: const Alignment(-0.9, 0.2),
       glowStrength: 0.7,
       child: Column(
@@ -695,23 +699,27 @@ class _StepCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              IconBadge(icon: step.icon, color: AppColors.cyan, size: 44),
+              IconBadge(icon: step.icon, color: AppColors.cardAccent, size: 44),
               const Spacer(),
               Text(
                 number.toString().padLeft(2, '0'),
-                style: AppTypography.display(fontSize: 30, fontWeight: FontWeight.w800, height: 1).copyWith(
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = 1.1
-                    ..color = AppColors.white.withValues(alpha: 0.3),
-                ),
+                style: AppTypography.display(fontSize: 30, fontWeight: FontWeight.w800, height: 1, color: AppColors.cardHeading)
+                    .copyWith(
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 1.1
+                        ..color = AppColors.softGrey,
+                    ),
               ),
             ],
           ),
           const SizedBox(height: 18),
-          Text(step.title, style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, height: 1.3)),
+          Text(
+            step.title,
+            style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
+          ),
           const SizedBox(height: 8),
-          Text(step.description, style: AppTypography.body(fontSize: 14.5, height: 1.6)),
+          Text(step.description, style: AppTypography.body(fontSize: 14.5, height: 1.6, color: AppColors.cardBody)),
         ],
       ),
     );
@@ -731,12 +739,12 @@ class _Notice extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.accentSoft,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 22, color: AppColors.cyan),
+          Icon(icon, size: 22, color: AppColors.accent),
           const SizedBox(width: 14),
           Expanded(
             child: Text(text, style: AppTypography.body(fontSize: 15, color: AppColors.ink, height: 1.65)),
@@ -763,7 +771,7 @@ class _FormSection extends StatelessWidget {
     final intro = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Eyebrow('Get In Touch', color: AppColors.cyan),
+        const Eyebrow('Get In Touch', color: AppColors.accent),
         const SizedBox(height: 18),
         Semantics(
           header: true,
@@ -783,14 +791,8 @@ class _FormSection extends StatelessWidget {
       ],
     );
 
-    final card = Container(
+    final card = FormCard(
       padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 36.0)),
-      decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppColors.softShadow(0.8),
-      ),
       child: PillarEnquiryForm(
         config: form,
         options: [for (final o in content.offerings) o.title, PillarPagesContent.otherOption],
@@ -799,7 +801,7 @@ class _FormSection extends StatelessWidget {
     );
 
     return SectionShell(
-      background: AppColors.surface,
+      background: AppColors.background,
       child: desktop
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -835,7 +837,7 @@ class _RelatedPillars extends StatelessWidget {
   Widget build(BuildContext context) {
     final others = CompanyContent.corePillars.where((p) => p.route != current).toList();
     return SectionShell(
-      background: AppColors.background,
+      background: AppColors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -908,7 +910,6 @@ class _RelatedCardState extends State<_RelatedCard> {
       child: HoverCard(
         padding: const EdgeInsets.all(10),
         onTap: _open,
-        accent: AppColors.cyan,
         semanticLabel: pillar.title,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -927,25 +928,30 @@ class _RelatedCardState extends State<_RelatedCard> {
                 children: [
                   Row(
                     children: [
-                      Icon(pillar.icon, size: 16, color: AppColors.cyan),
+                      Icon(pillar.icon, size: 16, color: AppColors.cardAccent),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           pillar.title,
-                          style: AppTypography.display(fontSize: 18, fontWeight: FontWeight.w700, height: 1.3),
+                          style: AppTypography.display(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            height: 1.3,
+                            color: AppColors.cardHeading,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(pillar.description, style: AppTypography.body(fontSize: 14, height: 1.6)),
+                  Text(pillar.description, style: AppTypography.body(fontSize: 14, height: 1.6, color: AppColors.cardBody)),
                 ],
               ),
             ),
             const Spacer(),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 14, 12, 6),
-              child: ArrowLink(label: pillar.actionLabel, color: AppColors.cyan, onPressed: _open),
+              child: ArrowLink(label: pillar.actionLabel, color: AppColors.cardAccent, onPressed: _open),
             ),
           ],
         ),

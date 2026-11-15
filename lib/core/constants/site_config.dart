@@ -53,14 +53,11 @@ class ContactConfig {
 
   /// Google Maps directions to [address], resolved by Google from the text
   /// itself rather than hard-coded coordinates.
-  static final String directionsUrl = Uri.https('www.google.com', '/maps/dir/', {
-    'api': '1',
-    'destination': address,
-  }).toString();
+  static final String directionsUrl = Uri.https('www.google.com', '/maps/dir/', {'api': '1', 'destination': address}).toString();
 
   /// Budget ranges shown in the enquiry form. Edit to match your pricing.
   static const List<String> budgetOptions = [
-    'Not sure yet – need guidance',
+    'Not sure yet, need guidance',
     'Starter project (small scope)',
     'Growth project (medium scope)',
     'Advanced project (large scope)',
