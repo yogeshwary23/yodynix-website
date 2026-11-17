@@ -31,5 +31,6 @@ class AppMotion {
   static const Duration lift = Duration(milliseconds: 260);
   static const Duration reveal = Duration(milliseconds: 700);
   static const Duration page = Duration(milliseconds: 320);
+  static const Duration pageEnter = Duration(milliseconds: 520);
   static const Curve ease = Curves.easeOutCubic;
 }

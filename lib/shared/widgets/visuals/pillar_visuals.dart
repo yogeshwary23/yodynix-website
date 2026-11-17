@@ -31,7 +31,7 @@ class PillarVisual extends StatelessWidget {
       child: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF151B26), AppColors.midnightNavy, Color(0xFF1B2230)],
+            colors: [Color(0xFF1E1C1A), AppColors.charcoal, Color(0xFF24221F)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -80,10 +80,10 @@ class PillarVisual extends StatelessWidget {
 
 // ----------------------------------------------------------------- Shared
 
-/// Navy glass surface used by every scene.
+/// Charcoal glass surface used by every scene.
 BoxDecoration _glass({double radius = 12, Color edge = AppColors.primary, double glow = 0.18}) => BoxDecoration(
   gradient: LinearGradient(
-    colors: [const Color(0xFF2A3243).withValues(alpha: 0.95), const Color(0xFF202735).withValues(alpha: 0.95)],
+    colors: [const Color(0xFF36332F).withValues(alpha: 0.95), const Color(0xFF2A2826).withValues(alpha: 0.95)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   ),
@@ -91,7 +91,7 @@ BoxDecoration _glass({double radius = 12, Color edge = AppColors.primary, double
   border: Border.all(color: edge.withValues(alpha: 0.38)),
   boxShadow: [
     BoxShadow(color: edge.withValues(alpha: glow), blurRadius: 22, spreadRadius: -6),
-    const BoxShadow(color: Color(0x9905070C), blurRadius: 18, offset: Offset(0, 10)),
+    const BoxShadow(color: Color(0x990C0A08), blurRadius: 18, offset: Offset(0, 10)),
   ],
 );
 

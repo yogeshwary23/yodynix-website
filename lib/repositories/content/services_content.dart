@@ -236,7 +236,7 @@ class ServicesContent {
         'Online Presence Setup',
       ],
       icon: Icons.auto_fix_high_outlined,
-      color: AppColors.charcoalNavy,
+      color: AppColors.charcoal,
       imageAlt: 'Brand identity board with colour swatches, typography and stationery',
     ),
   ];

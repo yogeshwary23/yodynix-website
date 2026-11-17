@@ -30,12 +30,12 @@ class _HandloomStoreDemoState extends State<HandloomStoreDemo> {
   static const _deliveryFee = 99;
   static const _categories = ['All', 'Sarees', 'Stoles', 'Home'];
   static const _products = [
-    _Product('Indigo Cotton Saree', 'Sarees', 2450, [AppColors.electricBlue, AppColors.midnightNavy]),
-    _Product('Ice-Blue Chanderi Saree', 'Sarees', 3200, [AppColors.electricBlueTint, AppColors.electricBlue]),
-    _Product('Handwoven Silk Stole', 'Stoles', 1150, [AppColors.electricBlue, AppColors.surfaceNavy]),
-    _Product('Khadi Check Stole', 'Stoles', 690, [AppColors.lightGrey, AppColors.blueGrey]),
-    _Product('Ikat Cushion Cover', 'Home', 540, [AppColors.blueGrey, AppColors.midnightNavy]),
-    _Product('Woven Table Runner', 'Home', 820, [AppColors.electricBlueTint, AppColors.surfaceNavy]),
+    _Product('Indigo Cotton Saree', 'Sarees', 2450, [AppColors.demoAccent, AppColors.charcoal]),
+    _Product('Ivory-Gold Chanderi Saree', 'Sarees', 3200, [AppColors.demoAccentTint, AppColors.demoAccent]),
+    _Product('Handwoven Silk Stole', 'Stoles', 1150, [AppColors.demoAccent, AppColors.charcoalRaised]),
+    _Product('Khadi Check Stole', 'Stoles', 690, [AppColors.lightGrey, AppColors.softGrey]),
+    _Product('Ikat Cushion Cover', 'Home', 540, [AppColors.softGrey, AppColors.charcoal]),
+    _Product('Woven Table Runner', 'Home', 820, [AppColors.demoAccentTint, AppColors.charcoalRaised]),
   ];
 
   String _category = 'All';
@@ -115,7 +115,7 @@ class _HandloomStoreDemoState extends State<HandloomStoreDemo> {
                   const Spacer(),
                   Badge(
                     isLabelVisible: _items > 0,
-                    backgroundColor: AppColors.electricBlue,
+                    backgroundColor: AppColors.demoAccent,
                     label: Text('$_items'),
                     child: const Icon(Icons.shopping_bag_outlined, color: DemoColors.ink),
                   ),
@@ -168,7 +168,7 @@ class _HandloomStoreDemoState extends State<HandloomStoreDemo> {
           if (_ordered)
             Column(
               children: [
-                const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue, size: 44),
+                const Icon(Icons.check_circle_rounded, color: AppColors.demoAccent, size: 44),
                 const SizedBox(height: 10),
                 Text('Order placed (demo)', style: AppTypography.display(fontSize: 18, color: DemoColors.ink, height: 1.3)),
                 const SizedBox(height: 6),
@@ -219,7 +219,7 @@ class _HandloomStoreDemoState extends State<HandloomStoreDemo> {
             const SizedBox(height: 12),
             Text(
               remaining > 0 ? 'Add ${rupees(remaining)} more for free delivery.' : 'You have unlocked free delivery.',
-              style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.electricBlue, height: 1.4),
+              style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.demoAccent, height: 1.4),
             ),
             const SizedBox(height: 16),
             DemoButton(

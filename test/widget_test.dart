@@ -52,6 +52,6 @@ void main() {
     await pumpAt(tester, const Size(1440, 900));
     await tester.tap(find.text('Client Login').first);
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('Client Portal — Coming Soon'), findsOneWidget);
+    expect(find.text('Client Portal: Coming Soon'), findsOneWidget);
   });
 }

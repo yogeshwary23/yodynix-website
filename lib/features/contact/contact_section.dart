@@ -7,6 +7,8 @@ import '../../core/utils/responsive.dart';
 import '../../repositories/contact_repository.dart';
 import '../../models/social_link.dart';
 import '../../services/link_service.dart';
+import '../../shared/three/scene3d.dart';
+import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
@@ -34,6 +36,21 @@ class ContactSection extends StatelessWidget {
       ],
     );
 
+    // The connection network leans towards the cursor anywhere over the section.
+    final network = Reveal(
+      child: AspectRatio(
+        aspectRatio: context.responsive(mobile: 1.6, tablet: 2.4, desktop: 3.2),
+        child: const Section3DScene(
+          scene: Scene3D.network,
+          background: AppColors.surface,
+          semanticLabel:
+              'A sphere of champagne-gold, platinum and glass nodes linked by fine gold lines, '
+              'with light travelling between connections.',
+          fallback: SizedBox.shrink(),
+        ),
+      ),
+    );
+
     final form = Reveal(
       delay: const Duration(milliseconds: 120),
       child: FormCard(
@@ -46,8 +63,13 @@ class ContactSection extends StatelessWidget {
     return SectionShell(
       background: AppColors.surface,
       glowAt: const Alignment(0.9, 0.2),
-      child: context.isDesktop
-          ? Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          network,
+          SizedBox(height: context.responsive(mobile: 16.0, desktop: 24.0)),
+          if (context.isDesktop)
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(flex: 5, child: info),
@@ -55,7 +77,9 @@ class ContactSection extends StatelessWidget {
                 Expanded(flex: 7, child: form),
               ],
             )
-          : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [info, const SizedBox(height: 40), form]),
+          else ...[info, const SizedBox(height: 40), form],
+        ],
+      ),
     );
   }
 }
@@ -116,7 +140,7 @@ class _ContactChannels extends StatelessWidget {
           icon: Icons.location_on_outlined,
           label: 'Office Address',
           lines: const [_ChannelLine(ContactConfig.address, null, wrap: true)],
-          color: AppColors.charcoalNavy,
+          color: AppColors.charcoal,
           action: _ChannelLine('Get Directions', () => LinkService.open(ContactConfig.directionsUrl)),
         ),
       ],
@@ -266,19 +290,19 @@ class _InstagramLogo extends StatelessWidget {
         gradient: const RadialGradient(
           center: Alignment(-0.7, 1.15),
           radius: 1.45,
+          // Champagne rather than Instagram's own gradient, which runs into
+          // blue: the site palette has no blue.
           colors: [
-            Color(0xFFFFDC80),
-            Color(0xFFFCAF45),
-            Color(0xFFF56040),
-            Color(0xFFE1306C),
-            Color(0xFFC13584),
-            Color(0xFF833AB4),
-            Color(0xFF5851DB),
+            Color(0xFFF1E2BF),
+            Color(0xFFD9BC82),
+            Color(0xFFC6A46A),
+            Color(0xFFA98245),
+            Color(0xFF7A5A28),
           ],
-          stops: [0, 0.12, 0.32, 0.5, 0.66, 0.84, 1],
+          stops: [0, 0.25, 0.5, 0.75, 1],
         ),
         boxShadow: [
-          BoxShadow(color: const Color(0xFFE1306C).withValues(alpha: 0.28), blurRadius: 14, offset: const Offset(0, 6)),
+          BoxShadow(color: const Color(0xFFA98245).withValues(alpha: 0.28), blurRadius: 14, offset: const Offset(0, 6)),
         ],
       ),
       child: CustomPaint(painter: _InstagramGlyphPainter()),

@@ -167,14 +167,14 @@ class _InternshipBanner extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.charcoalNavy, AppColors.deepCharcoal],
+          colors: [AppColors.charcoal, AppColors.deepCharcoal],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(mobile ? 26 : 36),
         boxShadow: [
           BoxShadow(
-            color: AppColors.charcoalNavy.withValues(alpha: 0.22),
+            color: AppColors.charcoal.withValues(alpha: 0.22),
             blurRadius: 60,
             offset: const Offset(0, 24),
             spreadRadius: -12,

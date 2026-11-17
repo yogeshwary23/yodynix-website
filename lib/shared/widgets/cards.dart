@@ -5,9 +5,10 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
+import 'motion_effects.dart';
 
-/// The site-wide card look: a deep-charcoal tile with a fine champagne edge
-/// and a soft dark shadow. Content inside reads its colours from
+/// The site-wide card look: a white tile with a fine silver edge and a soft,
+/// cool shadow. Content inside reads its colours from
 /// [SurfaceColors.inCard] (wrap it in [CardSurface] or use [HoverCard]).
 class CardStyle {
   CardStyle._();
@@ -21,7 +22,7 @@ class CardStyle {
 
   static List<BoxShadow> shadow({bool hover = false}) => [
     BoxShadow(
-      color: AppColors.deepCharcoal.withValues(alpha: hover ? 0.26 : 0.16),
+      color: AppColors.charcoal.withValues(alpha: hover ? 0.12 : 0.06),
       blurRadius: hover ? 32 : 22,
       offset: Offset(0, hover ? 16 : 10),
     ),
@@ -50,7 +51,7 @@ class CardSurface extends StatelessWidget {
 }
 
 /// A [CardSurface] holding a form: fields, chips and menus switch to their
-/// dark, gold-focused style.
+/// platinum, gold-focused style.
 class FormCard extends StatelessWidget {
   const FormCard({super.key, required this.child, this.padding, this.radius = AppRadius.xl});
 
@@ -67,7 +68,8 @@ class FormCard extends StatelessWidget {
   }
 }
 
-/// Card that lifts gently and brightens its gold edge on hover.
+/// Card that lifts gently, tilts towards the cursor with a glass-like sheen
+/// and tints its edge gold on hover.
 class HoverCard extends StatefulWidget {
   const HoverCard({
     super.key,
@@ -98,24 +100,28 @@ class _HoverCardState extends State<HoverCard> {
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
       cursor: widget.onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
-      child: AnimatedContainer(
-        duration: AppMotion.lift,
-        curve: AppMotion.ease,
-        transform: Matrix4.translationValues(0, _hover ? -4 : 0, 0),
-        decoration: CardStyle.decoration(radius: widget.radius, hover: _hover),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: radius,
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: widget.onTap,
+      child: Tilt3D(
+        radius: widget.radius,
+        maxAngle: 4,
+        child: AnimatedContainer(
+          duration: AppMotion.lift,
+          curve: AppMotion.ease,
+          transform: Matrix4.translationValues(0, _hover ? -4 : 0, 0),
+          decoration: CardStyle.decoration(radius: widget.radius, hover: _hover),
+          child: Material(
+            color: Colors.transparent,
             borderRadius: radius,
-            hoverColor: Colors.transparent,
-            splashColor: AppColors.cardAccent.withValues(alpha: 0.06),
-            highlightColor: AppColors.cardAccent.withValues(alpha: 0.03),
-            child: SurfaceTone(
-              colors: SurfaceColors.inCard,
-              child: Padding(padding: widget.padding, child: widget.child),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: widget.onTap,
+              borderRadius: radius,
+              hoverColor: Colors.transparent,
+              splashColor: AppColors.cardAccent.withValues(alpha: 0.06),
+              highlightColor: AppColors.cardAccent.withValues(alpha: 0.03),
+              child: SurfaceTone(
+                colors: SurfaceColors.inCard,
+                child: Padding(padding: widget.padding, child: widget.child),
+              ),
             ),
           ),
         ),
@@ -174,9 +180,9 @@ class IconBadge extends StatelessWidget {
       child: Icon(
         icon,
         size: size * 0.48,
-        // Dark glyph on light fills (gold), white on deep ones.
+        // Charcoal glyph on light fills, white on deep ones.
         color: gradient
-            ? (ThemeData.estimateBrightnessForColor(color) == Brightness.light ? AppColors.onPrimary : AppColors.white)
+            ? (ThemeData.estimateBrightnessForColor(color) == Brightness.light ? AppColors.charcoal : AppColors.white)
             : color,
       ),
     );

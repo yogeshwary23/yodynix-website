@@ -26,9 +26,9 @@ class _Palette {
 
 class _BrandKitDemoState extends State<BrandKitDemo> {
   static const _palettes = [
-    _Palette('Electric', AppColors.electricBlue, AppColors.electricBlue, AppColors.midnightNavy),
-    _Palette('Glacier', AppColors.electricBlueTint, AppColors.lightGrey, AppColors.surfaceNavy),
-    _Palette('Midnight', AppColors.electricBlue, AppColors.electricBlueTint, AppColors.deepNavy),
+    _Palette('Electric', AppColors.demoAccent, AppColors.demoAccent, AppColors.charcoal),
+    _Palette('Glacier', AppColors.demoAccentTint, AppColors.lightGrey, AppColors.charcoalRaised),
+    _Palette('Midnight', AppColors.demoAccent, AppColors.demoAccentTint, AppColors.deepCharcoal),
   ];
 
   // Heading/body pairings, both already used by the site (no new fonts).
@@ -103,7 +103,7 @@ class _BrandKitDemoState extends State<BrandKitDemo> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(AppRadius.sm),
                           border: Border.all(
-                            color: i == _palette ? AppColors.electricBlue : DemoColors.line,
+                            color: i == _palette ? AppColors.demoAccent : DemoColors.line,
                             width: i == _palette ? 2 : 1,
                           ),
                         ),

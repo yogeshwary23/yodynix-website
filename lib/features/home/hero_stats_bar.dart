@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/constants/site_config.dart';
@@ -7,7 +9,8 @@ import '../../core/utils/responsive.dart';
 import '../../shared/widgets/viewport_trigger.dart';
 
 /// Single-row statistics bar at the foot of the hero. Values come from
-/// [HeroStatsConfig] and count up once when the bar first becomes visible.
+/// [HeroStatsConfig] and count up once when the bar first becomes visible,
+/// each figure starting a beat after the one before.
 class HeroStatsBar extends StatefulWidget {
   const HeroStatsBar({super.key});
 
@@ -16,20 +19,28 @@ class HeroStatsBar extends StatefulWidget {
 }
 
 class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderStateMixin, ViewportTrigger<HeroStatsBar> {
-  late final AnimationController _count = AnimationController(vsync: this, duration: const Duration(milliseconds: 1600));
-  late final Animation<double> _progress = CurvedAnimation(parent: _count, curve: Curves.easeOutCubic);
+  late final AnimationController _count = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200));
+
+  final _built = DateTime.now();
+  Timer? _start;
 
   @override
   void onEnterViewport() {
     if (MediaQuery.disableAnimationsOf(context)) {
       _count.value = 1;
-    } else {
-      _count.forward();
+      return;
     }
+    // On desktop the bar is in view on the very first frame, while the
+    // splash screen is still fading out; hold the count until it has gone.
+    final initialLoad = DateTime.now().difference(_built) < const Duration(seconds: 1);
+    _start = Timer(Duration(milliseconds: initialLoad ? 900 : 150), () {
+      if (mounted) _count.forward();
+    });
   }
 
   @override
   void dispose() {
+    _start?.cancel();
     _count.dispose();
     super.dispose();
   }
@@ -42,14 +53,27 @@ class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderSt
     final numberSize = context.responsive(mobile: 28.0, tablet: 34.0, desktop: 42.0);
     final labelSize = context.responsive(mobile: 12.0, tablet: 13.0, desktop: 14.5);
 
-    Widget item((int, String, String) stat) =>
-        _StatItem(stat: stat, progress: _progress, numberSize: numberSize, labelSize: labelSize);
+    // Each figure gets its own window of the shared controller: a staggered
+    // cascade rather than five counters ticking in lockstep.
+    Animation<double> progressFor(int index) {
+      final start = index * 0.09;
+      return CurvedAnimation(
+        parent: _count,
+        curve: Interval(start, (start + 0.64).clamp(0, 1), curve: Curves.easeOutCubic),
+      );
+    }
 
-    Widget row(List<(int, String, String)> items) => IntrinsicHeight(
+    Widget item(int index, (int, String, String) stat) =>
+        _StatItem(stat: stat, progress: progressFor(index), numberSize: numberSize, labelSize: labelSize);
+
+    Widget row(List<(int, String, String)> items, {int offset = 0}) => IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final (i, stat) in items.indexed) ...[if (i > 0) const _VerticalDivider(), Expanded(child: item(stat))],
+          for (final (i, stat) in items.indexed) ...[
+            if (i > 0) const _VerticalDivider(),
+            Expanded(child: item(offset + i, stat)),
+          ],
         ],
       ),
     );
@@ -60,10 +84,10 @@ class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderSt
       child: Container(
         padding: EdgeInsets.symmetric(vertical: mobile ? 18 : (tablet ? 22 : 28), horizontal: mobile ? 8 : 12),
         decoration: BoxDecoration(
-          gradient: AppColors.darkGlassGradient,
+          gradient: AppColors.glassGradient,
           borderRadius: BorderRadius.circular(mobile ? 20 : 24),
-          border: Border.all(color: AppColors.darkBorder),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 32, offset: const Offset(0, 14))],
+          border: Border.all(color: AppColors.cardBorder),
+          boxShadow: AppColors.softShadow(),
         ),
         // One straight row from tablet up; on phones 3 + 2 rows so labels
         // stay readable without horizontal scrolling.
@@ -76,18 +100,14 @@ class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderSt
                     margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          AppColors.darkBorder.withValues(alpha: 0),
-                          AppColors.softGrey.withValues(alpha: 0.35),
-                          AppColors.darkBorder.withValues(alpha: 0),
-                        ],
+                        colors: [AppColors.stone.withValues(alpha: 0), AppColors.stone, AppColors.stone.withValues(alpha: 0)],
                       ),
                     ),
                   ),
                   Row(
                     children: [
                       const Spacer(),
-                      Expanded(flex: 4, child: row(stats.sublist(3))),
+                      Expanded(flex: 4, child: row(stats.sublist(3), offset: 3)),
                       const Spacer(),
                     ],
                   ),
@@ -110,47 +130,67 @@ class _StatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (value, suffix, label) = stat;
-    final style = AppTypography.display(fontSize: numberSize, fontWeight: FontWeight.w800, height: 1.1, color: AppColors.onDark);
+    // Tabular figures keep the digits from jittering while they count.
+    final style = AppTypography.display(
+      fontSize: numberSize,
+      fontWeight: FontWeight.w800,
+      height: 1.1,
+      color: AppColors.charcoal,
+    ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
     return Semantics(
       label: '$value$suffix $label',
       excludeSemantics: true,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 6),
+        // Top-aligned so figures stay level when one label wraps to two lines.
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             AnimatedBuilder(
               animation: progress,
               builder: (context, _) {
-                // White numerals with only the suffix in accent blue.
-                final count = '${(value * progress.value).round()}';
-                return FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text.rich(
-                    TextSpan(
-                      text: count,
-                      children: [
+                final t = progress.value;
+                // Charcoal numerals with only the suffix in gold; each figure
+                // rises and fades in as it starts counting.
+                final count = '${(value * t).round()}';
+                return Opacity(
+                  opacity: (t * 2.5).clamp(0.0, 1.0),
+                  child: Transform.translate(
+                    offset: Offset(0, (1 - (t * 2).clamp(0.0, 1.0)) * 10),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text.rich(
                         TextSpan(
-                          text: suffix,
-                          style: style.copyWith(color: AppColors.primaryTint),
+                          text: count,
+                          children: [
+                            TextSpan(
+                              text: suffix,
+                              style: style.copyWith(color: AppColors.primary),
+                            ),
+                          ],
                         ),
-                      ],
+                        style: style,
+                      ),
                     ),
-                    style: style,
                   ),
                 );
               },
             ),
-            SizedBox(height: numberSize * 0.22),
+            SizedBox(height: numberSize * 0.14),
+            // A short gold rule draws in as the figure lands.
+            AnimatedBuilder(
+              animation: progress,
+              builder: (context, _) => Container(
+                width: 22 * Curves.easeOut.transform(((progress.value - 0.6) / 0.4).clamp(0.0, 1.0)),
+                height: 2,
+                decoration: BoxDecoration(gradient: AppColors.liquidGold, borderRadius: BorderRadius.circular(2)),
+              ),
+            ),
+            SizedBox(height: numberSize * 0.14),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: AppTypography.body(
-                fontSize: labelSize,
-                color: AppColors.onDarkMuted,
-                fontWeight: FontWeight.w500,
-                height: 1.35,
-              ),
+              style: AppTypography.body(fontSize: labelSize, color: AppColors.muted, fontWeight: FontWeight.w500, height: 1.35),
             ),
           ],
         ),
@@ -171,11 +211,7 @@ class _VerticalDivider extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            AppColors.softGrey.withValues(alpha: 0.0),
-            AppColors.softGrey.withValues(alpha: 0.35),
-            AppColors.softGrey.withValues(alpha: 0.0),
-          ],
+          colors: [AppColors.stone.withValues(alpha: 0.0), AppColors.stone, AppColors.stone.withValues(alpha: 0.0)],
         ),
       ),
     );

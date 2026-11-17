@@ -4,7 +4,7 @@ import 'app_colors.dart';
 
 /// The text, line and card colours for one kind of section surface.
 ///
-/// Light sections use [light]; the premium charcoal bands (hero, footer,
+/// Light sections use [light]; the charcoal bands (hero, footer,
 /// call-to-action panels) use [dark]. Shared widgets read the nearest
 /// [SurfaceTone] so the same `SectionHeader` or `HoverCard` reads correctly on
 /// either.
@@ -72,7 +72,7 @@ class SurfaceColors {
     ornament: AppColors.champagneGold,
     glowCore: Color(0x00C6A46A),
     glowTail: Color(0x00C6A46A),
-    shadowColor: AppColors.charcoalNavy,
+    shadowColor: AppColors.charcoal,
     shadowAlpha: 0.06,
     badgeTint: AppColors.goldTint,
     ghostFill: AppColors.softWhite,
@@ -83,7 +83,7 @@ class SurfaceColors {
   static const SurfaceColors dark = SurfaceColors(
     isDark: true,
     background: AppColors.deepCharcoal,
-    card: AppColors.charcoalNavy,
+    card: AppColors.charcoal,
     cardGradient: AppColors.darkGlassGradient,
     ink: AppColors.onDark,
     body: AppColors.onDarkBody,
@@ -93,7 +93,7 @@ class SurfaceColors {
     ornament: AppColors.champagneGold,
     glowCore: Color(0x14C6A46A),
     glowTail: Color(0x00C6A46A),
-    shadowColor: Color(0xFF05070C),
+    shadowColor: Color(0xFF0C0A08),
     shadowAlpha: 0.45,
     badgeTint: AppColors.goldTint,
     ghostFill: Color(0x0AFFFFFF),
@@ -101,26 +101,26 @@ class SurfaceColors {
     ghostHoverFill: Color(0x14FFFFFF),
   );
 
-  /// Inside a content card (see `CardStyle`): charcoal with champagne details.
+  /// Inside a content card (see `CardStyle`): white with charcoal type and gold details.
   static const SurfaceColors inCard = SurfaceColors(
-    isDark: true,
+    isDark: false,
     background: AppColors.cardSurface,
-    card: AppColors.charcoalNavy,
+    card: AppColors.cardField,
     cardGradient: null,
     ink: AppColors.cardHeading,
     body: AppColors.cardBody,
     muted: AppColors.cardMuted,
     border: AppColors.cardLine,
     accent: AppColors.cardAccent,
-    ornament: AppColors.cardAccent,
+    ornament: AppColors.primary,
     glowCore: Color(0x00C6A46A),
     glowTail: Color(0x00C6A46A),
-    shadowColor: Color(0xFF05070C),
-    shadowAlpha: 0.3,
-    badgeTint: AppColors.goldTint,
-    ghostFill: Color(0x0AFFFFFF),
-    ghostBorder: Color(0x66C6A46A),
-    ghostHoverFill: Color(0x14FFFFFF),
+    shadowColor: AppColors.charcoal,
+    shadowAlpha: 0.06,
+    badgeTint: AppColors.softChampagne,
+    ghostFill: AppColors.white,
+    ghostBorder: AppColors.goldLine,
+    ghostHoverFill: AppColors.goldWash,
   );
 
   /// Light pooling from [center], tuned per surface.
@@ -161,7 +161,7 @@ extension SurfaceToneContext on BuildContext {
   /// Colours for the surface this widget sits on.
   SurfaceColors get tone => SurfaceTone.of(this);
 
-  /// [color] adjusted for this surface: the light-surface gold
-  /// ([AppColors.accent]) becomes the surface's own readable gold.
+  /// [color] adjusted for this surface: the light-surface accent
+  /// ([AppColors.accent]) becomes the surface's own readable accent.
   Color readable(Color color) => color == AppColors.accent ? tone.accent : color;
 }

@@ -12,7 +12,10 @@ import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
 import '../../shared/layouts/navigation_actions.dart';
+import '../../shared/three/mobile_3d_fallback.dart';
+import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/tinted_photo.dart';
+import 'service_stage.dart';
 
 class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
@@ -36,6 +39,8 @@ class ServicesSection extends StatelessWidget {
             centered: true,
           ),
           const SizedBox(height: 56),
+          const Reveal(child: ServiceStage()),
+          SizedBox(height: context.responsive(mobile: 56.0, desktop: 88.0)),
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = ((constraints.maxWidth + _spacing) / (_minCard + _spacing)).floor().clamp(1, 3);
@@ -107,7 +112,8 @@ class _HoverScopeState extends State<_HoverScope> {
   }
 }
 
-/// The service's photograph with its icon badge in the corner.
+/// The service's 3D concept (a still render from the engine) with its icon
+/// badge in the corner. The image eases up slightly on hover.
 class _ServicePhoto extends StatelessWidget {
   const _ServicePhoto({required this.service, required this.active});
 
@@ -119,16 +125,33 @@ class _ServicePhoto extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        TintedPhoto(basePath: AssetPaths.service(service.id), semanticLabel: service.imageAlt, active: active, strength: 0.7),
+        ColoredBox(
+          color: AppColors.white,
+          child: Semantics(
+            label: service.imageAlt,
+            image: true,
+            child: AnimatedScale(
+              scale: active ? 1.05 : 1,
+              duration: AppMotion.lift,
+              curve: AppMotion.ease,
+              child: Mobile3DFallback(
+                scene: Service3DVisual.sceneFor(service.id),
+                variant: Service3DVisual.variantFor(service.id),
+                fallback: TintedPhoto(basePath: AssetPaths.service(service.id), semanticLabel: service.imageAlt, active: active, strength: 0.7),
+              ),
+            ),
+          ),
+        ),
+        const Positioned(left: 0, right: 0, bottom: 0, child: Divider(height: 1, color: AppColors.cardLine)),
         Positioned(
           left: 16,
           bottom: 16,
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.deepNavy.withValues(alpha: 0.82),
+              color: AppColors.cardTile,
               borderRadius: BorderRadius.circular(AppRadius.sm),
-              border: Border.all(color: AppColors.cardLine),
+              border: Border.all(color: AppColors.goldLine),
             ),
             child: Icon(service.icon, size: 20, color: AppColors.cardAccent),
           ),

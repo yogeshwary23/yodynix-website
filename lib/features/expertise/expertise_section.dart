@@ -7,11 +7,14 @@ import '../../models/content_models.dart';
 import '../../models/site_section.dart';
 import '../../providers/section_navigator.dart';
 import '../../repositories/content/expertise_content.dart';
+import '../../core/utils/responsive.dart';
+import '../../shared/three/interactive_3d_object.dart';
+import '../../shared/three/scene3d.dart';
+import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/buttons.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
-import '../../shared/widgets/visuals/visual_primitives.dart';
 
 class ExpertiseSection extends StatelessWidget {
   const ExpertiseSection({super.key});
@@ -20,21 +23,34 @@ class ExpertiseSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = ExpertiseContent.categories;
     return SectionShell(
-      tone: SurfaceColors.dark,
-      glowAt: const Alignment(-1, -0.8),
-      decoration: IgnorePointer(
-        child: CustomPaint(painter: GridPainter(color: AppColors.white.withValues(alpha: 0.03), step: 40)),
-      ),
+      background: AppColors.pearlWhite,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SectionHeader(
-            eyebrow: 'Our Expertise',
-            title: ExpertiseContent.heading,
-            lead: ExpertiseContent.lead,
+            eyebrow: 'AI & Technology',
+            title: ExpertiseContent.aiHeading,
+            lead: ExpertiseContent.aiLead,
             centered: true,
           ),
-          const SizedBox(height: 56),
+          const SizedBox(height: 24),
+          // The neural network: glass neurons with signals travelling between them.
+          Reveal(
+            child: AspectRatio(
+              aspectRatio: context.responsive(mobile: 1.3, tablet: 1.8, desktop: 2.3),
+              child: const Interactive3DObject(
+                scene: Scene3D.neural,
+                semanticLabel:
+                    'A neural network of transparent glass and metal spheres, connected by fine lines '
+                    'with points of golden light travelling between them.',
+                background: AppColors.pearlWhite,
+                fallback: SizedBox.shrink(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          const _TechnologyHeader(),
+          const SizedBox(height: 48),
           ResponsiveGrid(
             minItemWidth: 260,
             maxColumns: 4,
@@ -50,6 +66,47 @@ class ExpertiseSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Our Expertise" heading beside the technology ecosystem: metallic
+/// components orbiting a gold hub, linked to it by fine lines.
+class _TechnologyHeader extends StatelessWidget {
+  const _TechnologyHeader();
+
+  static const _header = SectionHeader(
+    eyebrow: 'Our Expertise',
+    title: ExpertiseContent.heading,
+    lead: ExpertiseContent.lead,
+  );
+
+  static const _scene = Section3DScene(
+    scene: Scene3D.ecosystem,
+    semanticLabel:
+        'A rotating ecosystem of metallic and glass components on gold and platinum orbits, '
+        'each linked to a central gold hub.',
+    fallback: SizedBox.shrink(),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    if (!context.isDesktop) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _header,
+          const SizedBox(height: 16),
+          Reveal(child: AspectRatio(aspectRatio: context.responsive(mobile: 1.2, tablet: 1.7, desktop: 1.7), child: _scene)),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        const Expanded(flex: 5, child: _header),
+        const SizedBox(width: 32),
+        Expanded(flex: 6, child: Reveal(child: AspectRatio(aspectRatio: 1.45, child: _scene))),
+      ],
     );
   }
 }
@@ -73,13 +130,13 @@ class _CategoryCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   category.name,
-                  style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.white),
+                  style: AppTypography.display(fontSize: 19, fontWeight: FontWeight.w700, color: context.tone.ink),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(category.description, style: AppTypography.body(fontSize: 14, color: AppColors.onDarkBody)),
+          Text(category.description, style: AppTypography.body(fontSize: 14, color: context.tone.body)),
           const SizedBox(height: 18),
           for (final item in category.items)
             Padding(
@@ -96,7 +153,7 @@ class _CategoryCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item.name,
-                      style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: AppColors.white, height: 1.3),
+                      style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: context.tone.ink, height: 1.3),
                     ),
                   ),
                 ],
@@ -113,13 +170,13 @@ class _TalkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // A solid champagne panel; its outlined button reads as on a light surface.
+    // A solid gold panel with white type and a light outlined button.
     return Container(
       padding: const EdgeInsets.all(26),
       decoration: BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 30, offset: const Offset(0, 14))],
+        boxShadow: AppColors.glowShadow(1.4),
       ),
       child: SurfaceTone(
         colors: SurfaceColors.light,
@@ -130,7 +187,7 @@ class _TalkCard extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: AppColors.deepCharcoal.withValues(alpha: 0.1),
+                color: AppColors.white.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(13),
               ),
               child: const Icon(Icons.forum_outlined, color: AppColors.onPrimary, size: 21),

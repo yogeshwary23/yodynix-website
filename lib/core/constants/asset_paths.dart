@@ -5,7 +5,9 @@
 class AssetPaths {
   AssetPaths._();
 
-  static const String logo = 'assets/images/brand/yodynix_logo.png';
+  /// Champagne-gold / platinum variant of the mark (made by
+  /// `tool/recolor_logo`); the original `yodynix_logo.png` is kept unchanged.
+  static const String logo = 'assets/images/brand/yodynix_logo_gold.png';
   static const String founderPhoto = 'assets/images/team/founder_office.jpg';
 
   static const String hero = 'assets/images/hero/hero_visual';
@@ -13,6 +15,9 @@ class AssetPaths {
   static const String internship = 'assets/images/internship/internship_banner';
 
   static String service(String id) => 'assets/images/services/$id';
+
+  /// Still renders of the 3D scenes (see `Mobile3DFallback`).
+  static String render(String scene) => 'assets/images/renders/$scene';
 
   /// Sample-project visuals on the service pages.
   static String serviceProject(String id) => 'assets/images/service_projects/$id';

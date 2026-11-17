@@ -215,7 +215,7 @@ class _LeadRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: lead.status == LeadStatus.won ? AppColors.electricBlue : AppColors.electricBlue.withValues(alpha: 0.10),
+          color: lead.status == LeadStatus.won ? AppColors.demoAccent : AppColors.demoAccent.withValues(alpha: 0.10),
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Row(
@@ -226,14 +226,14 @@ class _LeadRow extends StatelessWidget {
               style: AppTypography.body(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,
-                color: lead.status == LeadStatus.won ? AppColors.white : AppColors.electricBlue,
+                color: lead.status == LeadStatus.won ? AppColors.white : AppColors.demoAccent,
                 height: 1.2,
               ),
             ),
             Icon(
               Icons.arrow_drop_down_rounded,
               size: 18,
-              color: lead.status == LeadStatus.won ? AppColors.white : AppColors.electricBlue,
+              color: lead.status == LeadStatus.won ? AppColors.white : AppColors.demoAccent,
             ),
           ],
         ),
@@ -249,7 +249,7 @@ class _LeadRow extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 17,
-            backgroundColor: AppColors.midnightNavy,
+            backgroundColor: AppColors.charcoal,
             child: Text(
               lead.name[0],
               style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.white, height: 1),

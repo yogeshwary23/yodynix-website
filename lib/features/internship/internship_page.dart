@@ -243,7 +243,7 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = SurfaceColors.dark;
+    const tone = SurfaceColors.light;
     final desktop = context.isDesktop;
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,7 +329,7 @@ class _Hero extends StatelessWidget {
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
       tone: tone,
-      gradient: AppColors.darkBandGradient,
+      background: AppColors.pearlWhite,
       glowAt: const Alignment(0.8, -0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

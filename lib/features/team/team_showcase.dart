@@ -223,7 +223,7 @@ class _DeveloperCard extends StatelessWidget {
 
 // ----------------------------------------------------------------- Shared
 
-/// Navy card with a cyan border that lifts and glows on hover.
+/// Card with a gold border that lifts and glows on hover.
 class _CardShell extends StatefulWidget {
   const _CardShell({required this.builder});
 

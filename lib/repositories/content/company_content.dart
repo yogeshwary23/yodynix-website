@@ -9,10 +9,13 @@ class CompanyContent {
   CompanyContent._();
 
   // ---------------------------------------------------------------- Hero
-  static const heroEyebrow = 'Digital Technology & Innovation Studio';
+  static const heroEyebrow = 'Technology. Intelligence. Innovation.';
+  static const heroHeadlineLead = 'We Build ';
+  static const heroHeadlineAccent = 'Intelligent';
+  static const heroHeadlineTail = ' Digital Experiences.';
   static const heroDescription =
-      'YODYNIX designs and builds websites, mobile apps, AI solutions and business '
-      'automation that turn good ideas into dependable digital products.';
+      'Transforming ideas into powerful digital products through technology, '
+      'intelligence and innovation.';
 
   // --------------------------------------------------------------- Intro
   static const introHeading = 'Technology That Turns Possibilities Into Progress.';
@@ -254,7 +257,7 @@ class CompanyContent {
           'Interfaces are designed around real users, so they stay clear, accessible '
           'and easy to use on any screen size.',
       icon: Icons.touch_app_outlined,
-      color: AppColors.charcoalNavy,
+      color: AppColors.charcoal,
       image: 'assets/images/why_choose/user_focused_design',
       imageAlt: 'A designer sketching interface wireframes beside a laptop showing a design.',
     ),
@@ -284,7 +287,7 @@ class CompanyContent {
           'One team stays with your project through discovery, design, development, '
           'launch and support.',
       icon: Icons.all_inclusive_rounded,
-      color: AppColors.charcoalNavy,
+      color: AppColors.charcoal,
       image: 'assets/images/why_choose/end_to_end_development',
       imageAlt: 'A project team working at laptops in front of a planning board of sticky notes.',
     ),

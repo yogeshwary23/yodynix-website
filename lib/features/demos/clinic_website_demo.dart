@@ -134,7 +134,7 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
           Container(
             width: 34,
             height: 34,
-            decoration: BoxDecoration(color: AppColors.electricBlue, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: AppColors.demoAccent, borderRadius: BorderRadius.circular(10)),
             child: const Icon(Icons.medical_services_outlined, size: 19, color: AppColors.white),
           ),
           const SizedBox(width: 10),
@@ -165,7 +165,7 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
           style: AppTypography.body(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: AppColors.electricBlue,
+            color: AppColors.demoAccent,
             letterSpacing: 1.4,
             height: 1.2,
           ),
@@ -195,7 +195,7 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.electricBlue, AppColors.electricBlue],
+          colors: [AppColors.demoAccent, AppColors.demoAccent],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -275,9 +275,9 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
       decoration: BoxDecoration(
         color: DemoColors.page,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.electricBlue.withValues(alpha: 0.35)),
+        border: Border.all(color: AppColors.demoAccent.withValues(alpha: 0.35)),
         boxShadow: [
-          BoxShadow(color: AppColors.electricBlue.withValues(alpha: 0.10), blurRadius: 30, offset: const Offset(0, 12)),
+          BoxShadow(color: AppColors.demoAccent.withValues(alpha: 0.10), blurRadius: 30, offset: const Offset(0, 12)),
         ],
       ),
       child: AnimatedSize(
@@ -287,7 +287,7 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
             ? Column(
                 key: const ValueKey('done'),
                 children: [
-                  const Icon(Icons.check_circle_rounded, size: 52, color: AppColors.electricBlue),
+                  const Icon(Icons.check_circle_rounded, size: 52, color: AppColors.demoAccent),
                   const SizedBox(height: 14),
                   Text(
                     'Thank you, $confirmed!',
@@ -362,11 +362,11 @@ class _ClinicWebsiteDemoState extends State<ClinicWebsiteDemo> {
         filled: true,
         fillColor: DemoColors.panel,
         labelStyle: AppTypography.body(fontSize: 14, color: DemoColors.muted, height: 1.2),
-        errorStyle: AppTypography.body(fontSize: 12, color: AppColors.electricBlue, fontWeight: FontWeight.w600, height: 1.2),
+        errorStyle: AppTypography.body(fontSize: 12, color: AppColors.demoAccent, fontWeight: FontWeight.w600, height: 1.2),
         border: border(DemoColors.line),
         enabledBorder: border(DemoColors.line),
-        focusedBorder: border(AppColors.electricBlue),
-        errorBorder: border(AppColors.electricBlue),
+        focusedBorder: border(AppColors.demoAccent),
+        errorBorder: border(AppColors.demoAccent),
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       ),
     );
@@ -396,10 +396,10 @@ class _TreatmentCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AppColors.electricBlue.withValues(alpha: 0.10),
+              color: AppColors.demoAccent.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppColors.electricBlue, size: 22),
+            child: Icon(icon, color: AppColors.demoAccent, size: 22),
           ),
           const SizedBox(height: 14),
           Text(name, style: AppTypography.display(fontSize: 16, color: DemoColors.ink, height: 1.3)),

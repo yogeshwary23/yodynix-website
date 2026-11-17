@@ -1,0 +1,7 @@
+{
+  "name": "yodynix-render-scenes",
+  "private": true,
+  "description": "Renders the 3D scenes in web/three/yodynix3d.js to the still images in assets/images/renders/.",
+  "scripts": { "render": "node render.js", "demos": "node demos.js" },
+  "dependencies": { "puppeteer-core": "23.11.1" }
+}

@@ -7,6 +7,8 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
+import '../../shared/three/scene3d.dart';
+import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/tinted_photo.dart';
@@ -27,6 +29,21 @@ class ProcessTimeline extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // The whole journey in one view: each stage rises onto the gold line
+        // as the section scrolls in.
+        Reveal(
+          child: AspectRatio(
+            aspectRatio: context.responsive(mobile: 1.5, tablet: 2.2, desktop: 2.8),
+            child: const Section3DScene(
+              scene: Scene3D.workflow,
+              semanticLabel:
+                  'A connected workflow: five metal and glass forms on porcelain plinths, joined by a gold line '
+                  'with points of light travelling along it from discovery to launch.',
+              fallback: SizedBox.shrink(),
+            ),
+          ),
+        ),
+        SizedBox(height: context.responsive(mobile: 24.0, desktop: 40.0)),
         for (final (i, step) in timeline.indexed)
           Reveal(
             delay: const Duration(milliseconds: 60),
@@ -160,7 +177,7 @@ class _Node extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.charcoalNavy,
+        color: AppColors.charcoal,
         border: Border.all(color: AppColors.background, width: 4),
         boxShadow: AppColors.softShadow(0.6),
       ),
@@ -199,7 +216,7 @@ class _StepPhotoState extends State<_StepPhoto> {
           boxShadow: [
             if (_hover)
               BoxShadow(
-                color: AppColors.charcoalNavy.withValues(alpha: 0.14),
+                color: AppColors.charcoal.withValues(alpha: 0.14),
                 blurRadius: 44,
                 spreadRadius: -6,
                 offset: const Offset(0, 18),
@@ -221,7 +238,7 @@ class _StepPhotoState extends State<_StepPhoto> {
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(10, 7, 14, 7),
                     decoration: BoxDecoration(
-                      color: AppColors.deepNavy.withValues(alpha: 0.78),
+                      color: AppColors.deepCharcoal.withValues(alpha: 0.78),
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                       border: Border.all(color: AppColors.white.withValues(alpha: 0.16)),
                     ),

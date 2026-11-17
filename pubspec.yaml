@@ -67,6 +67,8 @@ flutter:
     - assets/images/hero/
     - assets/images/about/
     - assets/images/services/
+    # Still renders of the 3D scenes, used on phones and without WebGL.
+    - assets/images/renders/
     - assets/images/service_projects/
     - assets/images/team/
     - assets/images/internship/

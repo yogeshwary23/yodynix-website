@@ -21,6 +21,10 @@ class AppRoutes {
   static const String businessSolutions = '/business-solutions';
   static const String technologyInnovation = '/technology-innovation';
 
+  /// Demonstration projects and the sectors we work with.
+  static const String portfolio = '/portfolio';
+  static const String industries = '/industries';
+
   /// Internship landing page and its programme pages.
   static const String internship = '/internship';
   static const String internshipPrefix = '/internship/';
@@ -55,10 +59,11 @@ class AppRoutes {
       '/founder' || '/team' => AboutPage.team.route,
       '/philosophy' => AboutPage.philosophy.route,
       '/process' || '/how-we-work' => AboutPage.howWeWork.route,
-      // Retired pages: the old Students and Portfolio areas now open the homepage.
-      '/student-development' || '/students' || '/portfolio' => home,
+      // Retired pages: the old Students area now opens the homepage.
+      '/student-development' || '/students' => home,
       '/internship-careers' || '/internships' || '/careers' => internship,
-      _ when normalised.startsWith('/portfolio/') => home,
+      '/projects' || '/work' => portfolio,
+      _ when normalised.startsWith('/portfolio/') => portfolio,
       _ => normalised,
     };
   }

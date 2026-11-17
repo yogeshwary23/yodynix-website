@@ -67,7 +67,7 @@ class _InternshipProgramCardState extends State<InternshipProgramCard> {
                     child: Container(
                       padding: const EdgeInsets.all(9),
                       decoration: BoxDecoration(
-                        color: AppColors.deepNavy.withValues(alpha: 0.85),
+                        color: AppColors.deepCharcoal.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(AppRadius.sm),
                         border: Border.all(color: AppColors.cardLine),
                       ),
@@ -375,7 +375,7 @@ class LearningModelCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          CheckList(items: focus, color: AppColors.charcoalNavy),
+                          CheckList(items: focus, color: AppColors.charcoal),
                         ],
                       ),
                     ),

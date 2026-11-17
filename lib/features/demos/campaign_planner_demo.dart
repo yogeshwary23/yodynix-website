@@ -90,7 +90,7 @@ class _CampaignPlannerDemoState extends State<CampaignPlannerDemo> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [AppColors.midnightNavy, AppColors.surfaceNavy],
+              colors: [AppColors.charcoal, AppColors.charcoalRaised],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -104,7 +104,7 @@ class _CampaignPlannerDemoState extends State<CampaignPlannerDemo> {
                 style: AppTypography.body(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.electricBlue,
+                  color: AppColors.demoAccent,
                   letterSpacing: 1.3,
                   height: 1.2,
                 ),
@@ -133,7 +133,7 @@ class _CampaignPlannerDemoState extends State<CampaignPlannerDemo> {
               const SizedBox(height: 16),
               Text(
                 'Illustrative estimates only. Real results depend on the market, creative, targeting and season.',
-                style: AppTypography.body(fontSize: 12, color: AppColors.blueGrey, height: 1.5),
+                style: AppTypography.body(fontSize: 12, color: AppColors.softGrey, height: 1.5),
               ),
             ],
           ),
@@ -177,10 +177,10 @@ class _CampaignPlannerDemoState extends State<CampaignPlannerDemo> {
           ),
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: AppColors.electricBlue,
+              activeTrackColor: AppColors.demoAccent,
               inactiveTrackColor: DemoColors.line,
-              thumbColor: AppColors.electricBlue,
-              overlayColor: AppColors.electricBlue.withValues(alpha: 0.12),
+              thumbColor: AppColors.demoAccent,
+              overlayColor: AppColors.demoAccent.withValues(alpha: 0.12),
               trackHeight: 4,
               tickMarkShape: SliderTickMarkShape.noTickMark,
             ),
@@ -230,8 +230,8 @@ class _FunnelBar extends StatelessWidget {
             child: LinearProgressIndicator(
               value: fraction,
               minHeight: 10,
-              backgroundColor: AppColors.deepNavy,
-              valueColor: const AlwaysStoppedAnimation(AppColors.electricBlue),
+              backgroundColor: AppColors.deepCharcoal,
+              valueColor: const AlwaysStoppedAnimation(AppColors.demoAccent),
             ),
           ),
         ],
@@ -261,7 +261,7 @@ class _Metric extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(label, style: AppTypography.body(fontSize: 12, color: AppColors.blueGrey, height: 1.3)),
+        Text(label, style: AppTypography.body(fontSize: 12, color: AppColors.softGrey, height: 1.3)),
       ],
     );
   }

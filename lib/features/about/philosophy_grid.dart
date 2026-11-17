@@ -72,7 +72,7 @@ enum _Density {
 
 /// Photographic principle card: full-bleed photo under a dark gradient, with
 /// the number, title and description set over the lower portion. Lifts, zooms
-/// and gains a cyan edge on hover.
+/// and gains a gold edge on hover.
 class _PhilosophyCard extends StatefulWidget {
   const _PhilosophyCard({required this.index, required this.item, required this.density});
 
@@ -137,7 +137,7 @@ class _PhilosophyCardState extends State<_PhilosophyCard> {
       DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: const [Color(0x00151B26), Color(0x99151B26), Color(0xF2151B26)],
+            colors: const [Color(0x001E1C1A), Color(0x991E1C1A), Color(0xF21E1C1A)],
             stops: fixedAspect ? const [0.15, 0.5, 0.82] : const [0.12, 0.4, 0.62],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

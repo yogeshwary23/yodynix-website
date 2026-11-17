@@ -66,7 +66,7 @@ class WhoWeAreStory extends StatelessWidget {
             icon: Icons.route_outlined,
             title: 'Our Approach',
             text: CompanyContent.approach,
-            color: AppColors.charcoalNavy,
+            color: AppColors.charcoal,
           ),
         ),
       ],

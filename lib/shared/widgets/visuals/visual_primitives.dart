@@ -15,13 +15,13 @@ class VizColors {
   VizColors._();
 
   static const Color base = AppColors.deepCharcoal;
-  static const Color card = AppColors.charcoalNavy;
+  static const Color card = AppColors.charcoal;
   static const Color raised = AppColors.charcoalRaised;
   static const Color line = AppColors.darkBorder;
   static const Color text = AppColors.onDark;
   static const Color body = AppColors.onDarkBody;
   static const Color muted = AppColors.onDarkMuted;
-  static const Color skeleton = Color(0xFF3A4354);
+  static const Color skeleton = Color(0xFF4A463F);
 }
 
 class Skel extends StatelessWidget {
@@ -186,7 +186,7 @@ class PhoneFrame extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A3243),
+        color: const Color(0xFF36332F),
         borderRadius: BorderRadius.circular(width * 0.17),
         border: Border.all(color: edgeColor.withValues(alpha: 0.35)),
         boxShadow: [BoxShadow(color: edgeColor.withValues(alpha: 0.22), blurRadius: 34, offset: const Offset(0, 12))],
@@ -201,7 +201,7 @@ class PhoneFrame extends StatelessWidget {
               Container(
                 width: width * 0.3,
                 height: 7,
-                decoration: BoxDecoration(color: const Color(0xFF2A3243), borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(color: const Color(0xFF36332F), borderRadius: BorderRadius.circular(8)),
               ),
               Expanded(child: child),
             ],
@@ -309,7 +309,7 @@ class VisualCanvas extends StatelessWidget {
     super.key,
     required this.child,
     this.designSize = const Size(600, 400),
-    this.tones = const [Color(0xFF151B26), Color(0xFF1B2230)],
+    this.tones = const [Color(0xFF1E1C1A), Color(0xFF24221F)],
     this.blobs = const [AppColors.primary, AppColors.primaryTint],
     this.showGrid = true,
     this.fit = BoxFit.cover,

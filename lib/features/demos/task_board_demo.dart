@@ -101,7 +101,7 @@ class _TaskBoardDemoState extends State<TaskBoardDemo> {
                     color: DemoColors.panel,
                     borderRadius: BorderRadius.circular(_device == _Device.phone ? 28 : AppRadius.md),
                     border: Border.all(
-                      color: AppColors.electricBlue.withValues(alpha: 0.4),
+                      color: AppColors.demoAccent.withValues(alpha: 0.4),
                       width: _device == _Device.phone ? 6 : 1,
                     ),
                   ),
@@ -115,7 +115,7 @@ class _TaskBoardDemoState extends State<TaskBoardDemo> {
           Text(
             'Same Flutter widgets, three layouts: columns stack on phones and sit side by side on wider screens.',
             textAlign: TextAlign.center,
-            style: AppTypography.body(fontSize: 13, color: AppColors.blueGrey, height: 1.5),
+            style: AppTypography.body(fontSize: 13, color: AppColors.softGrey, height: 1.5),
           ),
         ],
       ),
@@ -239,7 +239,7 @@ class _Column extends StatelessWidget {
                           style: AppTypography.body(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.electricBlue,
+                            color: AppColors.demoAccent,
                             height: 1.2,
                           ),
                         ),

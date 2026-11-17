@@ -74,7 +74,7 @@ void main() {
         nav.pop();
         await tester.pump(const Duration(milliseconds: 500));
       }
-      for (final r in [AppRoutes.internship, for (final p in InternshipContent.programs) p.route]) {
+      for (final r in [AppRoutes.internship, AppRoutes.portfolio, AppRoutes.industries, for (final p in InternshipContent.programs) p.route]) {
         nav.pushNamed(r);
         await tester.pump(const Duration(milliseconds: 500));
         final s = find.byType(Scrollable).last;

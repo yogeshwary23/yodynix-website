@@ -4,7 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import 'smart_image.dart';
 
-/// A bundled photograph graded towards the midnight-navy palette so photos
+/// A bundled photograph graded towards the warm charcoal palette so photos
 /// from different sources sit together consistently. The grade lifts and the
 /// photo zooms slightly while [active] (hover / focus).
 class TintedPhoto extends StatelessWidget {
@@ -23,11 +23,11 @@ class TintedPhoto extends StatelessWidget {
   final String semanticLabel;
   final bool active;
 
-  /// Shown when the photo is not bundled; defaults to a branded navy panel.
+  /// Shown when the photo is not bundled; defaults to a branded charcoal panel.
   final Widget? fallback;
   final Alignment alignment;
 
-  /// Scales the navy grade; 0 shows the untouched photo.
+  /// Scales the charcoal grade; 0 shows the untouched photo.
   final double strength;
 
   @override
@@ -54,8 +54,8 @@ class TintedPhoto extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.midnightNavy.withValues(alpha: 0.10 * strength),
-                    AppColors.deepNavy.withValues(alpha: 0.42 * strength),
+                    AppColors.charcoal.withValues(alpha: 0.10 * strength),
+                    AppColors.deepCharcoal.withValues(alpha: 0.42 * strength),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

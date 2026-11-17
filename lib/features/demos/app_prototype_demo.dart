@@ -55,7 +55,7 @@ class _AppPrototypeDemoState extends State<AppPrototypeDemo> {
           const SizedBox(height: 10),
           Text(
             'Step ${_screen + 1} of 3 · ${_screens[_screen]}',
-            style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.electricBlueTint, height: 1.3),
+            style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.demoAccentTint, height: 1.3),
           ),
           const SizedBox(height: 16),
           FittedBox(
@@ -78,16 +78,16 @@ class _AppPrototypeDemoState extends State<AppPrototypeDemo> {
   }
 
   // Wireframe mode swaps colour and type for greys and outlines.
-  Color get _ink => _wireframe ? AppColors.blueGrey : DemoColors.ink;
-  Color get _accent => _wireframe ? AppColors.blueGrey : AppColors.electricBlue;
+  Color get _ink => _wireframe ? AppColors.softGrey : DemoColors.ink;
+  Color get _accent => _wireframe ? AppColors.softGrey : AppColors.demoAccent;
 
   TextStyle _text(double size, {bool bold = false, Color? color}) =>
       AppTypography.body(fontSize: size, fontWeight: bold ? FontWeight.w700 : FontWeight.w500, color: color ?? _ink, height: 1.3);
 
   BoxDecoration _box({bool selected = false}) => BoxDecoration(
-    color: _wireframe ? AppColors.white : (selected ? AppColors.electricBlue.withValues(alpha: 0.08) : DemoColors.page),
+    color: _wireframe ? AppColors.white : (selected ? AppColors.demoAccent.withValues(alpha: 0.08) : DemoColors.page),
     borderRadius: BorderRadius.circular(_wireframe ? 4 : 14),
-    border: Border.all(color: selected ? _accent : (_wireframe ? AppColors.blueGrey : DemoColors.line), width: selected ? 2 : 1),
+    border: Border.all(color: selected ? _accent : (_wireframe ? AppColors.softGrey : DemoColors.line), width: selected ? 2 : 1),
   );
 
   Widget _body() {
@@ -121,7 +121,7 @@ class _AppPrototypeDemoState extends State<AppPrototypeDemo> {
       child: FilledButton(
         onPressed: onTap,
         style: FilledButton.styleFrom(
-          backgroundColor: _wireframe ? AppColors.blueGrey : AppColors.electricBlue,
+          backgroundColor: _wireframe ? AppColors.softGrey : AppColors.demoAccent,
           disabledBackgroundColor: AppColors.lightGrey,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_wireframe ? 4 : 14)),
         ),
@@ -151,10 +151,10 @@ class _AppPrototypeDemoState extends State<AppPrototypeDemo> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: _wireframe ? AppColors.lightGrey : AppColors.electricBlue.withValues(alpha: 0.12),
+                        color: _wireframe ? AppColors.lightGrey : AppColors.demoAccent.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(_wireframe ? 2 : 12),
                       ),
-                      child: _wireframe ? null : const Icon(Icons.content_cut_rounded, color: AppColors.electricBlue, size: 20),
+                      child: _wireframe ? null : const Icon(Icons.content_cut_rounded, color: AppColors.demoAccent, size: 20),
                     ),
                     const SizedBox(width: 12),
                     Expanded(

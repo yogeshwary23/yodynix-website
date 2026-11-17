@@ -118,13 +118,13 @@ class _SupportAssistantDemoState extends State<SupportAssistantDemo> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  color: AppColors.midnightNavy,
+                  color: AppColors.charcoal,
                   child: Row(
                     children: [
                       Container(
                         width: 36,
                         height: 36,
-                        decoration: const BoxDecoration(color: AppColors.electricBlue, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: AppColors.demoAccent, shape: BoxShape.circle),
                         child: const Icon(Icons.support_agent_rounded, color: AppColors.white, size: 20),
                       ),
                       const SizedBox(width: 10),
@@ -143,7 +143,7 @@ class _SupportAssistantDemoState extends State<SupportAssistantDemo> {
                             ),
                             Text(
                               _handedOff ? 'Handed off to the support team' : 'Scripted demo · no AI model connected',
-                              style: AppTypography.body(fontSize: 12, color: AppColors.electricBlueTint, height: 1.3),
+                              style: AppTypography.body(fontSize: 12, color: AppColors.demoAccentTint, height: 1.3),
                             ),
                           ],
                         ),
@@ -182,7 +182,7 @@ class _SupportAssistantDemoState extends State<SupportAssistantDemo> {
                       IconButton.filled(
                         tooltip: 'Send',
                         onPressed: () => _send(_input.text),
-                        style: IconButton.styleFrom(backgroundColor: AppColors.electricBlue, minimumSize: const Size(48, 48)),
+                        style: IconButton.styleFrom(backgroundColor: AppColors.demoAccent, minimumSize: const Size(48, 48)),
                         icon: const Icon(Icons.send_rounded, color: AppColors.white),
                       ),
                     ],
@@ -213,7 +213,7 @@ class _Bubble extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: user ? AppColors.electricBlue : DemoColors.panel,
+          color: user ? AppColors.demoAccent : DemoColors.panel,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),

@@ -43,7 +43,7 @@ class AboutVisual extends StatelessWidget {
           Positioned(
             left: 30,
             top: 50,
-            child: _stage(Icons.lightbulb_outline_rounded, 'Idea', 'Understand the possibility', AppColors.charcoalNavy, 0.25),
+            child: _stage(Icons.lightbulb_outline_rounded, 'Idea', 'Understand the possibility', AppColors.charcoal, 0.25),
           ),
           Positioned(
             left: 320,
@@ -195,7 +195,7 @@ class InternshipVisual extends StatelessWidget {
                           for (final w in const [80.0, 60.0, 90.0, 50.0, 70.0])
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8),
-                              child: Skel(width: w, height: 5, color: const Color(0xFF3A4354)),
+                              child: Skel(width: w, height: 5, color: const Color(0xFF4A463F)),
                             ),
                         ],
                       ),

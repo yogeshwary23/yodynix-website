@@ -50,7 +50,7 @@ class WhyChooseSection extends StatelessWidget {
 }
 
 /// Photo-led card: the photograph fills the top band and zooms in on hover
-/// while the card lifts and its border glows cyan.
+/// while the card lifts and its border glows gold.
 class _PhotoCard extends StatefulWidget {
   const _PhotoCard({required this.point});
 
@@ -165,7 +165,7 @@ class _CardPhoto extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.midnightNavy.withValues(alpha: 0.04), AppColors.deepNavy.withValues(alpha: 0.28)],
+                  colors: [AppColors.charcoal.withValues(alpha: 0.04), AppColors.deepCharcoal.withValues(alpha: 0.28)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

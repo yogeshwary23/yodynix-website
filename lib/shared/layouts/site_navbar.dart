@@ -29,7 +29,8 @@ class SiteNavbar extends StatelessWidget {
     final nav = SectionNavigatorScope.of(context);
     final aboutPage = currentAboutPage(context);
     final service = currentService(context);
-    final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context));
+    final sitePage = currentSitePage(context);
+    final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context), page: sitePage);
     final compact = context.useCompactNav;
     final height = context.isMobile ? 68.0 : 80.0;
 
@@ -37,15 +38,15 @@ class SiteNavbar extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       height: height,
       decoration: BoxDecoration(
-        color: AppColors.deepCharcoal.withValues(alpha: nav.isScrolled ? 0.97 : 1),
-        border: Border(bottom: BorderSide(color: AppColors.champagneGold.withValues(alpha: 0.8))),
+        color: AppColors.white.withValues(alpha: nav.isScrolled ? 0.97 : 1),
+        border: const Border(bottom: BorderSide(color: AppColors.stone)),
         boxShadow: nav.isScrolled
-            ? [BoxShadow(color: AppColors.deepCharcoal.withValues(alpha: 0.18), blurRadius: 24, offset: const Offset(0, 6))]
+            ? [BoxShadow(color: AppColors.charcoal.withValues(alpha: 0.08), blurRadius: 24, offset: const Offset(0, 6))]
             : null,
       ),
-      // The bar is a dark band: the wordmark reads its colours from it.
+      // The bar is a light surface: the wordmark reads its colours from it.
       child: SurfaceTone(
-        colors: SurfaceColors.dark,
+        colors: SurfaceColors.light,
         child: Semantics(
           container: true,
           explicitChildNodes: true,
@@ -75,7 +76,10 @@ class SiteNavbar extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Row(
                         children: [
-                          for (final section in SiteSection.navigation)
+                          for (final section in SiteSection.navigation) ...[
+                            if (section == SiteSection.internship)
+                              for (final page in SitePage.values)
+                                _NavItem(label: page.label, active: page == sitePage, onTap: () => openSitePage(context, page)),
                             if (section == SiteSection.about)
                               _DropdownNavItem(
                                 label: 'About',
@@ -103,6 +107,7 @@ class SiteNavbar extends StatelessWidget {
                                     ? openInternshipPage(context)
                                     : goToSection(context, section),
                               ),
+                          ],
                           const SizedBox(width: 20),
                           _ClientLoginButton(onTap: () => showClientLoginDialog(context)),
                           const SizedBox(width: 12),
@@ -128,15 +133,19 @@ class SiteNavbar extends StatelessWidget {
                     builder: (context) => Tooltip(
                       message: 'Open menu',
                       child: Material(
-                        color: AppColors.charcoalRaised,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: const BorderRadius.all(Radius.circular(14)),
-                          side: BorderSide(color: AppColors.champagneGold.withValues(alpha: 0.35)),
+                        color: AppColors.pearlWhite,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(14)),
+                          side: BorderSide(color: AppColors.stone),
                         ),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(14),
                           onTap: () => Scaffold.of(context).openEndDrawer(),
-                          child: const SizedBox(width: 46, height: 46, child: Icon(Icons.menu_rounded, color: AppColors.white)),
+                          child: const SizedBox(
+                            width: 46,
+                            height: 46,
+                            child: Icon(Icons.menu_rounded, color: AppColors.charcoal),
+                          ),
                         ),
                       ),
                     ),
@@ -158,8 +167,10 @@ bool Function(SiteSection) _activeResolver(
   AboutPage? aboutPage,
   ServiceOffering? service, {
   bool internship = false,
+  SitePage? page,
 }) {
   return (s) {
+    if (page != null) return false;
     if (aboutPage != null) return s == SiteSection.about;
     if (service != null) return s == SiteSection.services;
     if (internship) return s == SiteSection.internship;
@@ -208,20 +219,26 @@ class _NavItemState extends State<_NavItem> {
               children: [
                 // Balances the underline below so labels stay vertically centred.
                 const SizedBox(height: 9),
-                AnimatedDefaultTextStyle(
+                // The label lifts a pixel as the gold underline grows beneath it.
+                AnimatedSlide(
+                  offset: Offset(0, hover && !widget.active ? -0.06 : 0),
                   duration: const Duration(milliseconds: 200),
-                  style: AppTypography.body(
-                    fontSize: 14.5,
-                    fontWeight: widget.active ? FontWeight.w700 : FontWeight.w500,
-                    color: widget.active || hover ? AppColors.champagneGold : AppColors.white,
-                    height: 1.2,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(widget.label),
-                      if (widget.trailing != null) ...[const SizedBox(width: 3), widget.trailing!],
-                    ],
+                  curve: Curves.easeOut,
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    style: AppTypography.body(
+                      fontSize: 14.5,
+                      fontWeight: widget.active ? FontWeight.w700 : FontWeight.w500,
+                      color: widget.active || hover ? AppColors.accent : AppColors.charcoal,
+                      height: 1.2,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(widget.label),
+                        if (widget.trailing != null) ...[const SizedBox(width: 3), widget.trailing!],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -230,9 +247,12 @@ class _NavItemState extends State<_NavItem> {
                   curve: Curves.easeOut,
                   height: 3,
                   width: widget.active ? 22 : (hover ? 12 : 0),
+                  // Liquid-gold indicator with a soft glow once active.
                   decoration: BoxDecoration(
-                    color: widget.active ? AppColors.champagneGold : AppColors.champagneGold.withValues(alpha: 0.45),
+                    gradient: widget.active ? AppColors.liquidGold : null,
+                    color: widget.active ? null : AppColors.champagneGold.withValues(alpha: 0.45),
                     borderRadius: BorderRadius.circular(3),
+                    boxShadow: widget.active ? AppColors.glowShadow(0.9) : null,
                   ),
                 ),
               ],
@@ -372,7 +392,7 @@ class _DropdownNavItemState extends State<_DropdownNavItem> with SingleTickerPro
                   child: Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 18,
-                    color: widget.active || _isOpen ? AppColors.champagneGold : AppColors.white.withValues(alpha: 0.7),
+                    color: widget.active || _isOpen ? AppColors.accent : AppColors.charcoal.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -403,9 +423,7 @@ class _AboutMenu extends StatelessWidget {
           color: AppColors.card,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(color: AppColors.goldLine),
-          boxShadow: [
-            BoxShadow(color: AppColors.charcoalNavy.withValues(alpha: 0.14), blurRadius: 40, offset: const Offset(0, 22)),
-          ],
+          boxShadow: [BoxShadow(color: AppColors.charcoal.withValues(alpha: 0.14), blurRadius: 40, offset: const Offset(0, 22))],
         ),
         child: Material(
           type: MaterialType.transparency,
@@ -570,9 +588,7 @@ class _ServicesMenu extends StatelessWidget {
           color: AppColors.card,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(color: AppColors.goldLine),
-          boxShadow: [
-            BoxShadow(color: AppColors.charcoalNavy.withValues(alpha: 0.14), blurRadius: 40, offset: const Offset(0, 22)),
-          ],
+          boxShadow: [BoxShadow(color: AppColors.charcoal.withValues(alpha: 0.14), blurRadius: 40, offset: const Offset(0, 22))],
         ),
         child: Material(
           type: MaterialType.transparency,
@@ -705,8 +721,8 @@ class _ClientLoginButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.white,
-        overlayColor: AppColors.champagneGold,
+        foregroundColor: AppColors.charcoal,
+        overlayColor: AppColors.primary,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         shape: const StadiumBorder(),
         textStyle: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, height: 1.2),
@@ -725,7 +741,8 @@ class MobileNavDrawer extends StatelessWidget {
     final nav = SectionNavigatorScope.of(context);
     final aboutPage = currentAboutPage(context);
     final service = currentService(context);
-    final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context));
+    final sitePage = currentSitePage(context);
+    final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context), page: sitePage);
 
     // Closes the drawer first; [context] stays valid for the follow-up action.
     void navigate(VoidCallback action) {
@@ -757,7 +774,14 @@ class MobileNavDrawer extends StatelessWidget {
               Expanded(
                 child: ListView(
                   children: [
-                    for (final section in SiteSection.navigation)
+                    for (final section in SiteSection.navigation) ...[
+                      if (section == SiteSection.internship)
+                        for (final page in SitePage.values)
+                          _DrawerItem(
+                            label: page.label,
+                            active: page == sitePage,
+                            onTap: () => navigate(() => openSitePage(context, page)),
+                          ),
                       if (section == SiteSection.about)
                         _DrawerGroup(
                           label: 'About',
@@ -802,6 +826,7 @@ class MobileNavDrawer extends StatelessWidget {
                             () => section == SiteSection.internship ? openInternshipPage(context) : goToSection(context, section),
                           ),
                         ),
+                    ],
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/routing/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
@@ -12,6 +13,8 @@ import '../../repositories/content/company_content.dart';
 import '../../repositories/content/pillar_pages_content.dart';
 import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/layouts/subpage_scaffold.dart';
+import '../../shared/three/scene3d.dart';
+import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/buttons.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
@@ -135,7 +138,7 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = SurfaceColors.dark;
+    const tone = SurfaceColors.light;
     final desktop = context.isDesktop;
 
     final copy = Column(
@@ -168,9 +171,9 @@ class _Hero extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.06),
+                    color: AppColors.cardTile,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.darkBorder),
+                    border: Border.all(color: AppColors.goldLine),
                   ),
                   child: Icon(icon, size: 17, color: tone.accent),
                 ),
@@ -217,12 +220,26 @@ class _Hero extends StatelessWidget {
         ),
       ),
     );
+    // Technology & Innovation shows the 3D ecosystem in place of its photo.
+    final visual = content.route == AppRoutes.technologyInnovation
+        ? Reveal(
+            delay: const Duration(milliseconds: 120),
+            child: AspectRatio(
+              aspectRatio: desktop ? 1.1 : 1.4,
+              child: Section3DScene(
+                scene: Scene3D.ecosystem,
+                semanticLabel: 'A rotating ecosystem of metallic and glass technology components linked to a gold hub.',
+                fallback: image,
+              ),
+            ),
+          )
+        : image;
 
     return SectionShell(
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
       tone: tone,
-      gradient: AppColors.darkBandGradient,
+      background: AppColors.pearlWhite,
       glowAt: const Alignment(0.8, -0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -235,13 +252,13 @@ class _Hero extends StatelessWidget {
               children: [
                 Expanded(flex: 11, child: Reveal(child: copy)),
                 const SizedBox(width: 56),
-                Expanded(flex: 10, child: image),
+                Expanded(flex: 10, child: visual),
               ],
             )
           else ...[
             Reveal(child: copy),
             const SizedBox(height: 36),
-            image,
+            visual,
           ],
           SizedBox(height: context.responsive(mobile: 36.0, desktop: 56.0)),
           Reveal(
@@ -421,7 +438,7 @@ class _OfferingPhotoState extends State<_OfferingPhoto> {
           boxShadow: [
             if (_hover)
               BoxShadow(
-                color: AppColors.charcoalNavy.withValues(alpha: 0.14),
+                color: AppColors.charcoal.withValues(alpha: 0.14),
                 blurRadius: 48,
                 spreadRadius: -6,
                 offset: const Offset(0, 20),
@@ -443,7 +460,7 @@ class _OfferingPhotoState extends State<_OfferingPhoto> {
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(10, 8, 14, 8),
                     decoration: BoxDecoration(
-                      color: AppColors.deepNavy.withValues(alpha: 0.78),
+                      color: AppColors.deepCharcoal.withValues(alpha: 0.78),
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                       border: Border.all(color: AppColors.white.withValues(alpha: 0.16)),
                     ),
@@ -510,7 +527,7 @@ class _OfferingDetails extends StatelessWidget {
         const SizedBox(height: 14),
         Text(
           offering.tagline,
-          style: AppTypography.body(fontSize: 16.5, fontWeight: FontWeight.w600, color: AppColors.charcoalNavy, height: 1.5),
+          style: AppTypography.body(fontSize: 16.5, fontWeight: FontWeight.w600, color: AppColors.charcoal, height: 1.5),
         ),
         const SizedBox(height: 12),
         Text(offering.description, style: AppTypography.body(fontSize: 15.5, height: 1.75)),

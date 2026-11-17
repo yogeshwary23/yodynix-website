@@ -7,6 +7,8 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
+import '../../shared/three/interactive_3d_object.dart';
+import '../../shared/three/scene3d.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
@@ -19,9 +21,19 @@ class IntroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A floating architecture of glass planes and metal beams: how YODYNIX
+    // structures ideas into dependable systems.
     const visual = Reveal(
       delay: Duration(milliseconds: 120),
-      child: AspectRatio(aspectRatio: 560 / 520, child: IntroVisual()),
+      child: AspectRatio(
+        aspectRatio: 560 / 520,
+        child: Interactive3DObject(
+          scene: Scene3D.about,
+          semanticLabel: 'A floating architectural structure of glass panels, chrome beams and a gold block on a white plinth.',
+          background: AppColors.background,
+          fallback: IntroVisual(),
+        ),
+      ),
     );
 
     return SectionShell(
@@ -412,7 +424,7 @@ class _PillarCardState extends State<_PillarCard> {
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.transparent, Color(0x40151B26)],
+                  colors: [Colors.transparent, Color(0x401E1C1A)],
                   stops: [0.6, 1],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

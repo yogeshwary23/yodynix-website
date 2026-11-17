@@ -31,7 +31,7 @@ class FinalCtaSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(34),
             boxShadow: [
               BoxShadow(
-                color: AppColors.charcoalNavy.withValues(alpha: 0.22),
+                color: AppColors.charcoal.withValues(alpha: 0.22),
                 blurRadius: 60,
                 offset: const Offset(0, 24),
                 spreadRadius: -12,
@@ -43,7 +43,7 @@ class FinalCtaSection extends StatelessWidget {
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.charcoalNavy, AppColors.deepCharcoal],
+                  colors: [AppColors.charcoal, AppColors.deepCharcoal],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

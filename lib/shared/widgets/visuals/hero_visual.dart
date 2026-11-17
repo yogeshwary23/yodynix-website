@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import 'visual_primitives.dart';
 
-// Hero palette: champagne gold, balanced with muted steel blue and soft silver.
+// Hero palette: champagne gold, balanced with warm taupe and platinum.
 const _gold = AppColors.champagneGold; // #C6A46A
-const _softGold = AppColors.softChampagne; // #D6BD8F
-const _steel = AppColors.steelBlue; // #60758F
-const _silver = AppColors.softGrey; // #A8B0BC
-const _edge = Color(0x8C60758F); // silver-blue hairline
-const _tileFill = Color(0xFF202735);
+const _softGold = AppColors.softChampagne; // #E3CFA3
+const _steel = AppColors.taupe; // #8A8277
+const _silver = AppColors.softGrey; // #B3ADA3
+const _edge = Color(0x8CA8A39A); // platinum hairline
+const _tileFill = Color(0xFF2A2826);
 const _goldGradient = LinearGradient(colors: [_gold, _softGold], begin: Alignment.topLeft, end: Alignment.bottomRight);
 
 /// Cinematic hero composition: a glowing "innovation core" inside tilted
@@ -101,7 +101,7 @@ class _Core extends StatelessWidget {
         gradient: const RadialGradient(
           center: Alignment(-0.3, -0.35),
           radius: 0.95,
-          colors: [Color(0xFFE6D4B1), _softGold, _gold, AppColors.antiqueGold, Color(0xFF151B26)],
+          colors: [Color(0xFFE6D4B1), _softGold, _gold, AppColors.antiqueGold, Color(0xFF1E1C1A)],
           stops: [0, 0.22, 0.45, 0.8, 1],
         ),
         boxShadow: [
@@ -123,7 +123,7 @@ class _Core extends StatelessWidget {
           height: size * 0.52,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.deepNavy.withValues(alpha: 0.55),
+            color: AppColors.deepCharcoal.withValues(alpha: 0.55),
             border: Border.all(color: AppColors.white.withValues(alpha: 0.35), width: 1.4),
           ),
           child: const Icon(Icons.auto_awesome_rounded, color: AppColors.white, size: 46),
@@ -148,7 +148,7 @@ class _GlassTile extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [const Color(0xFF2A3243).withValues(alpha: 0.92), _tileFill.withValues(alpha: 0.92)],
+          colors: [const Color(0xFF36332F).withValues(alpha: 0.92), _tileFill.withValues(alpha: 0.92)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -215,9 +215,9 @@ class _AiTile extends StatelessWidget {
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Skel(width: 150, height: 4, color: Color(0xFF3A4354)),
+                Skel(width: 150, height: 4, color: Color(0xFF4A463F)),
                 SizedBox(height: 5),
-                Skel(width: 112, height: 4, color: Color(0xFF3A4354)),
+                Skel(width: 112, height: 4, color: Color(0xFF4A463F)),
               ],
             ),
           ),
@@ -338,7 +338,7 @@ class _MobileTile extends StatelessWidget {
                       decoration: BoxDecoration(shape: BoxShape.circle, color: i == 0 ? _gold : VizColors.skeleton),
                     ),
                     const SizedBox(width: 6),
-                    Skel(width: 50.0 - i * 8, height: 4, color: const Color(0xFF3A4354)),
+                    Skel(width: 50.0 - i * 8, height: 4, color: const Color(0xFF4A463F)),
                   ],
                 ),
               ),

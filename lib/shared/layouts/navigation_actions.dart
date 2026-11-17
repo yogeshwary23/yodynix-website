@@ -94,6 +94,41 @@ void openInternshipPage(BuildContext context, {String? slug, bool apply = false}
   }
 }
 
+/// Top-level pages listed in the navigation beside the homepage sections.
+enum SitePage {
+  portfolio('Portfolio', AppRoutes.portfolio),
+  industries('Industries', AppRoutes.industries);
+
+  const SitePage(this.label, this.route);
+
+  final String label;
+  final String route;
+}
+
+/// The [SitePage] shown by the route that owns [context], if any.
+SitePage? currentSitePage(BuildContext context) {
+  final name = ModalRoute.of(context)?.settings.name;
+  if (name == null) return null;
+  final route = AppRoutes.resolve(name);
+  for (final p in SitePage.values) {
+    if (p.route == route) return p;
+  }
+  return null;
+}
+
+/// Opens a [SitePage], pushed from the homepage and replacing any other
+/// sub-page, like [openServicePage].
+void openSitePage(BuildContext context, SitePage page) {
+  if (currentSitePage(context) == page) return;
+  final current = ModalRoute.of(context);
+  final navigator = Navigator.of(context);
+  if (current == null || current.isFirst) {
+    navigator.pushNamed(page.route);
+  } else {
+    navigator.pushReplacementNamed(page.route);
+  }
+}
+
 void showClientLoginDialog(BuildContext context) {
   showSiteDialog(
     context,

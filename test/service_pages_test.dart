@@ -42,17 +42,24 @@ void main() {
 
   final servicesMenu = find.byWidgetPredicate((w) => w is Semantics && w.properties.label == 'Services menu');
 
-  test('navigation has no Students or Portfolio items, in the agreed order', () {
+  test('homepage section navigation has no Students item, in the agreed order', () {
     expect(
       [for (final s in SiteSection.values) ?s.navLabel],
       ['Home', 'About', 'Services', 'Expertise', 'Internship', 'Contact'],
     );
   });
 
-  test('retired Students and Portfolio links redirect home', () {
-    for (final r in ['/students', '/student-development', '/portfolio', '/portfolio/', '/portfolio/smart-crm']) {
+  test('retired Students links redirect home', () {
+    for (final r in ['/students', '/student-development']) {
       expect(AppRoutes.resolve(r), AppRoutes.home, reason: r);
     }
+  });
+
+  test('Portfolio links, including old project URLs, open the Portfolio page', () {
+    for (final r in ['/portfolio', '/portfolio/', '/portfolio/smart-crm', '/projects']) {
+      expect(AppRoutes.resolve(r), AppRoutes.portfolio, reason: r);
+    }
+    expect(AppRoutes.resolve('/industries/'), AppRoutes.industries);
   });
 
   test('every service has its own route, page content and 4–5 sample projects', () {
@@ -124,7 +131,8 @@ void main() {
     await pumpAt(tester, const Size(1440, 900));
     final navServices = find.descendant(of: find.byType(SiteNavbar), matching: find.text('Services'));
     expect(find.descendant(of: find.byType(SiteNavbar), matching: find.text('Students')), findsNothing);
-    expect(find.descendant(of: find.byType(SiteNavbar), matching: find.text('Portfolio')), findsNothing);
+    expect(find.descendant(of: find.byType(SiteNavbar), matching: find.text('Portfolio')), findsOneWidget);
+    expect(find.descendant(of: find.byType(SiteNavbar), matching: find.text('Industries')), findsOneWidget);
 
     await tester.tap(navServices.last);
     await settle(tester);
@@ -196,7 +204,8 @@ void main() {
     await settle(tester);
     final drawer = find.byType(Drawer);
     expect(find.descendant(of: drawer, matching: find.text('Students')), findsNothing);
-    expect(find.descendant(of: drawer, matching: find.text('Portfolio')), findsNothing);
+    expect(find.descendant(of: drawer, matching: find.text('Portfolio')), findsOneWidget);
+    expect(find.descendant(of: drawer, matching: find.text('Industries')), findsOneWidget);
     expect(find.descendant(of: drawer, matching: find.text('Internship')), findsOneWidget);
 
     await tester.tap(find.descendant(of: drawer, matching: find.text('Services')));

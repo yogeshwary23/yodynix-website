@@ -6,19 +6,19 @@ import '../../core/theme/app_typography.dart';
 
 /// Shared building blocks for the in-site demos. Demos stay within the
 /// YODYNIX palette; "client-style" demos use the light tokens (white, light
-/// grey) with navy text so they read as a separate product.
+/// grey) with charcoal text so they read as a separate product.
 
 /// Light demo surface colours, all from the brand palette.
 class DemoColors {
   DemoColors._();
 
   static const Color page = AppColors.white;
-  static const Color panel = Color(0xFFF5F6F8); // white tinted toward light grey
+  static const Color panel = Color(0xFFF6F4F0); // white tinted toward warm grey
   static const Color line = AppColors.lightGrey;
-  static const Color ink = AppColors.midnightNavy;
-  static const Color text = AppColors.surfaceNavy;
-  static const Color muted = AppColors.blueGrey;
-  static const Color accent = AppColors.electricBlue;
+  static const Color ink = AppColors.charcoal;
+  static const Color text = AppColors.charcoalRaised;
+  static const Color muted = AppColors.softGrey;
+  static const Color accent = AppColors.demoAccent;
 }
 
 /// A browser-style window around a demo, with a title bar and a "Sample"
@@ -48,10 +48,10 @@ class DemoWindow extends StatelessWidget {
             Container(
               height: 42,
               padding: const EdgeInsets.symmetric(horizontal: 14),
-              color: AppColors.surfaceNavy,
+              color: AppColors.charcoalRaised,
               child: Row(
                 children: [
-                  for (final c in [AppColors.blueGrey, AppColors.electricBlueTint, AppColors.electricBlue]) ...[
+                  for (final c in [AppColors.softGrey, AppColors.demoAccentTint, AppColors.demoAccent]) ...[
                     Container(
                       width: 10,
                       height: 10,
@@ -77,7 +77,7 @@ class DemoWindow extends StatelessWidget {
                 ],
               ),
             ),
-            ColoredBox(color: light ? DemoColors.page : AppColors.deepNavy, child: child),
+            ColoredBox(color: light ? DemoColors.page : AppColors.deepCharcoal, child: child),
           ],
         ),
       ),
@@ -93,16 +93,16 @@ class SampleTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.electricBlue.withValues(alpha: 0.18),
+        color: AppColors.demoAccent.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: AppColors.electricBlueTint.withValues(alpha: 0.5)),
+        border: Border.all(color: AppColors.demoAccentTint.withValues(alpha: 0.5)),
       ),
       child: Text(
         'SAMPLE DEMO',
         style: AppTypography.body(
           fontSize: 10,
           fontWeight: FontWeight.w700,
-          color: AppColors.electricBlueTint,
+          color: AppColors.demoAccentTint,
           letterSpacing: 1,
           height: 1.2,
         ),
@@ -126,12 +126,12 @@ class PhoneFrame extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.deepNavy,
+        color: AppColors.deepCharcoal,
         borderRadius: BorderRadius.circular(44),
-        border: Border.all(color: AppColors.electricBlue.withValues(alpha: 0.4), width: 1.5),
+        border: Border.all(color: AppColors.demoAccent.withValues(alpha: 0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: AppColors.electricBlue.withValues(alpha: 0.16),
+            color: AppColors.demoAccent.withValues(alpha: 0.16),
             blurRadius: 60,
             spreadRadius: -10,
             offset: const Offset(0, 24),
@@ -152,7 +152,7 @@ class PhoneFrame extends StatelessWidget {
                 child: Container(
                   width: 86,
                   height: 22,
-                  decoration: BoxDecoration(color: AppColors.deepNavy, borderRadius: BorderRadius.circular(12)),
+                  decoration: BoxDecoration(color: AppColors.deepCharcoal, borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
@@ -200,27 +200,27 @@ class DemoField extends StatelessWidget {
       maxLines: maxLines,
       onFieldSubmitted: onSubmitted,
       style: AppTypography.body(fontSize: 14.5, color: ink, height: 1.4),
-      cursorColor: AppColors.electricBlue,
+      cursorColor: AppColors.demoAccent,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         isDense: true,
         filled: true,
-        fillColor: light ? DemoColors.panel : AppColors.surfaceNavy,
+        fillColor: light ? DemoColors.panel : AppColors.charcoalRaised,
         labelStyle: AppTypography.body(fontSize: 14, color: light ? DemoColors.muted : AppColors.lightGrey, height: 1.2),
         hintStyle: AppTypography.body(fontSize: 14, color: DemoColors.muted, height: 1.2),
         floatingLabelStyle: AppTypography.body(
           fontSize: 13,
           fontWeight: FontWeight.w600,
-          color: AppColors.electricBlue,
+          color: AppColors.demoAccent,
           height: 1.2,
         ),
-        errorStyle: AppTypography.body(fontSize: 12, color: AppColors.electricBlue, fontWeight: FontWeight.w600, height: 1.2),
+        errorStyle: AppTypography.body(fontSize: 12, color: AppColors.demoAccent, fontWeight: FontWeight.w600, height: 1.2),
         border: border(light ? DemoColors.line : AppColors.darkBorder),
         enabledBorder: border(light ? DemoColors.line : AppColors.darkBorder),
-        focusedBorder: border(AppColors.electricBlue),
-        errorBorder: border(AppColors.electricBlue),
-        focusedErrorBorder: border(AppColors.electricBlue),
+        focusedBorder: border(AppColors.demoAccent),
+        errorBorder: border(AppColors.demoAccent),
+        focusedErrorBorder: border(AppColors.demoAccent),
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       ),
     );
@@ -244,9 +244,9 @@ class DemoChip extends StatelessWidget {
       button: true,
       selected: selected,
       child: Material(
-        color: selected ? AppColors.electricBlue : (light ? DemoColors.panel : AppColors.surfaceNavy),
+        color: selected ? AppColors.demoAccent : (light ? DemoColors.panel : AppColors.charcoalRaised),
         shape: StadiumBorder(
-          side: BorderSide(color: selected ? AppColors.electricBlue : (light ? DemoColors.line : AppColors.darkBorder)),
+          side: BorderSide(color: selected ? AppColors.demoAccent : (light ? DemoColors.line : AppColors.darkBorder)),
         ),
         child: InkWell(
           customBorder: const StadiumBorder(),
@@ -275,7 +275,7 @@ class DemoChip extends StatelessWidget {
   }
 }
 
-/// Primary demo action button (electric blue).
+/// Primary demo action button (bronze demo accent).
 class DemoButton extends StatelessWidget {
   const DemoButton({
     super.key,
@@ -311,8 +311,8 @@ class DemoButton extends StatelessWidget {
         ? OutlinedButton(
             onPressed: onPressed,
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.electricBlue,
-              side: const BorderSide(color: AppColors.electricBlue),
+              foregroundColor: AppColors.demoAccent,
+              side: const BorderSide(color: AppColors.demoAccent),
               padding: padding,
               shape: shape,
               textStyle: textStyle,
@@ -322,9 +322,9 @@ class DemoButton extends StatelessWidget {
         : FilledButton(
             onPressed: onPressed,
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.electricBlue,
+              backgroundColor: AppColors.demoAccent,
               foregroundColor: AppColors.white,
-              disabledBackgroundColor: AppColors.blueGrey,
+              disabledBackgroundColor: AppColors.softGrey,
               padding: padding,
               shape: shape,
               textStyle: textStyle,

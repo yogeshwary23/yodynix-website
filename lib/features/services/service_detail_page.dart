@@ -14,6 +14,8 @@ import '../../repositories/content/service_pages_content.dart';
 import '../../repositories/content/services_content.dart';
 import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/layouts/subpage_scaffold.dart';
+import '../../services/asset_registry.dart';
+import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/buttons.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
@@ -161,7 +163,7 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = SurfaceColors.dark;
+    const tone = SurfaceColors.light;
     final desktop = context.isDesktop;
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,24 +205,19 @@ class _Hero extends StatelessWidget {
       ],
     );
 
+    // The service's 3D concept, live, on the same pearl surface as the copy.
     final image = Reveal(
       delay: const Duration(milliseconds: 120),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.35),
-              blurRadius: 70,
-              spreadRadius: -12,
-              offset: const Offset(0, 24),
-            ),
-          ],
-        ),
-        child: MediaFrame(
-          radius: AppRadius.xl,
-          aspectRatio: desktop ? 5 / 4 : 16 / 10,
-          child: TintedPhoto(basePath: AssetPaths.service(service.id), semanticLabel: service.imageAlt, strength: 0.5),
+      child: AspectRatio(
+        aspectRatio: desktop ? 5 / 4 : 16 / 11,
+        child: Service3DVisual(
+          serviceId: service.id,
+          background: AppColors.pearlWhite,
+          fallback: MediaFrame(
+            radius: AppRadius.xl,
+            aspectRatio: desktop ? 5 / 4 : 16 / 11,
+            child: TintedPhoto(basePath: AssetPaths.service(service.id), semanticLabel: service.imageAlt, strength: 0.5),
+          ),
         ),
       ),
     );
@@ -229,8 +226,7 @@ class _Hero extends StatelessWidget {
       topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
       bottomPadding: context.responsive(mobile: 56.0, desktop: 88.0),
       tone: tone,
-      gradient: AppColors.darkBandGradient,
-      glowAt: const Alignment(0.8, -0.6),
+      background: AppColors.pearlWhite,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -512,7 +508,7 @@ class _ProcessCard extends StatelessWidget {
                   style: AppTypography.display(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.cardAccent),
                 ),
                 const Spacer(),
-                Icon(step.icon, size: 22, color: AppColors.charcoalNavy),
+                Icon(step.icon, size: 22, color: AppColors.charcoal),
               ],
             ),
             const SizedBox(height: 14),
@@ -543,7 +539,7 @@ class _StatusBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         // Opaque enough to stay legible over light demo screenshots.
-        color: AppColors.deepNavy.withValues(alpha: live ? 0.9 : 0.78),
+        color: AppColors.deepCharcoal.withValues(alpha: live ? 0.9 : 0.78),
         borderRadius: BorderRadius.circular(AppRadius.pill),
         border: Border.all(color: AppColors.white.withValues(alpha: live ? 0.24 : 0.14)),
       ),
@@ -833,16 +829,27 @@ class _FeaturedProject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = MediaFrame(
-      radius: AppRadius.xl,
-      aspectRatio: 16 / 10,
-      child: TintedPhoto(
-        basePath: project.image,
-        semanticLabel: project.imageAlt,
-        strength: project.hasDemo ? 0.1 : 0.4,
-        alignment: project.hasDemo ? Alignment.topCenter : Alignment.center,
-      ),
-    );
+    final screenshot = AssetRegistry.instance.resolve(project.image);
+    // Working demos are shown on a 3D laptop using their real screenshot;
+    // concepts keep a flat image so they never read as shipped products.
+    final Widget image = project.hasDemo && screenshot != null
+        ? AspectRatio(
+            aspectRatio: 16 / 11,
+            child: Portfolio3DPreview(
+              imageAsset: screenshot,
+              semanticLabel: '${project.imageAlt} Shown on a laptop screen.',
+            ),
+          )
+        : MediaFrame(
+            radius: AppRadius.xl,
+            aspectRatio: 16 / 10,
+            child: TintedPhoto(
+              basePath: project.image,
+              semanticLabel: project.imageAlt,
+              strength: project.hasDemo ? 0.1 : 0.4,
+              alignment: project.hasDemo ? Alignment.topCenter : Alignment.center,
+            ),
+          );
     final details = _ProjectDetailsBody(project: project);
 
     return Reveal(
@@ -900,14 +907,14 @@ class ServiceProjectCta extends StatelessWidget {
               padding: EdgeInsets.all(context.responsive(mobile: 28.0, desktop: 56.0)),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [AppColors.charcoalNavy, AppColors.deepCharcoal],
+                  colors: [AppColors.charcoal, AppColors.deepCharcoal],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(AppRadius.xl),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.charcoalNavy.withValues(alpha: 0.22),
+                    color: AppColors.charcoal.withValues(alpha: 0.22),
                     blurRadius: 60,
                     spreadRadius: -12,
                     offset: const Offset(0, 24),
@@ -1038,7 +1045,7 @@ class _ServiceLinkState extends State<_ServiceLink> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(s.icon, size: 17, color: _hover ? AppColors.accent : AppColors.charcoalNavy),
+                Icon(s.icon, size: 17, color: _hover ? AppColors.accent : AppColors.charcoal),
                 const SizedBox(width: 8),
                 Text(
                   s.title,

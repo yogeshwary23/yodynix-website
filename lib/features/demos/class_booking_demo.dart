@@ -77,7 +77,7 @@ class _ClassBookingDemoState extends State<ClassBookingDemo> {
                     padding: const EdgeInsets.fromLTRB(20, 44, 20, 18),
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.midnightNavy, AppColors.surfaceNavy],
+                        colors: [AppColors.charcoal, AppColors.charcoalRaised],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -101,7 +101,7 @@ class _ClassBookingDemoState extends State<ClassBookingDemo> {
                     Container(
                       margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: BoxDecoration(color: AppColors.midnightNavy, borderRadius: BorderRadius.circular(AppRadius.sm)),
+                      decoration: BoxDecoration(color: AppColors.charcoal, borderRadius: BorderRadius.circular(AppRadius.sm)),
                       child: Text(
                         _toast!,
                         style: AppTypography.body(
@@ -115,7 +115,7 @@ class _ClassBookingDemoState extends State<ClassBookingDemo> {
                   NavigationBarTheme(
                     data: NavigationBarThemeData(
                       backgroundColor: DemoColors.page,
-                      indicatorColor: AppColors.electricBlue.withValues(alpha: 0.14),
+                      indicatorColor: AppColors.demoAccent.withValues(alpha: 0.14),
                       labelTextStyle: WidgetStatePropertyAll(
                         AppTypography.body(fontSize: 11.5, fontWeight: FontWeight.w600, color: DemoColors.ink, height: 1.2),
                       ),
@@ -130,17 +130,17 @@ class _ClassBookingDemoState extends State<ClassBookingDemo> {
                       destinations: [
                         const NavigationDestination(
                           icon: Icon(Icons.calendar_month_outlined, color: DemoColors.muted),
-                          selectedIcon: Icon(Icons.calendar_month_rounded, color: AppColors.electricBlue),
+                          selectedIcon: Icon(Icons.calendar_month_rounded, color: AppColors.demoAccent),
                           label: 'Classes',
                         ),
                         NavigationDestination(
                           icon: Badge(
                             isLabelVisible: booked.isNotEmpty,
-                            backgroundColor: AppColors.electricBlue,
+                            backgroundColor: AppColors.demoAccent,
                             label: Text('${booked.length}'),
                             child: const Icon(Icons.confirmation_number_outlined, color: DemoColors.muted),
                           ),
-                          selectedIcon: const Icon(Icons.confirmation_number_rounded, color: AppColors.electricBlue),
+                          selectedIcon: const Icon(Icons.confirmation_number_rounded, color: AppColors.demoAccent),
                           label: 'My Bookings',
                         ),
                       ],
@@ -235,7 +235,7 @@ class _SessionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: DemoColors.page,
         borderRadius: BorderRadius.circular(AppRadius.sm + 2),
-        border: Border.all(color: s.booked ? AppColors.electricBlue : DemoColors.line),
+        border: Border.all(color: s.booked ? AppColors.demoAccent : DemoColors.line),
       ),
       child: Row(
         children: [
@@ -248,7 +248,7 @@ class _SessionCard extends StatelessWidget {
                   style: AppTypography.body(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.electricBlue,
+                    color: AppColors.demoAccent,
                     height: 1.3,
                   ),
                 ),
@@ -271,8 +271,8 @@ class _SessionCard extends StatelessWidget {
                 ? OutlinedButton(
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.electricBlue,
-                      side: const BorderSide(color: AppColors.electricBlue),
+                      foregroundColor: AppColors.demoAccent,
+                      side: const BorderSide(color: AppColors.demoAccent),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                     ),
                     child: const Text('Cancel'),
@@ -280,7 +280,7 @@ class _SessionCard extends StatelessWidget {
                 : FilledButton(
                     onPressed: full ? null : onTap,
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.electricBlue,
+                      backgroundColor: AppColors.demoAccent,
                       disabledBackgroundColor: DemoColors.line,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                     ),

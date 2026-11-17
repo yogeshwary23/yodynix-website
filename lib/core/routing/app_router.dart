@@ -5,9 +5,11 @@ import '../../features/demos/demo_catalog.dart';
 import '../../features/demos/demo_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/home/legal_page.dart';
+import '../../features/industries/industries_page.dart';
 import '../../features/internship/internship_page.dart';
 import '../../features/internship/internship_program_page.dart';
 import '../../features/pillars/pillar_detail_page.dart';
+import '../../features/portfolio/portfolio_page.dart';
 import '../../features/services/service_detail_page.dart';
 import '../../models/about_page.dart';
 import '../../models/site_section.dart';
@@ -44,6 +46,10 @@ class AppRouter {
       page = InternshipPage(scrollToApply: settings.arguments == InternshipPageArgs.apply);
     } else if (program != null) {
       page = InternshipProgramPage(program: program);
+    } else if (name == AppRoutes.portfolio) {
+      page = const PortfolioPage();
+    } else if (name == AppRoutes.industries) {
+      page = const IndustriesPage();
     } else if (name == AppRoutes.privacy) {
       page = const LegalPage(title: 'Privacy Policy');
     } else if (name == AppRoutes.terms) {
@@ -54,11 +60,27 @@ class AppRouter {
     return PageRouteBuilder<void>(
       // Canonical name, so redirected links (e.g. `/team`) show the page's own URL.
       settings: RouteSettings(name: name, arguments: settings.arguments),
-      transitionDuration: AppMotion.page,
+      transitionDuration: AppMotion.pageEnter,
+      reverseTransitionDuration: AppMotion.page,
       pageBuilder: (_, _, _) => page,
-      transitionsBuilder: (_, animation, _, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-        child: child,
+      transitionsBuilder: _cinematic,
+    );
+  }
+
+  /// The incoming page rises a little and settles from a slight zoom as it
+  /// fades in, like a camera easing onto the next scene. Reduced motion keeps
+  /// only the fade.
+  static Widget _cinematic(BuildContext context, Animation<double> animation, Animation<double> _, Widget child) {
+    final fade = CurvedAnimation(parent: animation, curve: const Interval(0, 0.7, curve: Curves.easeOut));
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      return FadeTransition(opacity: fade, child: child);
+    }
+    final move = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic, reverseCurve: Curves.easeInCubic);
+    return FadeTransition(
+      opacity: fade,
+      child: SlideTransition(
+        position: Tween(begin: const Offset(0, 0.025), end: Offset.zero).animate(move),
+        child: ScaleTransition(scale: Tween(begin: 1.015, end: 1.0).animate(move), child: child),
       ),
     );
   }

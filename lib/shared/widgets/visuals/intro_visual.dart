@@ -97,7 +97,7 @@ class _Chip extends StatelessWidget {
         height: 62,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color(0xFF2A3243).withValues(alpha: 0.92), AppColors.deepNavy.withValues(alpha: 0.92)],
+            colors: [const Color(0xFF36332F).withValues(alpha: 0.92), AppColors.deepCharcoal.withValues(alpha: 0.92)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -105,7 +105,7 @@ class _Chip extends StatelessWidget {
           border: Border.all(color: color.withValues(alpha: 0.45)),
           boxShadow: [
             BoxShadow(color: color.withValues(alpha: 0.22), blurRadius: 26, spreadRadius: -4),
-            const BoxShadow(color: Color(0x8005070C), blurRadius: 20, offset: Offset(0, 12)),
+            const BoxShadow(color: Color(0x800C0A08), blurRadius: 20, offset: Offset(0, 12)),
           ],
         ),
         child: Icon(icon, size: 28, color: color),
@@ -180,8 +180,8 @@ class _StackPainter extends CustomPainter {
     // Visible sides: front-left (corner 3 → 2) and front-right (2 → 1).
     final leftFace = Path()..addPolygon([top[3], top[2], bottom[2], bottom[3]], true);
     final rightFace = Path()..addPolygon([top[2], top[1], bottom[1], bottom[2]], true);
-    canvas.drawPath(leftFace, Paint()..color = const Color(0xFF262E3E));
-    canvas.drawPath(rightFace, Paint()..color = const Color(0xFF1A202C));
+    canvas.drawPath(leftFace, Paint()..color = const Color(0xFF332F2B));
+    canvas.drawPath(rightFace, Paint()..color = const Color(0xFF221F1C));
 
     final topFace = Path()..addPolygon(top, true);
     final bounds = topFace.getBounds();
@@ -189,7 +189,7 @@ class _StackPainter extends CustomPainter {
       topFace,
       Paint()
         ..shader = LinearGradient(
-          colors: [const Color(0xFF323B4E).withValues(alpha: 0.95), const Color(0xFF202735).withValues(alpha: 0.95)],
+          colors: [const Color(0xFF3E3A35).withValues(alpha: 0.95), const Color(0xFF2A2826).withValues(alpha: 0.95)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ).createShader(bounds),
@@ -206,7 +206,7 @@ class _StackPainter extends CustomPainter {
       canvas.drawLine(_p(-a, f, z), _p(a, f, z), grid);
     }
 
-    // Edges: cyan on the leading corners, blue elsewhere.
+    // Edges: pale gold on the leading corners, gold elsewhere.
     final edge = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4

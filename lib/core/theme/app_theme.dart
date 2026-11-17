@@ -11,7 +11,7 @@ class AppTheme {
     final colorScheme = ColorScheme.fromSeed(seedColor: AppColors.primary, brightness: Brightness.light).copyWith(
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
-      secondary: AppColors.charcoalNavy,
+      secondary: AppColors.charcoal,
       onSecondary: AppColors.white,
       surface: AppColors.card,
       onSurface: AppColors.ink,
@@ -75,7 +75,7 @@ class AppTheme {
       ),
       drawerTheme: const DrawerThemeData(backgroundColor: AppColors.white, surfaceTintColor: Colors.transparent),
       tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(color: AppColors.charcoalNavy, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: AppColors.charcoal, borderRadius: BorderRadius.circular(8)),
         textStyle: textTheme.bodySmall?.copyWith(color: AppColors.white),
       ),
       scrollbarTheme: ScrollbarThemeData(
@@ -85,15 +85,15 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.charcoalNavy,
+        backgroundColor: AppColors.charcoal,
         contentTextStyle: textTheme.bodyMedium?.copyWith(color: AppColors.white),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 
-  /// [base] adapted for forms sitting inside a charcoal card: dark fields,
-  /// light text and champagne focus.
+  /// [base] adapted for forms sitting inside a white card: soft silver
+  /// fields, charcoal text and gold focus.
   static ThemeData onCard(ThemeData base) {
     final textTheme = base.textTheme.apply(bodyColor: AppColors.cardHeading, displayColor: AppColors.cardHeading);
     OutlineInputBorder border(Color color, [double width = 1]) => OutlineInputBorder(
@@ -101,9 +101,7 @@ class AppTheme {
       borderSide: BorderSide(color: color, width: width),
     );
     return base.copyWith(
-      brightness: Brightness.dark,
       colorScheme: base.colorScheme.copyWith(
-        brightness: Brightness.dark,
         surface: AppColors.cardField,
         onSurface: AppColors.cardHeading,
         onSurfaceVariant: AppColors.cardMuted,
@@ -124,7 +122,7 @@ class AppTheme {
         suffixIconColor: AppColors.cardMuted,
         border: border(AppColors.cardLine),
         enabledBorder: border(AppColors.cardLine),
-        focusedBorder: border(AppColors.cardBorder, 1.6),
+        focusedBorder: border(AppColors.primary, 1.6),
         errorBorder: border(AppColors.errorOnCard),
         focusedErrorBorder: border(AppColors.errorOnCard, 1.6),
       ),

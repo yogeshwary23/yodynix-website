@@ -11,11 +11,17 @@ class ExpertiseContent {
       'A focused, modern toolkit we use and offer, chosen for reliability, '
       'maintainability and a great end-user experience.';
 
+  static const aiHeading = 'Intelligence, Applied With Care.';
+  static const aiLead =
+      'We design AI assistants, automations and data workflows that fit the way a '
+      'business already works: useful from day one, transparent in what they do, '
+      'and built on the dependable engineering behind everything else we make.';
+
   // Icons use theme colours (not each product's brand colour) so the
-  // section stays within the site palette: gold tones on the charcoal band.
+  // section stays within the site palette: gold and warm neutral tones on white cards.
   static const _a = AppColors.champagneGold;
-  static const _b = AppColors.goldTint;
-  static const _c = AppColors.onDarkBody;
+  static const _b = AppColors.mint;
+  static const _c = AppColors.slate;
 
   static final categories = [
     TechCategory(

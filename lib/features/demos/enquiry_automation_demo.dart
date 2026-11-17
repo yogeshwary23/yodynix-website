@@ -121,7 +121,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
             const SizedBox(height: 4),
             Text(
               'Toggle steps, then run the simulation.',
-              style: AppTypography.body(fontSize: 13, color: AppColors.blueGrey, height: 1.4),
+              style: AppTypography.body(fontSize: 13, color: AppColors.softGrey, height: 1.4),
             ),
             const SizedBox(height: 14),
             for (var i = 0; i < _steps.length; i++) _stepTile(i),
@@ -130,7 +130,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
         final log = Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.deepNavy,
+            color: AppColors.deepCharcoal,
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(color: AppColors.darkBorder),
           ),
@@ -154,7 +154,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
               ),
               const SizedBox(height: 14),
               if (_log.isEmpty)
-                Text('No runs yet.', style: AppTypography.body(fontSize: 13, color: AppColors.blueGrey))
+                Text('No runs yet.', style: AppTypography.body(fontSize: 13, color: AppColors.softGrey))
               else
                 for (final line in _log)
                   Padding(
@@ -163,7 +163,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
                       line,
                       style: AppTypography.body(
                         fontSize: 12.5,
-                        color: AppColors.electricBlueTint,
+                        color: AppColors.demoAccentTint,
                         height: 1.45,
                       ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
                     ),
@@ -171,7 +171,7 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: AppColors.electricBlueSoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
+                decoration: BoxDecoration(color: AppColors.demoAccentSoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
                 child: Text(
                   'Estimated manual time avoided: about $saved minutes per enquiry (illustrative).',
                   style: AppTypography.body(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.white, height: 1.45),
@@ -205,13 +205,13 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
       decoration: BoxDecoration(
-        color: active ? AppColors.electricBlue.withValues(alpha: 0.16) : AppColors.surfaceNavy,
+        color: active ? AppColors.demoAccent.withValues(alpha: 0.16) : AppColors.charcoalRaised,
         borderRadius: BorderRadius.circular(AppRadius.sm),
-        border: Border.all(color: active ? AppColors.electricBlue : AppColors.darkBorder),
+        border: Border.all(color: active ? AppColors.demoAccent : AppColors.darkBorder),
       ),
       child: Row(
         children: [
-          Icon(s.icon, color: s.enabled ? AppColors.electricBlue : AppColors.blueGrey, size: 22),
+          Icon(s.icon, color: s.enabled ? AppColors.demoAccent : AppColors.softGrey, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -222,17 +222,17 @@ class _EnquiryAutomationDemoState extends State<EnquiryAutomationDemo> {
                   style: AppTypography.body(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: s.enabled ? AppColors.white : AppColors.blueGrey,
+                    color: s.enabled ? AppColors.white : AppColors.softGrey,
                     height: 1.3,
                   ),
                 ),
-                Text(s.detail, style: AppTypography.body(fontSize: 12.5, color: AppColors.blueGrey, height: 1.35)),
+                Text(s.detail, style: AppTypography.body(fontSize: 12.5, color: AppColors.softGrey, height: 1.35)),
               ],
             ),
           ),
           Switch(
             value: s.enabled,
-            activeTrackColor: AppColors.electricBlue,
+            activeTrackColor: AppColors.demoAccent,
             onChanged: _running ? null : (v) => setState(() => s.enabled = v),
           ),
         ],
