@@ -572,14 +572,20 @@ class Kit {
     return this.track(t);
   }
 
-  /** Soft ambient-occlusion shadow on an invisible floor. */
-  contactShadow(radius = 1.4, opacity = 0.22) {
+  /**
+   * Soft ambient-occlusion shadow on an invisible floor. A [tight] shadow
+   * holds its density almost to the edge and then falls off quickly: the
+   * crisp occlusion line where a solid base meets the floor. A [warm] shadow
+   * is umber rather than charcoal, as shadows read on an ivory floor.
+   */
+  contactShadow(radius = 1.4, opacity = 0.22, { tight = false, warm = false } = {}) {
     const tex = this.canvasTexture(256, 256, (g, w, h) => {
       const grad = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
-      grad.addColorStop(0, 'rgba(42,40,38,1)');
-      grad.addColorStop(0.35, 'rgba(42,40,38,0.55)');
-      grad.addColorStop(0.7, 'rgba(42,40,38,0.12)');
-      grad.addColorStop(1, 'rgba(42,40,38,0)');
+      const stops = tight
+        ? [[0, 1], [0.86, 0.8], [0.93, 0.22], [1, 0]]
+        : [[0, 1], [0.35, 0.55], [0.7, 0.12], [1, 0]];
+      const rgb = warm ? '58,46,32' : '42,40,38';
+      for (const [at, a] of stops) grad.addColorStop(at, `rgba(${rgb},${a})`);
       g.fillStyle = grad;
       g.fillRect(0, 0, w, h);
     });
@@ -1483,8 +1489,17 @@ const SCENES = {
       [1.46, 0.5, 0.07, true, [0.55, -0.4, 0.95], [0.4, 0, 1], -0.12],
       [1.7, 0.2, 0.045, false, [1.35, 0.9, 0], [1, 0, 0.2], 0.09],
     ];
+    // Hero finishes: the gold is a deep champagne under a thin, glassy
+    // lacquer, so it shows both the warm metal reflection and a crisp white
+    // highlight on top; the silver is a warm polished platinum with a faint
+    // clearcoat for the same layered depth.
+    const heroGold = (extra = {}) =>
+      kit.liquidGold({ color: 0xe8c890, roughness: 0.1, clearcoat: 0.85, clearcoatRoughness: 0.035, envMapIntensity: 1.35, ...extra });
+    const heroSilver = (extra = {}) =>
+      kit.chrome({ color: 0xf1efea, roughness: 0.06, clearcoat: 0.5, clearcoatRoughness: 0.04, envMapIntensity: 1.3, ...extra });
+
     const bands = bandSpecs.map(([R, w, t, isGold, rest, axis, speed], i) => {
-      const material = isGold ? kit.liquidGold({ roughness: 0.08 }) : kit.chrome({ roughness: 0.05 });
+      const material = isGold ? heroGold() : heroSilver();
       const mesh = new THREE.Mesh(band(R, w, t), material);
       const pivot = new THREE.Group();
       pivot.rotation.set(...rest);
@@ -1495,7 +1510,7 @@ const SCENES = {
     });
 
     // Liquid-gold core with a warm inner light.
-    const core = new THREE.Mesh(new THREE.SphereGeometry(0.4, 96, 64), kit.liquidGold({ roughness: 0.03 }));
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.4, 96, 64), heroGold({ roughness: 0.04 }));
     const coreLight = new THREE.PointLight(0xffdca0, 1.2, 2.2, 2);
     sculpture.add(core, coreLight);
     casters.push(core);
@@ -1516,11 +1531,11 @@ const SCENES = {
       spin.add(tilt);
       const ring = new THREE.Mesh(
         new THREE.TorusGeometry(radius, goldRing ? 0.02 : 0.016, 20, kit.seg(360)),
-        goldRing ? kit.gold({ roughness: 0.1 }) : kit.chrome({ roughness: 0.06 }),
+        goldRing ? heroGold({ roughness: 0.12, clearcoat: 0.5 }) : heroSilver({ roughness: 0.07 }),
       );
-      const sphere = new THREE.Mesh(new THREE.SphereGeometry(size, 48, 32), goldSphere ? kit.liquidGold() : kit.chrome({ roughness: 0.04 }));
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(size, 48, 32), goldSphere ? heroGold() : heroSilver({ roughness: 0.04 }));
       // A second, smaller rider opposite the first on the outer rings.
-      const rider = i > 0 ? new THREE.Mesh(new THREE.SphereGeometry(size * 0.75, 32, 24), goldSphere ? kit.chrome({ roughness: 0.04 }) : kit.liquidGold()) : null;
+      const rider = i > 0 ? new THREE.Mesh(new THREE.SphereGeometry(size * 0.75, 32, 24), goldSphere ? heroSilver({ roughness: 0.04 }) : heroGold()) : null;
       tilt.add(ring, sphere);
       if (rider) tilt.add(rider);
       sculpture.add(spin);
@@ -1569,12 +1584,15 @@ const SCENES = {
     rim.rotation.x = Math.PI / 2;
     rim.position.y = platformTop - 0.08;
     platform.add(plinth, top, inlay, lip, rim);
-    // Ambient occlusion: a soft pool under the sculpture and under the plinth.
-    const pool = kit.contactShadow(1.6, 0.16);
+    // Ambient occlusion: a soft pool under the sculpture, a broad shadow
+    // around the plinth and a tight occlusion line where it meets the floor.
+    const pool = kit.contactShadow(1.6, 0.18, { warm: true });
     pool.position.y = platformTop + 0.003;
-    const ground = kit.contactShadow(4.0, 0.22);
+    const ground = kit.contactShadow(4.2, 0.24, { warm: true });
     ground.position.y = platformTop - 0.31;
-    platform.add(pool, ground);
+    const foot = kit.contactShadow(3.4, 0.2, { tight: true, warm: true });
+    foot.position.y = platformTop - 0.305;
+    platform.add(pool, ground, foot);
     scene.add(platform);
 
     if (kit.quality.shadow) {
@@ -1595,7 +1613,11 @@ const SCENES = {
     sweep.target.position.set(0, 0, 0);
     const front = new THREE.PointLight(0xfff6e8, 6, 10, 2);
     front.position.set(0.5, 1.2, 4.2);
-    scene.add(sweep, sweep.target, front);
+    // Warm light bouncing up off the pearl-and-gold platform, so the bands'
+    // undersides glow the way metal does above a lit surface.
+    const bounce = new THREE.PointLight(0xffe4b8, 2.2, 4.5, 2);
+    bounce.position.set(0, platformTop + 0.5, 0.9);
+    scene.add(sweep, sweep.target, front, bounce);
 
     const q = new THREE.Quaternion();
     const look = new THREE.Vector3();
@@ -1642,6 +1664,10 @@ const SCENES = {
         dust.points.position.set(s.pointer.x * 0.3, -s.pointer.y * 0.2, 0);
         dust.update(t, dt, null);
         rim.material.emissiveIntensity = 1.4 + Math.sin(t * 1.2) * 0.25;
+        // The pool under the sculpture softens as it rises.
+        const lift = sculpture.position.y - 0.36;
+        pool.material.opacity = pool.userData.baseOpacity * (1 - lift * 1.6);
+        pool.scale.setScalar(1 + lift * 0.5);
 
         // Cinematic camera: dolly in on load, rise and pull back on scroll.
         const zoom = 1.3 - intro * 0.3 + scroll * 0.12;

@@ -9,6 +9,9 @@ import '../../core/utils/responsive.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/viewport_trigger.dart';
 
+/// Warm umber for the card's shadows, so they read naturally on ivory.
+const _shadowTone = Color(0xFF4A3B28);
+
 /// The "Our Impact" card at the foot of the hero: an introduction followed
 /// by the figures from [HeroStatsConfig], separated by fine gold rules. The
 /// figures count up once when the card first becomes visible, each starting
@@ -125,16 +128,22 @@ class _HeroStatsBarState extends State<HeroStatsBar> with SingleTickerProviderSt
           horizontal: context.responsive(mobile: 12.0, tablet: 24.0, desktop: 40.0),
         ),
         decoration: BoxDecoration(
+          // Lit from the upper right, like the room behind it.
           gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.white, Color(0xFFFBF8F2)],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [AppColors.white, Color(0xFFFEFCF8), Color(0xFFFAF6EE)],
+            stops: [0, 0.45, 1],
           ),
           borderRadius: BorderRadius.circular(mobile ? 22 : 28),
           border: Border.all(color: const Color(0xFFEFE8DC)),
+          // Layered warm shadows, as a lifted object casts under soft light:
+          // a broad, faint ambient pool well below the card, a key shadow
+          // offset away from the light, and a tight contact edge.
           boxShadow: [
-            BoxShadow(color: AppColors.charcoal.withValues(alpha: 0.08), blurRadius: 48, offset: const Offset(0, 22)),
-            BoxShadow(color: AppColors.charcoal.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
+            BoxShadow(color: _shadowTone.withValues(alpha: 0.07), blurRadius: mobile ? 48 : 80, spreadRadius: -16, offset: Offset(0, mobile ? 26 : 40)),
+            BoxShadow(color: _shadowTone.withValues(alpha: 0.08), blurRadius: mobile ? 22 : 32, spreadRadius: -6, offset: Offset(mobile ? -2 : -4, mobile ? 12 : 16)),
+            BoxShadow(color: _shadowTone.withValues(alpha: 0.06), blurRadius: 3, offset: const Offset(0, 1)),
           ],
         ),
         child: content,

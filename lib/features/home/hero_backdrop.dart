@@ -10,8 +10,10 @@ import '../../core/utils/responsive.dart';
 import '../../shared/three/scroll_animation_controller.dart';
 
 /// The hero's environment: a pearl-and-ivory architectural space of curved
-/// walls catching champagne light, with a golden glow behind the sculpture,
-/// light flowing along the walls' edges and slow gold and platinum motes.
+/// walls catching champagne light, set in the large curved shell of a room
+/// lit by warm daylight from the upper right, with a golden glow behind the
+/// sculpture, light flowing along the walls' edges and slow gold and
+/// platinum motes.
 ///
 /// Two layers keep it cheap. The architecture repaints only when the pointer
 /// or the scroll moves it; the atmosphere (glow, streaks, motes) animates on
@@ -141,6 +143,69 @@ const _light = Color(0xFFFFFCF6);
 const _shade = Color(0xFFDCC9AC); // shaded side of a curved wall
 const _shadow = Color(0xFF8A7458); // warm cast shadow, used at low alpha
 const _platinumMote = Color(0xFFBDB8AF);
+const _sun = Color(0xFFFFF0D6); // warm daylight
+
+/// A large shell of the room: its lit lip (a cubic from [a] to [b]) and
+/// [inset], the offset from the lip to the shell's far, shaded side. All in
+/// normalised coordinates.
+typedef _Shell = ({Offset a, Offset c1, Offset c2, Offset b, Offset inset});
+
+/// Wide layouts: a grand arch rising behind the sculpture and over the
+/// room, and a long curved step in the floor. Stacked layouts keep both
+/// below the copy.
+List<_Shell> _shells(bool wide) => wide
+    ? const [
+        (a: Offset(0.16, 1.1), c1: Offset(0.3, 0.32), c2: Offset(0.62, -0.04), b: Offset(1.1, -0.02), inset: Offset(0.1, 0.11)),
+        (a: Offset(-0.05, 0.86), c1: Offset(0.35, 0.77), c2: Offset(0.7, 0.8), b: Offset(1.05, 0.69), inset: Offset(0, 0.07)),
+      ]
+    : const [
+        (a: Offset(-0.1, 0.78), c1: Offset(0.25, 0.47), c2: Offset(0.7, 0.43), b: Offset(1.1, 0.56), inset: Offset(0, 0.08)),
+        (a: Offset(-0.05, 0.95), c1: Offset(0.4, 0.86), c2: Offset(0.7, 0.88), b: Offset(1.05, 0.82), inset: Offset(0, 0.05)),
+      ];
+
+/// Paints a [_Shell]: lit at its lip, turning through clear ivory into a
+/// faint shade that dissolves before its far side, so it has no hard edge.
+/// Gradients only, no blur, so it stays cheap to repaint.
+void _paintShell(Canvas canvas, Size size, _Shell shell) {
+  Offset at(Offset p) => Offset(p.dx * size.width, p.dy * size.height);
+  final inset = at(shell.inset);
+  final lip = Path()
+    ..moveTo(at(shell.a).dx, at(shell.a).dy)
+    ..cubicTo(at(shell.c1).dx, at(shell.c1).dy, at(shell.c2).dx, at(shell.c2).dy, at(shell.b).dx, at(shell.b).dy);
+  final body = Path()
+    ..addPath(lip, Offset.zero)
+    ..extendWithPath(_ArchitecturePainter._reverse(lip.shift(inset)), Offset.zero)
+    ..close();
+  final mid = lip.computeMetrics().first;
+  final from = mid.getTangentForOffset(mid.length / 2)!.position;
+  canvas.drawPath(
+    body,
+    Paint()
+      ..shader = ui.Gradient.linear(
+        from,
+        from + inset,
+        [_light.withValues(alpha: 0.55), _light.withValues(alpha: 0), _shadow.withValues(alpha: 0.06), _shadow.withValues(alpha: 0)],
+        const [0, 0.35, 0.72, 1],
+      ),
+  );
+  // The lip itself: a hairline of champagne, fading out at both ends.
+  final bounds = lip.getBounds().inflate(1);
+  canvas.drawPath(
+    lip,
+    Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2
+      ..shader = LinearGradient(
+        colors: [
+          AppColors.softChampagne.withValues(alpha: 0),
+          AppColors.softChampagne.withValues(alpha: 0.38),
+          AppColors.softChampagne.withValues(alpha: 0.3),
+          AppColors.softChampagne.withValues(alpha: 0),
+        ],
+        stops: const [0, 0.45, 0.75, 1],
+      ).createShader(bounds),
+  );
+}
 
 /// A curved wall: its lit edge (a cubic from [a] to [b]), its thickness as a
 /// fraction of the width, how strongly the edge catches gold, and its depth
@@ -209,6 +274,36 @@ class _ArchitecturePainter extends CustomPainter {
         ).createShader(rect),
     );
 
+    // Natural light: a broad, warm daylight wash entering from the upper
+    // right, as through a tall window out of frame. Long, eased falloff so
+    // it never shows an edge.
+    final window = wide ? Offset(w * 1.05, -h * 0.15) : Offset(w * 0.95, -h * 0.1);
+    final windowRadius = math.max(w, h) * (wide ? 1.05 : 1.2);
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            _sun.withValues(alpha: 0.5),
+            _sun.withValues(alpha: 0.26),
+            _sun.withValues(alpha: 0.08),
+            _sun.withValues(alpha: 0),
+          ],
+          stops: const [0, 0.32, 0.62, 1],
+        ).createShader(Rect.fromCircle(center: window, radius: windowRadius)),
+    );
+
+    // Far: the shell of the room, two very large, low-contrast curved
+    // surfaces sweeping behind everything. Each is shaded across its width
+    // with a soft lit lip, so it reads as form rather than line.
+    canvas.save();
+    final shell = _shift(p, s, 0.12, size);
+    canvas.translate(shell.dx, shell.dy);
+    for (final curve in _shells(wide)) {
+      _paintShell(canvas, size, curve);
+    }
+    canvas.restore();
+
     // Far: architectural ribs, faint concentric arcs of a vault rising
     // behind the sculpture. They barely move, which reads as distance.
     canvas.save();
@@ -249,6 +344,19 @@ class _ArchitecturePainter extends CustomPainter {
             colors: [_warm.withValues(alpha: 0), _warm.withValues(alpha: 0.75), _ivory.withValues(alpha: 0.3)],
             stops: const [0, 0.45, 1],
           ).createShader(floor),
+      );
+      // Ambient occlusion where the wall meets the floor: a faint, soft
+      // band of shade that grounds the room.
+      final junction = Rect.fromLTWH(0, h * 0.68, w, h * 0.12);
+      canvas.drawRect(
+        junction,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [_shadow.withValues(alpha: 0), _shadow.withValues(alpha: 0.045), _shadow.withValues(alpha: 0)],
+            stops: const [0, 0.55, 1],
+          ).createShader(junction),
       );
     }
 
@@ -361,8 +469,8 @@ class _ArchitecturePainter extends CustomPainter {
         ..shader = RadialGradient(
           center: wide ? const Alignment(0.2, -0.1) : Alignment.center,
           radius: 1.05,
-          colors: [_shadow.withValues(alpha: 0), _shadow.withValues(alpha: 0.1)],
-          stops: const [0.6, 1],
+          colors: [_shadow.withValues(alpha: 0), _shadow.withValues(alpha: 0.035), _shadow.withValues(alpha: 0.09)],
+          stops: const [0.55, 0.8, 1],
         ).createShader(rect),
     );
 
@@ -473,18 +581,24 @@ class _AtmospherePainter extends CustomPainter {
     final focus = _focus(size, wide) + Offset(0, -s * size.height * 0.12);
     final radius = math.max(size.width, size.height) * (wide ? 0.34 : 0.42);
     final strength = intro * (1 + math.sin(s * math.pi) * 0.35) * (1 - s * 0.5);
+    final glow = (0.17 + breath * 0.05) * strength;
+    // A slightly wider pool with an eased, many-step falloff: gentler at
+    // the centre and with no visible ring where it meets the room.
     canvas.drawCircle(
       focus,
-      radius,
+      radius * 1.12,
       Paint()
         ..shader = RadialGradient(
           colors: [
-            _light.withValues(alpha: 0.5 * strength),
-            AppColors.softChampagne.withValues(alpha: (0.2 + breath * 0.07) * strength),
+            _light.withValues(alpha: 0.42 * strength),
+            _light.withValues(alpha: 0.26 * strength),
+            AppColors.softChampagne.withValues(alpha: glow),
+            AppColors.softChampagne.withValues(alpha: glow * 0.45),
+            AppColors.softChampagne.withValues(alpha: glow * 0.12),
             AppColors.softChampagne.withValues(alpha: 0),
           ],
-          stops: const [0, 0.42, 1],
-        ).createShader(Rect.fromCircle(center: focus, radius: radius)),
+          stops: const [0, 0.2, 0.42, 0.62, 0.82, 1],
+        ).createShader(Rect.fromCircle(center: focus, radius: radius * 1.12)),
     );
   }
 
@@ -506,11 +620,12 @@ class _AtmospherePainter extends CustomPainter {
       canvas.drawPath(
         ray,
         Paint()
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 24)
           ..shader = RadialGradient(
             center: Alignment.topRight,
             radius: 1.2,
-            colors: [_light.withValues(alpha: 0.5 * intro), _light.withValues(alpha: 0)],
+            colors: [_sun.withValues(alpha: 0.36 * intro), _sun.withValues(alpha: 0.12 * intro), _sun.withValues(alpha: 0)],
+            stops: const [0, 0.5, 1],
           ).createShader(ray.getBounds()),
       );
     }
