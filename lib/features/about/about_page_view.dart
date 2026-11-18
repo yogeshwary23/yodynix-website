@@ -10,11 +10,16 @@ import '../../models/site_section.dart';
 import '../../repositories/content/company_content.dart';
 import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/layouts/subpage_scaffold.dart';
+import '../../shared/three/photo_scene.dart';
+import '../../shared/three/scene3d.dart';
 import '../../shared/widgets/buttons.dart';
-import '../../shared/widgets/cards.dart';
+import '../../shared/widgets/premium.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
-import '../../shared/widgets/tinted_photo.dart';
+import '../../shared/widgets/motion_effects.dart';
+import '../../shared/widgets/parallax_photo.dart';
+import '../../shared/widgets/visuals/illustrated_visual.dart';
+import '../../shared/widgets/visuals/visual_kind.dart';
 import '../process/process_timeline.dart';
 import '../team/team_showcase.dart';
 import 'philosophy_grid.dart';
@@ -58,6 +63,11 @@ class AboutPageView extends StatelessWidget {
 
 // ------------------------------------------------------------------ Hero
 
+/// The page's opening, in the homepage's language: breadcrumb, gold-rule
+/// eyebrow, a headline closing in metallic gold and a lead beside a gold
+/// bar on the left; on the right, the page's photograph set into its own 3D
+/// composition, swaying with the pointer anywhere over the hero. Tabs to
+/// the sibling pages run beneath. Stacked, text first, below desktop.
 class _Hero extends StatelessWidget {
   const _Hero({required this.page, required this.heading, required this.lead});
 
@@ -68,30 +78,101 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const tone = SurfaceColors.light;
+    final desktop = context.isDesktop;
+    final size = context.responsive<double>(mobile: 32, tablet: 42, desktop: 50);
+
+    final copy = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Pulled back by the links' own padding so the text lines up with the eyebrow.
+        Transform.translate(offset: const Offset(-8, 0), child: _Breadcrumb(current: page)),
+        SizedBox(height: context.responsive(mobile: 20.0, desktop: 28.0)),
+        Reveal(child: RuleEyebrow(page.title)),
+        SizedBox(height: size * 0.42),
+        Reveal(
+          delay: const Duration(milliseconds: 80),
+          child: GoldHighlightHeading(
+            heading: heading,
+            highlight: page.highlight,
+            style: AppTypography.display(
+              fontSize: size,
+              height: 1.1,
+              fontWeight: FontWeight.w800,
+              color: AppColors.ink,
+              letterSpacing: -size * 0.022,
+            ),
+          ),
+        ),
+        SizedBox(height: size * 0.56),
+        Reveal(
+          delay: const Duration(milliseconds: 160),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: GoldBarLead(
+              text: lead,
+              style: AppTypography.body(
+                fontSize: context.responsive(mobile: 16.5, desktop: 19.0),
+                color: AppColors.ink,
+                fontWeight: FontWeight.w500,
+                height: 1.6,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
     return SectionShell(
-      topPadding: context.responsive(mobile: 28.0, desktop: 44.0),
+      topPadding: context.responsive(mobile: 28.0, desktop: 40.0),
       bottomPadding: context.responsive(mobile: 40.0, desktop: 56.0),
       tone: tone,
       background: AppColors.pearlWhite,
-      glowAt: const Alignment(0, -1.2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: _Breadcrumb(current: page),
-          ),
-          SizedBox(height: context.responsive(mobile: 24.0, desktop: 32.0)),
-          SectionHeader(
-            eyebrow: page.title,
-            title: heading,
-            lead: lead,
-            centered: true,
-            titleSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0),
-          ),
-          SizedBox(height: context.responsive(mobile: 32.0, desktop: 40.0)),
-          Reveal(child: AboutPageTabs(current: page)),
-        ],
+      glowAt: const Alignment(0.6, -0.8),
+      child: PointerField(
+        builder: (context, pointer) {
+          final visual = Reveal(
+            delay: const Duration(milliseconds: 200),
+            offset: 30,
+            child: PhotoScene(
+              photo: page.heroImage ?? page.image,
+              photoAlt: page.heroImageAlt ?? page.imageAlt,
+              photoFallback: const IllustratedVisual(VisualKind.about),
+              scene: Scene3D.aboutPage,
+              variant: page.sceneVariant,
+              sceneLabel: page.sceneLabel,
+              pointer: pointer,
+            ),
+          );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (desktop)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(flex: 10, child: copy),
+                    const SizedBox(width: 48),
+                    Expanded(flex: 10, child: visual),
+                  ],
+                )
+              else ...[
+                copy,
+                const SizedBox(height: 24),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: context.isMobile ? 440 : 560),
+                    child: visual,
+                  ),
+                ),
+              ],
+              SizedBox(height: context.responsive(mobile: 28.0, desktop: 36.0)),
+              Reveal(
+                delay: const Duration(milliseconds: 240),
+                child: Align(alignment: desktop ? Alignment.center : Alignment.centerLeft, child: AboutPageTabs(current: page)),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -298,62 +379,120 @@ class AboutPageCard extends StatefulWidget {
 
 class _AboutPageCardState extends State<AboutPageCard> {
   bool _hover = false;
+  bool _focus = false;
+
+  bool get _active => _hover || _focus;
 
   void _open() => openAboutPage(context, widget.page);
 
   @override
   Widget build(BuildContext context) {
     final page = widget.page;
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) => setState(() => _hover = false),
-      child: HoverCard(
-        padding: const EdgeInsets.all(10),
-        onTap: _open,
-        semanticLabel: page.title,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              child: AspectRatio(
-                aspectRatio: 16 / 10,
-                child: TintedPhoto(basePath: page.image, semanticLabel: page.imageAlt, active: _hover),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 18, 12, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+    final radius = BorderRadius.circular(AppRadius.xl);
+    return Semantics(
+      button: true,
+      link: true,
+      label: '${page.title}. ${page.summary}',
+      excludeSemantics: true,
+      child: Tilt3D(
+        radius: AppRadius.xl,
+        maxAngle: 3,
+        child: AnimatedContainer(
+          duration: AppMotion.lift,
+          curve: AppMotion.ease,
+          transform: Matrix4.translationValues(0, _active ? -6 : 0, 0),
+          decoration: premiumGlassCard(lifted: _active),
+          child: SurfaceTone(
+            colors: SurfaceColors.inCard,
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: radius,
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: _open,
+                onHover: (v) => setState(() => _hover = v),
+                onFocusChange: (v) => setState(() => _focus = v),
+                borderRadius: radius,
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                splashColor: AppColors.cardAccent.withValues(alpha: 0.06),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Icon(page.icon, size: 18, color: AppColors.cardAccent),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          page.title,
-                          style: AppTypography.display(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            height: 1.3,
-                            color: AppColors.cardHeading,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        child: AspectRatio(
+                          aspectRatio: 16 / 10,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ParallaxPhoto(
+                                basePath: page.image,
+                                semanticLabel: page.imageAlt,
+                                depth: 8,
+                                zoom: _active ? 1.05 : 1,
+                                fallback: const IllustratedVisual(VisualKind.about),
+                              ),
+                              // Warm light from the upper right, as on the pillar cards.
+                              const IgnorePointer(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                      colors: [Color(0x40FFECC8), Color(0x00FFECC8)],
+                                      stops: [0, 0.55],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(AppRadius.md),
+                                  border: Border.all(color: AppColors.goldLine.withValues(alpha: 0.6)),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
+                        child: Row(
+                          children: [
+                            GoldIconTile(icon: page.icon, size: 38),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                page.title,
+                                style: AppTypography.display(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.3,
+                                  color: AppColors.cardHeading,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                        child: Text(page.summary, style: AppTypography.body(fontSize: 14, height: 1.6, color: AppColors.cardBody)),
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
+                        child: ArrowLink(label: 'Explore', color: AppColors.cardAccent, onPressed: _open),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(page.summary, style: AppTypography.body(fontSize: 14, height: 1.6, color: AppColors.cardBody)),
-                ],
+                ),
               ),
             ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 14, 12, 6),
-              child: ArrowLink(label: 'Explore', color: AppColors.cardAccent, onPressed: _open),
-            ),
-          ],
+          ),
         ),
       ),
     );

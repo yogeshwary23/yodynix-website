@@ -55,7 +55,10 @@ offering images and ~16:10 for heroes; never reuse a photo in two places.
 
 | File | Unsplash photo ID |
 |---|---|
-| `about/about_visual.jpg` | 1629904853716-f0bc54eea481 |
+| `about/about_visual.webp` | 1629904853716-f0bc54eea481 |
+| `about/studio.webp` (Who We Are story) | 1556761175-5973dc0f32e7 |
+| `about/philosophy_hero.webp` | 1517048676732-d65bc937f952 |
+| `about/process_hero.webp` | 1552664730-d307ca884978 |
 | `about/who_we_are.webp` (homepage "Who We Are") | 1521737604893-d14cc237f11d |
 | `about/philosophy_innovation.jpg` | 1549692520-acc6669e2f0c |
 | `about/philosophy_quality.jpg` | 1528901166007-3784c7dd3653 |

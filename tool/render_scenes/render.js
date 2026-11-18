@@ -32,6 +32,10 @@ const jobs = [
   ['marketing', null, 1200, 800, 'ffffff', 0.6],
   ['marketing', 'brand', 1200, 800, 'ffffff', 0.6],
   ['about', null, 1188, 1100, 'none', 0.5],
+  ['aboutPage', 'who', 1188, 1100, 'none', 0.5],
+  ['aboutPage', 'team', 1188, 1100, 'none', 0.5],
+  ['aboutPage', 'philosophy', 1188, 1100, 'none', 0.5],
+  ['aboutPage', 'process', 1188, 1100, 'none', 0.5],
   // 3D overlays for the core pillar cards, composited over their photos
   // (stills only; no live scene on the cards).
   ['overlay', 'business', 1200, 750, 'none', 0.5],

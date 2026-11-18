@@ -27,8 +27,12 @@ enum Scene3D {
   /// Channels orbiting a chrome hub above a rising chart.
   marketing,
 
-  /// Floating pavilion of glass planes and metal beams.
+  /// Homepage "Who We Are": 3D around a photograph laid out by Flutter.
   about,
+
+  /// About page heroes, likewise around a photograph; the variant names the
+  /// page (who, team, philosophy, process).
+  aboutPage,
 
   /// Laptop whose screen shows a real project image.
   preview,

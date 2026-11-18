@@ -11,7 +11,10 @@ import '../../shared/three/scene3d.dart';
 import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
-import '../../shared/widgets/tinted_photo.dart';
+import '../../shared/widgets/parallax_photo.dart';
+import '../../shared/widgets/premium.dart';
+import '../../shared/widgets/visuals/illustrated_visual.dart';
+import '../../shared/widgets/visuals/visual_kind.dart';
 
 /// The "How We Work" page body: the photographed delivery steps on a
 /// connected timeline, followed by the ongoing support after launch.
@@ -210,19 +213,11 @@ class _StepPhotoState extends State<_StepPhoto> {
       child: AnimatedContainer(
         duration: AppMotion.lift,
         curve: AppMotion.ease,
+        transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: _hover ? AppColors.accent.withValues(alpha: 0.45) : AppColors.lightGrey),
-          boxShadow: [
-            if (_hover)
-              BoxShadow(
-                color: AppColors.charcoal.withValues(alpha: 0.14),
-                blurRadius: 44,
-                spreadRadius: -6,
-                offset: const Offset(0, 18),
-              ),
-            ...AppColors.softShadow(0.6),
-          ],
+          border: Border.all(color: _hover ? AppColors.champagneGold : AppColors.goldLine),
+          boxShadow: premiumCardShadow(lifted: _hover),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.xl - 1),
@@ -231,28 +226,48 @@ class _StepPhotoState extends State<_StepPhoto> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                TintedPhoto(basePath: step.image!, semanticLabel: step.imageAlt ?? step.title, active: _hover, strength: 0.8),
+                ParallaxPhoto(
+                  basePath: step.image!,
+                  semanticLabel: step.imageAlt ?? step.title,
+                  depth: 12,
+                  zoom: _hover ? 1.05 : 1,
+                  fallback: const IllustratedVisual(VisualKind.about),
+                ),
+                // Warm light from the upper right, as across the site.
+                const IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [Color(0x40FFECC8), Color(0x00FFECC8)],
+                        stops: [0, 0.55],
+                      ),
+                    ),
+                  ),
+                ),
                 Positioned(
                   left: 16,
                   bottom: 16,
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(10, 7, 14, 7),
                     decoration: BoxDecoration(
-                      color: AppColors.deepCharcoal.withValues(alpha: 0.78),
+                      color: AppColors.white.withValues(alpha: 0.86),
                       borderRadius: BorderRadius.circular(AppRadius.pill),
-                      border: Border.all(color: AppColors.white.withValues(alpha: 0.16)),
+                      border: Border.all(color: _hover ? AppColors.champagneGold : AppColors.goldLine),
+                      boxShadow: [BoxShadow(color: warmShadowTone.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(step.icon, size: 15, color: AppColors.primaryTint),
+                        Icon(step.icon, size: 15, color: AppColors.cardAccent),
                         const SizedBox(width: 8),
                         Text(
                           'STEP ${step.number}',
                           style: AppTypography.body(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.white,
+                            color: AppColors.cardAccent,
                             letterSpacing: 1.2,
                             height: 1.2,
                           ),
@@ -342,7 +357,7 @@ class _OngoingCard extends StatelessWidget {
     );
     return Container(
       padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 28.0)),
-      decoration: CardStyle.decoration(radius: AppRadius.lg),
+      decoration: premiumGlassCard(lifted: false, radius: AppRadius.lg),
       child: SurfaceTone(
         colors: SurfaceColors.inCard,
         child: context.screenWidth >= 900

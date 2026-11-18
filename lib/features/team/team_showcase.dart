@@ -7,7 +7,8 @@ import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/team_member.dart';
-import '../../shared/widgets/cards.dart';
+import '../../shared/widgets/motion_effects.dart';
+import '../../shared/widgets/premium.dart';
 import '../../shared/widgets/reveal.dart';
 
 /// Two-row team layout: the leadership pair first, then the development
@@ -223,7 +224,8 @@ class _DeveloperCard extends StatelessWidget {
 
 // ----------------------------------------------------------------- Shared
 
-/// Card with a gold border that lifts and glows on hover.
+/// White glass card that tilts towards the pointer, lifts, and gains a gold
+/// rim on hover.
 class _CardShell extends StatefulWidget {
   const _CardShell({required this.builder});
 
@@ -241,13 +243,17 @@ class _CardShellState extends State<_CardShell> {
     return MouseRegion(
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
-      child: AnimatedContainer(
-        duration: AppMotion.lift,
-        curve: AppMotion.ease,
-        transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
-        padding: EdgeInsets.all(context.responsive(mobile: 14.0, desktop: 16.0)),
-        decoration: CardStyle.decoration(radius: AppRadius.xl, hover: _hover),
-        child: SurfaceTone(colors: SurfaceColors.inCard, child: widget.builder(_hover)),
+      child: Tilt3D(
+        radius: AppRadius.xl,
+        maxAngle: 3,
+        child: AnimatedContainer(
+          duration: AppMotion.lift,
+          curve: AppMotion.ease,
+          transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
+          padding: EdgeInsets.all(context.responsive(mobile: 14.0, desktop: 16.0)),
+          decoration: premiumGlassCard(lifted: _hover),
+          child: SurfaceTone(colors: SurfaceColors.inCard, child: widget.builder(_hover)),
+        ),
       ),
     );
   }
@@ -270,7 +276,8 @@ class _Portrait extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: active ? AppColors.accent.withValues(alpha: 0.45) : AppColors.lightGrey),
+          border: Border.all(color: active ? AppColors.champagneGold : AppColors.goldLine),
+          boxShadow: premiumCardShadow(lifted: false),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radius - 1),

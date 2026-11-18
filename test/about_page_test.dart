@@ -108,7 +108,12 @@ void main() {
 
       Future<void> expectTexts(List<String> texts) async {
         for (final text in texts) {
-          final f = find.text(text);
+          // Headings closing in gold are drawn in two pieces, so they are
+          // found by the label they give screen readers instead.
+          final plain = find.text(text);
+          final f = plain.evaluate().isNotEmpty
+              ? plain
+              : find.byWidgetPredicate((w) => w is Semantics && w.properties.label == text);
           expect(f, findsWidgets, reason: text);
           await tester.ensureVisible(f.last);
           await tester.pump(const Duration(milliseconds: 900));

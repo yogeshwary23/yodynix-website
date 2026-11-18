@@ -2774,6 +2774,286 @@ const SCENES = {
   },
 
   /**
+   * About page heroes: 3D around each page's photograph, in the same frame
+   * as the homepage "Who We Are" visual (Flutter lays the photo out; see
+   * [viewPlane]). Each page tells its own story:
+   *
+   *   who:        three glass layers edged in gold (development, design,
+   *               innovation, the disciplines in our story) beside a gold
+   *               ribbon rising up the left edge; a gold sphere in orbit.
+   *   team:       two gold and three platinum spheres, the leadership and
+   *               development teams, linked by gold arcs on a pearl disc.
+   *   philosophy: six gold-rimmed glass tiles, one per principle, turning
+   *               in an arc down the right edge; a gold compass below left.
+   *   process:    meshing gold and platinum gears, steady progress, and a
+   *               halo with a sphere travelling round it.
+   *
+   * Soft contact shadows ground the pieces inside the frame. The pointer
+   * sways the camera; scrolling turns the pieces a little further.
+   */
+  aboutPage(kit, options) {
+    const { scene, camera } = kit;
+    const distance = 10;
+    const at = viewPlane(distance, 1.08);
+    const gold = (extra) => kit.lacqueredGold(extra);
+    const silver = (extra) => kit.polishedPlatinum(extra);
+    const root = new THREE.Group();
+    scene.add(root);
+    const casters = [];
+    const cast = (...meshes) => meshes.forEach((m) => m.traverse((o) => o.isMesh && !o.material.transparent && casters.push(o)));
+    // Per-variant motion, called each frame with (t, k): time and scroll (-1..1).
+    const motions = [];
+    let floorAt = at(0.5, 0.93);
+
+    const variant = options.variant || 'who';
+    if (variant === 'who') {
+      const ribbonCurve = new THREE.CatmullRomCurve3([
+        at(0.02, 0.97, 0.6),
+        at(0.06, 0.78, 0.3),
+        at(0.03, 0.55, 0),
+        at(0.07, 0.3, -0.4),
+        at(0.16, 0.08, -0.8),
+        at(0.32, 0.02, -1.2),
+      ]);
+      const ribbonGeo = openRibbonGeometry(ribbonCurve, {
+        segments: kit.seg(240),
+        width: 0.24,
+        thickness: 0.02,
+        twist: (u) => Math.sin(u * Math.PI * 1.8) * 1.0,
+        taper: (u) => Math.pow(Math.sin(Math.PI * u), 0.45),
+      });
+      const ribbon = new THREE.Mesh(ribbonGeo, kit.liquidGold({ roughness: 0.07, clearcoat: 0.9, clearcoatRoughness: 0.03, envMapIntensity: 1.4 }));
+      root.add(ribbon);
+      const ribbonCount = ribbonGeo.index.count;
+
+      // Three glass layers, stacked and slightly fanned.
+      const stack = new THREE.Group();
+      stack.position.copy(at(0.8, 0.8, 0.8));
+      stack.rotation.set(0.5, -0.5, 0);
+      stack.scale.setScalar(1.15);
+      root.add(stack);
+      const layers = [0, 1, 2].map((i) => {
+        const layer = new THREE.Group();
+        const slab = kit.roundedBox(1.2, 0.06, 0.85, 0.03, kit.clearGlass({ color: 0xfff6e6, opacity: 0.55, envMapIntensity: 2.2 }), 3);
+        const rim = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.022, 8, 4), gold({ roughness: 0.1 }));
+        rim.rotation.set(Math.PI / 2, 0, Math.PI / 4);
+        rim.scale.set(1, 0.71, 1);
+        const gem = new THREE.Mesh(new THREE.SphereGeometry(0.07, 24, 16), i === 1 ? silver() : gold());
+        gem.position.set(0.3 - i * 0.3, 0.08, 0);
+        layer.add(slab, rim, gem);
+        layer.userData.base = i * 0.32;
+        stack.add(layer);
+        cast(gem, rim);
+        return layer;
+      });
+
+      const orb = new THREE.Mesh(new THREE.SphereGeometry(0.2, 48, 32), gold({ roughness: 0.04 }));
+      const orbit = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.012, 8, kit.seg(160)), silver({ roughness: 0.05 }));
+      const orbGroup = new THREE.Group();
+      orbGroup.position.copy(at(0.9, 0.12, -0.5));
+      orbit.rotation.set(1.2, 0, 0.3);
+      orbGroup.add(orb, orbit);
+      root.add(orbGroup);
+      cast(orb);
+
+      floorAt = at(0.8, 0.95);
+      motions.push((t, k, intro) => {
+        ribbonGeo.setDrawRange(0, Math.floor(ribbonCount * intro / 6) * 6);
+        layers.forEach((layer, i) => {
+          layer.position.y = layer.userData.base * intro + Math.sin(t * 0.7 + i) * 0.03 + Math.max(0, k) * i * 0.08;
+          layer.rotation.y = Math.sin(t * 0.3 + i * 1.3) * 0.12;
+        });
+        stack.rotation.y = -0.5 + k * 0.25;
+        orbGroup.position.y = at(0.9, 0.12).y + Math.sin(t * 0.6) * 0.06;
+        orbit.rotation.z = 0.3 + t * 0.2;
+      });
+    } else if (variant === 'team') {
+      // Leadership (gold) and developers (platinum), linked to one another.
+      const team = new THREE.Group();
+      team.position.copy(at(0.76, 0.82, 0.6));
+      team.rotation.x = 0.18;
+      team.scale.setScalar(1.2);
+      root.add(team);
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.0, 0.08, kit.seg(120)), kit.pearl());
+      const discLip = new THREE.Mesh(new THREE.TorusGeometry(0.97, 0.016, 12, kit.seg(160)), gold({ roughness: 0.08 }));
+      discLip.rotation.x = Math.PI / 2;
+      discLip.position.y = 0.04;
+      disc.receiveShadow = true;
+      team.add(disc, discLip);
+      cast(disc);
+      const members = [
+        [-0.32, 0.72, 0.1, 0.19, true],
+        [0.32, 0.78, -0.1, 0.19, true],
+        [-0.55, 0.36, 0.35, 0.14, false],
+        [0.02, 0.3, 0.45, 0.14, false],
+        [0.58, 0.38, 0.3, 0.14, false],
+      ].map(([x, y, z, r, lead]) => {
+        const node = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), lead ? gold({ roughness: 0.04 }) : silver({ roughness: 0.04 }));
+        node.position.set(x, y, z);
+        node.userData.base = node.position.clone();
+        team.add(node);
+        cast(node);
+        return node;
+      });
+      const links = [[0, 1], [0, 2], [0, 3], [1, 3], [1, 4], [2, 3], [3, 4]].map(([a, b]) => {
+        const link = new THREE.Mesh(new THREE.BufferGeometry(), gold({ roughness: 0.1 }));
+        team.add(link);
+        return { link, a, b };
+      });
+      const mid = new THREE.Vector3();
+      const updateLinks = () => {
+        for (const { link, a, b } of links) {
+          const p = members[a].position;
+          const q = members[b].position;
+          mid.copy(p).add(q).multiplyScalar(0.5);
+          mid.y += 0.12;
+          link.geometry.dispose();
+          link.geometry = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(p, mid.clone(), q), 20, 0.008, 6);
+        }
+      };
+      updateLinks();
+
+      const halo = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.03, 20, kit.seg(160)), gold({ roughness: 0.06 }));
+      halo.position.copy(at(0.08, 0.1, -0.3));
+      halo.rotation.set(1.25, 0, 0.1);
+      root.add(halo);
+      cast(halo);
+
+      floorAt = at(0.76, 0.89);
+      let linkClock = 0;
+      motions.push((t, k, intro, dt) => {
+        members.forEach((node, i) => {
+          node.position.copy(node.userData.base);
+          node.position.y = node.userData.base.y * (0.6 + 0.4 * intro) + Math.sin(t * 0.8 + i * 1.7) * 0.035;
+        });
+        // Rebuild the arcs at a modest rate; they follow the floating spheres.
+        linkClock += dt;
+        if (linkClock > 1 / 20) {
+          linkClock = 0;
+          updateLinks();
+        }
+        team.rotation.y = Math.sin(t * 0.25) * 0.2 + k * 0.3;
+        halo.position.y = at(0.08, 0.1).y + Math.sin(t * 0.6 + 1) * 0.05;
+      });
+    } else if (variant === 'philosophy') {
+      const tiles = [];
+      for (let i = 0; i < 6; i++) {
+        const tile = new THREE.Group();
+        const u = i / 5;
+        tile.position.copy(at(0.94 - Math.sin(u * Math.PI) * 0.06, 0.1 + u * 0.78, -0.3 + Math.sin(u * Math.PI) * 0.6));
+        const pane = kit.roundedBox(0.66, 0.66, 0.035, 0.07, kit.clearGlass({ color: 0xfff6e6, opacity: 0.45, envMapIntensity: 2.2 }), 4);
+        const rim = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.018, 8, 4), gold({ roughness: 0.08 }));
+        rim.rotation.z = Math.PI / 4;
+        const seed = new THREE.Mesh(new THREE.SphereGeometry(0.07, 24, 16), gold({ roughness: 0.05 }));
+        tile.add(pane, rim, seed);
+        tile.userData.phase = i * 0.9;
+        root.add(tile);
+        cast(rim, seed);
+        tiles.push(tile);
+      }
+      // A compass: graduated gold ring, platinum needle.
+      const compass = new THREE.Group();
+      compass.position.copy(at(0.1, 0.86, 0.6));
+      compass.rotation.set(1.0, 0, 0.1);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.035, 20, kit.seg(160)), gold({ roughness: 0.06 }));
+      const inner = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.008, 8, kit.seg(120)), gold({ roughness: 0.12 }));
+      const needle = new THREE.Mesh(new THREE.OctahedronGeometry(0.42, 0), gold({ roughness: 0.18 }));
+      needle.scale.set(0.12, 1, 0.05);
+      needle.rotation.x = Math.PI / 2;
+      const pivot = new THREE.Mesh(new THREE.SphereGeometry(0.06, 24, 16), gold());
+      const needleGroup = new THREE.Group();
+      needleGroup.add(needle);
+      compass.add(ring, inner, needleGroup, pivot);
+      root.add(compass);
+      cast(ring, needle);
+
+      floorAt = at(0.1, 0.95);
+      motions.push((t, k, intro) => {
+        tiles.forEach((tile, i) => {
+          const rise = THREE.MathUtils.clamp(intro * 1.6 - i * 0.12, 0, 1);
+          tile.scale.setScalar(0.001 + rise * 0.999);
+          tile.rotation.set(Math.sin(t * 0.4 + tile.userData.phase) * 0.25, -0.6 + Math.sin(t * 0.3 + tile.userData.phase) * 0.35 + k * 0.4, 0);
+        });
+        needleGroup.rotation.y = Math.sin(t * 0.5) * 0.5 + k * 0.6;
+        compass.position.y = at(0.1, 0.86).y + Math.sin(t * 0.6) * 0.04;
+      });
+    } else {
+      const gears = new THREE.Group();
+      gears.position.copy(at(0.8, 0.82, 0.6));
+      gears.rotation.set(-0.75, -0.35, 0);
+      root.add(gears);
+      const big = new THREE.Mesh(gearGeometry(18, 0.82, 0.7, 0.16, 0.16), gold({ roughness: 0.3, envMapIntensity: 1.8 }));
+      const small = new THREE.Mesh(gearGeometry(12, 0.56, 0.45, 0.11, 0.16), silver({ roughness: 0.26, envMapIntensity: 1.8 }));
+      const third = new THREE.Mesh(gearGeometry(10, 0.42, 0.33, 0.08, 0.14), gold({ roughness: 0.3, envMapIntensity: 1.8 }));
+      big.position.set(-0.55, 0.1, 0);
+      small.position.set(0.79, -0.12, 0.02);
+      third.position.set(0.38, 0.92, -0.04);
+      for (const gear of [big, small, third]) {
+        const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.3, 24), kit.pearl());
+        hub.rotation.x = Math.PI / 2;
+        gear.add(hub);
+      }
+      gears.scale.setScalar(0.7);
+      gears.add(big, small, third);
+      cast(big, small, third);
+
+      const halo = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.026, 20, kit.seg(160)), gold({ roughness: 0.06 }));
+      const traveller = new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 24), silver({ roughness: 0.04 }));
+      const haloGroup = new THREE.Group();
+      haloGroup.position.copy(at(0.12, 0.1, -0.4));
+      haloGroup.rotation.set(1.15, 0, 0.12);
+      haloGroup.add(halo, traveller);
+      root.add(haloGroup);
+      cast(halo, traveller);
+
+      floorAt = at(0.8, 0.95);
+      motions.push((t, k, intro, dt) => {
+        const speed = 0.35 * intro;
+        big.rotation.z += dt * speed;
+        small.rotation.z -= dt * speed * (18 / 12);
+        third.rotation.z -= dt * speed * (18 / 10);
+        gears.rotation.y = -0.35 + k * 0.25;
+        gears.rotation.x = -0.75;
+        gears.position.y = at(0.8, 0.82).y + Math.sin(t * 0.5) * 0.04;
+        const a = t * 0.6;
+        traveller.position.set(Math.cos(a) * 0.55, Math.sin(a) * 0.55, 0);
+        haloGroup.position.y = at(0.12, 0.1).y + Math.sin(t * 0.6 + 1) * 0.05;
+      });
+    }
+
+    // A soft contact shadow rather than a shadow-catching floor: its
+    // faded edge stays inside the transparent canvas, where a floor's cast
+    // shadow would run off the bottom and end in a hard line.
+    const ground = kit.contactShadow(1.1, 0.26, { warm: true });
+    ground.position.copy(floorAt);
+    ground.scale.set(1, 0.5, 1);
+    root.add(ground);
+    const dust = new DustField(kit, { count: 120, spread: 6.5, size: 0.03, opacity: 0.55 });
+    scene.add(dust.points);
+
+    if (keyLight(kit, scene, 4.5, [4, 7, 5])) for (const m of casters) m.castShadow = true;
+    const sweep = new THREE.SpotLight(0xffe2ad, 16, 16, 0.7, 0.8, 1.4);
+    sweep.position.set(-5, 4, 2);
+    const front = new THREE.PointLight(0xfff6e8, 7, 14, 2);
+    front.position.set(0.5, 0.5, 6);
+    scene.add(sweep, sweep.target, front);
+
+    const look = new THREE.Vector3();
+    return {
+      update(s, dt) {
+        const t = s.time;
+        const intro = s.reduced ? 1 : introCurve(t, 2.4);
+        const k = THREE.MathUtils.clamp((s.progress - 0.5) * 2, -1, 1);
+        for (const motion of motions) motion(t, k, intro, s.reduced ? 0 : dt);
+        dust.points.position.set(s.pointer.x * 0.3, -s.pointer.y * 0.2, 0);
+        dust.update(t, dt, null);
+        camera.position.set(s.pointer.x * 0.35, -s.pointer.y * 0.22, distance * (1 + k * 0.025));
+        camera.lookAt(look);
+      },
+    };
+  },
+
+  /**
    * 3D overlays for the three core pillar cards, composited by Flutter over
    * each card's photograph, in the space where the photo fades to ivory
    * (the right for business and innovation, the left for careers).
