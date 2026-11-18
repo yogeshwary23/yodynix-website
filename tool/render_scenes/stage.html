@@ -1,4 +1,4 @@
-<!doctype html><html><head><style>body{margin:0;background:#fff}#v{position:absolute;left:0;top:0}</style></head><body><div id="v"></div>
+<!doctype html><html><head><style>body{margin:0;background:transparent}#v{position:absolute;left:0;top:0}</style></head><body><div id="v"></div>
 <script type="module">
 import * as Y from '/three/yodynix3d.js';
 const q = new URLSearchParams(location.search);
@@ -6,7 +6,7 @@ const el = document.getElementById('v');
 el.style.width = q.get('w') + 'px'; el.style.height = q.get('h') + 'px';
 // Mounts one scene at a fixed size for render.js; see that file.
 window.errors = []; window.addEventListener('error', e => errors.push(String(e.message)));
-const v = Y.mount(el, q.get('s'), { quality: 'high', background: parseInt(q.get('bg') || 'ffffff', 16), variant: q.get('variant') || undefined, feather: false, image: q.get('img') || undefined });
+const v = Y.mount(el, q.get('s'), { quality: 'high', background: q.get('bg') === 'none' ? null : parseInt(q.get('bg') || 'ffffff', 16), variant: q.get('variant') || undefined, feather: false, image: q.get('img') || undefined });
 v.setActive(true); v.setProgress(+(q.get('p') || 0.5)); v.setPointer(+(q.get('px') || 0), 0);
 window.ready = true;
 </script></body></html>

@@ -18,8 +18,9 @@ const chrome = process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Applic
 // [scene, variant, width, height, background, scroll progress]
 const jobs = [
   // Backgrounds match the surface each scene sits on: pearl f8f6f1,
-  // white ffffff (service cards) or the beige band f2eee6.
-  ['hero', null, 1100, 1080, 'f8f6f1', 0.0],
+  // white ffffff (service cards) or the beige band f2eee6. 'none' renders a
+  // transparent WebP for scenes drawn over a painted backdrop (the hero).
+  ['hero', null, 1300, 1000, 'none', 0.0],
   ['web', null, 1200, 800, 'ffffff', 0.5],
   ['web', 'shop', 1200, 800, 'ffffff', 0.5],
   ['mobile', null, 1200, 800, 'ffffff', 0.5],
@@ -84,8 +85,14 @@ function serve() {
       console.error(`${name}: ${errors.join('; ')}`);
       continue;
     }
-    await page.screenshot({ path: path.join(outDir, `${name}.jpg`), type: 'jpeg', quality: 84, clip: { x: 0, y: 0, width: w, height: h } });
-    console.log(`rendered ${name}.jpg`);
+    const clip = { x: 0, y: 0, width: w, height: h };
+    const file = bg === 'none' ? `${name}.webp` : `${name}.jpg`;
+    await page.screenshot(
+      bg === 'none'
+        ? { path: path.join(outDir, file), type: 'webp', quality: 86, omitBackground: true, clip }
+        : { path: path.join(outDir, file), type: 'jpeg', quality: 84, clip },
+    );
+    console.log(`rendered ${file}`);
   }
   await browser.close();
   server.close();

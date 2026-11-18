@@ -5,9 +5,11 @@
 class AssetPaths {
   AssetPaths._();
 
-  /// Champagne-gold / platinum variant of the mark (made by
-  /// `tool/recolor_logo`); the original `yodynix_logo.png` is kept unchanged.
-  static const String logo = 'assets/images/brand/yodynix_logo_gold.png';
+  /// Recoloured variants of the mark (made by `tool/recolor_logo`); the
+  /// original `yodynix_logo.png` is kept unchanged. Deep charcoal + champagne
+  /// gold for white and light surfaces; platinum + gold for charcoal bands.
+  static const String logo = 'assets/images/brand/yodynix_logo_charcoal.png';
+  static const String logoOnDark = 'assets/images/brand/yodynix_logo_gold.png';
   static const String founderPhoto = 'assets/images/team/founder_office.jpg';
 
   static const String hero = 'assets/images/hero/hero_visual';

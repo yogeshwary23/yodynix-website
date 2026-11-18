@@ -6,6 +6,7 @@ import '../../core/utils/responsive.dart';
 import '../../models/site_section.dart';
 import '../../providers/section_navigator.dart';
 import '../../shared/layouts/site_footer.dart';
+import '../../shared/layouts/site_header.dart';
 import '../../shared/layouts/site_navbar.dart';
 import '../about/about_section.dart';
 import '../contact/contact_section.dart';
@@ -44,22 +45,17 @@ class HomePage extends StatelessWidget {
       color: AppColors.primary,
       child: Scaffold(
         endDrawer: context.useCompactNav ? const MobileNavDrawer() : null,
-        body: Column(
-          children: [
-            const SiteNavbar(),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: nav.scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final section in SiteSection.values) KeyedSubtree(key: nav.keyFor(section), child: _sections[section]!),
-                    const SiteFooter(),
-                  ],
-                ),
-              ),
+        body: SiteHeaderFrame(
+          child: SingleChildScrollView(
+            controller: nav.scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final section in SiteSection.values) KeyedSubtree(key: nav.keyFor(section), child: _sections[section]!),
+                const SiteFooter(),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

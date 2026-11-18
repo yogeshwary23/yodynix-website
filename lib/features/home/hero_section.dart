@@ -15,11 +15,13 @@ import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
 import '../../shared/widgets/smart_image.dart';
 import '../../shared/widgets/visuals/visual_kind.dart';
+import 'hero_backdrop.dart';
 import 'hero_stats_bar.dart';
 
 /// Light, cinematic hero: the headline on the left and the signature 3D
-/// sculpture on the right, reacting to the pointer anywhere in the hero and
-/// transforming as the page scrolls.
+/// sculpture on the right, inside the architectural [HeroBackdrop]. The statistics card straddles the backdrop's lower
+/// edge. The sculpture and the backdrop both answer the pointer anywhere in
+/// the hero, and the sculpture transforms as the page scrolls.
 class HeroSection extends StatefulWidget {
   const HeroSection({super.key});
 
@@ -46,11 +48,17 @@ class _HeroSectionState extends State<HeroSection> {
   @override
   Widget build(BuildContext context) {
     final desktop = context.isDesktop;
+    // How far the backdrop stops short of the section's foot: the lower part
+    // of the statistics card sits on the plain page surface below it.
+    final overlap = context.responsive(mobile: 96.0, tablet: 110.0, desktop: 128.0);
+    // The card rises into the empty space in front of the plinth.
+    final cardLift = desktop ? 10.0 : 0.0;
+
     final sculpture = Reveal(
       delay: const Duration(milliseconds: 200),
       offset: 30,
       child: AspectRatio(
-        aspectRatio: desktop ? 1.02 : 1.25,
+        aspectRatio: desktop ? 1.38 : 1.2,
         child: Hero3DScene(
           pointer: _pointer,
           fallback: SmartImage(
@@ -67,37 +75,52 @@ class _HeroSectionState extends State<HeroSection> {
       builder: (context, constraints) => MouseRegion(
         onHover: (e) => _track(e, Size(constraints.maxWidth, context.size?.height ?? 800)),
         onExit: (_) => _pointer.value = Offset.zero,
-        child: SectionShell(
-          topPadding: context.responsive(mobile: 32.0, tablet: 48.0, desktop: 40.0),
-          bottomPadding: context.responsive(mobile: 56.0, tablet: 72.0, desktop: 88.0),
-          tone: SurfaceColors.light,
-          background: AppColors.pearlWhite,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (desktop)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+        child: SurfaceTone(
+          colors: SurfaceColors.light,
+          child: ColoredBox(
+            color: AppColors.background,
+            child: Stack(
+              children: [
+                Positioned(left: 0, right: 0, top: 0, bottom: overlap, child: HeroBackdrop(pointer: _pointer)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Expanded(flex: 10, child: _HeroCopy()),
-                    const SizedBox(width: 24),
-                    // Sized so the sculpture never dominates the viewport.
-                    Expanded(
-                      flex: 11,
-                      child: ConstrainedBox(constraints: const BoxConstraints(maxHeight: 600), child: sculpture),
+                    SizedBox(height: context.responsive(mobile: 36.0, tablet: 48.0, desktop: 16.0)),
+                    MaxWidth(
+                      maxWidth: Breakpoints.heroMaxWidth,
+                      child: desktop
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Expanded(flex: 9, child: _HeroCopy()),
+                                const SizedBox(width: 8),
+                                Expanded(flex: 11, child: sculpture),
+                              ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const _HeroCopy(),
+                                const SizedBox(height: 12),
+                                Center(
+                                  child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 620), child: sculpture),
+                                ),
+                              ],
+                            ),
                     ),
+                    SizedBox(height: context.responsive(mobile: 8.0, tablet: 16.0, desktop: 0.0)),
+                    Transform.translate(
+                      offset: Offset(0, -cardLift),
+                      child: const MaxWidth(
+                        maxWidth: Breakpoints.heroMaxWidth,
+                        child: Reveal(delay: Duration(milliseconds: 380), child: HeroStatsBar()),
+                      ),
+                    ),
+                    SizedBox(height: context.responsive(mobile: 40.0, tablet: 56.0, desktop: 64.0) - cardLift),
                   ],
-                )
-              else ...[
-                const _HeroCopy(),
-                const SizedBox(height: 16),
-                Center(
-                  child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 560), child: sculpture),
                 ),
               ],
-              SizedBox(height: context.responsive(mobile: 24.0, desktop: 40.0)),
-              const Reveal(delay: Duration(milliseconds: 380), child: HeroStatsBar()),
-            ],
+            ),
           ),
         ),
       ),
@@ -112,68 +135,115 @@ class _HeroCopy extends StatelessWidget {
   Widget build(BuildContext context) {
     final nav = SectionNavigatorScope.read(context);
     final tone = context.tone;
-    final size = context.responsive(mobile: 40.0, tablet: 54.0, desktop: 60.0);
-    final style = AppTypography.display(fontSize: size, height: 1.06, fontWeight: FontWeight.w800, color: tone.ink, letterSpacing: -1.2);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Reveal(child: Eyebrow(CompanyContent.heroEyebrow)),
-        const SizedBox(height: 26),
-        Reveal(
-          delay: const Duration(milliseconds: 80),
-          child: Semantics(
-            header: true,
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  const TextSpan(text: CompanyContent.heroHeadlineLead),
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.baseline,
-                    baseline: TextBaseline.alphabetic,
-                    child: GradientText(
-                      CompanyContent.heroHeadlineAccent,
-                      style: style,
-                      gradient: const LinearGradient(colors: [AppColors.antiqueGold, AppColors.champagneGold, Color(0xFFD9BC82)]),
-                    ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Sized from the column so "Intelligent Digital" always holds its line.
+        final size = (constraints.maxWidth * 0.11).clamp(34.0, 72.0);
+        final style = AppTypography.display(
+          fontSize: size,
+          height: 1.06,
+          fontWeight: FontWeight.w800,
+          color: tone.ink,
+          letterSpacing: -size * 0.022,
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Reveal(child: _HeroEyebrow(CompanyContent.heroEyebrow)),
+            SizedBox(height: size * 0.36),
+            Reveal(
+              delay: const Duration(milliseconds: 80),
+              child: Semantics(
+                header: true,
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(text: CompanyContent.heroHeadlineLead),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.baseline,
+                        baseline: TextBaseline.alphabetic,
+                        child: GradientText(CompanyContent.heroHeadlineAccent, style: style, gradient: AppColors.metallicGoldText),
+                      ),
+                      const TextSpan(text: CompanyContent.heroHeadlineTail),
+                    ],
                   ),
-                  const TextSpan(text: CompanyContent.heroHeadlineTail),
+                  style: style,
+                ),
+              ),
+            ),
+            SizedBox(height: size * 0.4),
+            Reveal(
+              delay: const Duration(milliseconds: 160),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 580),
+                child: Text(
+                  CompanyContent.heroDescription,
+                  style: AppTypography.body(
+                    fontSize: context.responsive(mobile: 16.5, tablet: 18.0, desktop: 20.0),
+                    height: 1.6,
+                    color: tone.body,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: context.responsive(mobile: 30.0, desktop: 38.0)),
+            Reveal(
+              delay: const Duration(milliseconds: 240),
+              child: Wrap(
+                spacing: 24,
+                runSpacing: 14,
+                children: [
+                  PrimaryButton(
+                    label: 'Explore Our Expertise',
+                    size: ButtonSize.large,
+                    onPressed: () => nav.scrollTo(SiteSection.expertise),
+                  ),
+                  SecondaryButton(
+                    label: 'Start Your Project',
+                    size: ButtonSize.large,
+                    icon: Icons.arrow_forward_rounded,
+                    onPressed: () => nav.startEnquiry(),
+                  ),
                 ],
               ),
-              style: style,
             ),
-          ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// A short gold rule followed by the spaced, uppercase brand line.
+class _HeroEyebrow extends StatelessWidget {
+  const _HeroEyebrow(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = context.isMobile;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: mobile ? 24 : 32,
+          height: 2,
+          decoration: BoxDecoration(gradient: AppColors.brandGradient, borderRadius: BorderRadius.circular(2)),
         ),
-        const SizedBox(height: 24),
-        Reveal(
-          delay: const Duration(milliseconds: 160),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Text(
-              CompanyContent.heroDescription,
-              style: AppTypography.body(fontSize: context.responsive(mobile: 16.5, desktop: 18.5), height: 1.65, color: tone.body),
+        SizedBox(width: mobile ? 10 : 14),
+        Flexible(
+          child: Text(
+            text.toUpperCase(),
+            style: AppTypography.body(
+              fontSize: mobile ? 11 : 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: mobile ? 1.2 : 2.4,
+              height: 1.3,
+              color: AppColors.accent,
             ),
-          ),
-        ),
-        const SizedBox(height: 36),
-        Reveal(
-          delay: const Duration(milliseconds: 240),
-          child: Wrap(
-            spacing: 14,
-            runSpacing: 14,
-            children: [
-              PrimaryButton(
-                label: 'Explore Our Expertise',
-                size: ButtonSize.large,
-                onPressed: () => nav.scrollTo(SiteSection.expertise),
-              ),
-              SecondaryButton(
-                label: 'Start Your Project',
-                size: ButtonSize.large,
-                icon: Icons.arrow_forward_rounded,
-                onPressed: () => nav.startEnquiry(),
-              ),
-            ],
           ),
         ),
       ],

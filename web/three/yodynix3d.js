@@ -171,6 +171,11 @@ class Engine {
     r.setViewport(0, 0, w, h);
     r.setScissor(0, 0, w, h);
     r.setScissorTest(true);
+    // Per view: three.js leaves an opaque scene's background as the shared
+    // renderer's clear colour, which would fill transparent views after it.
+    const bg = view.scene.background;
+    if (bg && bg.isColor) r.setClearColor(bg, 1);
+    else r.setClearColor(0x000000, 0);
     r.clear(true, true, true);
     r.render(view.scene, view.camera);
     r.setScissorTest(false);
@@ -219,9 +224,9 @@ class View {
       pointerEvents: 'none',
     });
     this.canvas.setAttribute('aria-hidden', 'true');
-    // Feather the edges so the scene dissolves into the page rather than
-    // sitting in a visible box.
-    if (options.feather !== false) {
+    // Feather the edges so an opaque scene dissolves into the page rather
+    // than sitting in a visible box. Transparent scenes need no feathering.
+    if (options.feather !== false && options.background != null) {
       const mask = 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 72%, transparent 100%)';
       this.canvas.style.maskImage = mask;
       this.canvas.style.webkitMaskImage = mask;
@@ -1428,200 +1433,226 @@ function camOrbit(camera, state, { distance, height = 0.3, look = new THREE.Vect
 
 const SCENES = {
   /**
-   * Signature hero sculpture: a liquid-gold ribbon interwoven with a platinum
-   * one around a morphing glass core, inside floating metallic rings, with
-   * chrome spheres, glass cubes and gold dust drifting through the space.
+   * Signature hero sculpture: an armillary of polished champagne-gold and
+   * chrome bands nested around a liquid-gold core, each band tumbling on its
+   * own axis. Fine orbital rings carry small gold and chrome spheres around
+   * it, and the whole piece floats above a tiered gold-and-pearl platform.
+   *
+   * The bands are nested spherical shells (each band's inner and outer
+   * distance from the centre lies between its neighbours'), so however they
+   * turn they never pass through one another.
+   *
+   * Rendered on a transparent canvas: the hero paints its own ivory backdrop.
    */
-  hero(kit, options) {
+  hero(kit) {
     const { scene, camera } = kit;
     const root = new THREE.Group();
     const sculpture = new THREE.Group();
+    sculpture.position.y = 0.36;
     root.add(sculpture);
     scene.add(root);
     const casters = [];
 
-    const goldRibbon = new LiquidRibbon(new TrefoilCurve(0.38, 0.9), kit.liquidGold(), {
-      segments: kit.seg(520),
-      width: 0.3,
-      thickness: 0.055,
-      twist: 1,
-      amplitude: 0.035,
-      waves: 3,
-    });
-    const silverRibbon = new LiquidRibbon(new TrefoilCurve(0.38, 0.9), kit.chrome({ roughness: 0.05 }), {
-      segments: kit.seg(520),
-      width: 0.11,
-      thickness: 0.07,
-      twist: -2,
-      amplitude: 0.025,
-      waves: 4,
-    });
-    silverRibbon.mesh.rotation.z = Math.PI / 3;
-    silverRibbon.mesh.scale.setScalar(0.94);
-    sculpture.add(goldRibbon.mesh, silverRibbon.mesh);
-    casters.push(goldRibbon.mesh, silverRibbon.mesh);
+    // A thick ring with softly rounded edges, turned on a lathe: radius R,
+    // band width w (along the axis), wall thickness t.
+    const band = (R, w, t) => {
+      const pts = [];
+      const r = Math.min(t, w) * 0.48;
+      const corner = (cx, cy, a0) => {
+        for (let i = 0; i <= 6; i++) {
+          const a = a0 + (i / 6) * (Math.PI / 2);
+          pts.push(new THREE.Vector2(cx + Math.cos(a) * r, cy + Math.sin(a) * r));
+        }
+      };
+      const ri = R - t / 2;
+      const ro = R + t / 2;
+      const h = w / 2;
+      corner(ro - r, -h + r, -Math.PI / 2);
+      corner(ro - r, h - r, 0);
+      corner(ri + r, h - r, Math.PI / 2);
+      corner(ri + r, -h + r, Math.PI);
+      pts.push(pts[0].clone());
+      return new THREE.LatheGeometry(pts, kit.seg(200));
+    };
 
-    // Morphing glass core with a gold heart.
-    const coreGeo = morphGeometry(0.3, kit.quality.segments < 1 ? 4 : 5);
-    const core = new THREE.Mesh(coreGeo, kit.glass({ thickness: 0.9 }));
-    const heart = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 3), kit.liquidGold({ roughness: 0.04 }));
-    const heartLight = new THREE.PointLight(0xffd99a, 1.6, 2.5, 2);
-    sculpture.add(core, heart, heartLight);
-    casters.push(heart);
-    const weights = [0, 0, 0];
-
-    // Floating metallic rings. Each turns about its own axis, at its own
-    // speed and in its own direction, carrying a node tied to the core.
-    const orbits = [];
-    const lines = [];
-    const spins = [
-      [new THREE.Vector3(0.3, 1, 0.1), 0.11],
-      [new THREE.Vector3(-0.6, 0.2, 1), -0.075],
-      [new THREE.Vector3(1, -0.4, 0.5), 0.16],
+    // [radius, width, thickness, gold?, rest orientation, tumble axis, speed]
+    const bandSpecs = [
+      [0.72, 0.18, 0.05, false, [1.1, 0.2, 0.5], [1, 0, 0.3], 0.34],
+      [0.95, 0.4, 0.06, true, [0.35, 0.6, -0.9], [0.2, 0, 1], -0.22],
+      [1.2, 0.28, 0.05, false, [-0.75, 0.3, 0.35], [1, 0, -0.5], 0.17],
+      [1.46, 0.5, 0.07, true, [0.55, -0.4, 0.95], [0.4, 0, 1], -0.12],
+      [1.7, 0.2, 0.045, false, [1.35, 0.9, 0], [1, 0, 0.2], 0.09],
     ];
-    for (let i = 0; i < 3; i++) {
+    const bands = bandSpecs.map(([R, w, t, isGold, rest, axis, speed], i) => {
+      const material = isGold ? kit.liquidGold({ roughness: 0.08 }) : kit.chrome({ roughness: 0.05 });
+      const mesh = new THREE.Mesh(band(R, w, t), material);
       const pivot = new THREE.Group();
-      pivot.rotation.set(0.9 + i * 0.55, i * 1.1, 0.3 * i);
-      const radius = 1.45 + i * 0.13;
+      pivot.rotation.set(...rest);
+      pivot.add(mesh);
+      sculpture.add(pivot);
+      casters.push(mesh);
+      return { pivot, mesh, rest: pivot.quaternion.clone(), axis: new THREE.Vector3(...axis).normalize(), speed, phase: i * 0.9 };
+    });
+
+    // Liquid-gold core with a warm inner light.
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.4, 96, 64), kit.liquidGold({ roughness: 0.03 }));
+    const coreLight = new THREE.PointLight(0xffdca0, 1.2, 2.2, 2);
+    sculpture.add(core, coreLight);
+    casters.push(core);
+
+    // Fine orbital rings, each carrying a sphere along its path. They turn
+    // about the vertical only, so they never dip into the platform.
+    const orbitSpecs = [
+      // [radius, tilt x, tilt z, yaw, speed, sphere radius, gold ring?, gold sphere?]
+      [2.0, 1.05, 0.25, 0.2, 0.34, 0.12, true, true],
+      [2.25, -0.85, -0.35, 1.4, -0.26, 0.13, false, false],
+      [2.45, 0.5, 0.75, 2.5, 0.21, 0.115, true, true],
+    ];
+    const orbits = orbitSpecs.map(([radius, tx, tz, yaw, speed, size, goldRing, goldSphere], i) => {
+      const spin = new THREE.Group();
+      spin.rotation.y = yaw;
+      const tilt = new THREE.Group();
+      tilt.rotation.set(Math.PI / 2 + tx, 0, tz);
+      spin.add(tilt);
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(radius, i === 1 ? 0.013 : 0.008, 16, kit.seg(260)),
-        i === 1 ? kit.gold({ roughness: 0.1 }) : kit.chrome({ roughness: 0.08 }),
+        new THREE.TorusGeometry(radius, goldRing ? 0.02 : 0.016, 20, kit.seg(360)),
+        goldRing ? kit.gold({ roughness: 0.1 }) : kit.chrome({ roughness: 0.06 }),
       );
-      const node = new THREE.Mesh(new THREE.SphereGeometry(0.075, 40, 28), i === 1 ? kit.liquidGold() : kit.glass({ thickness: 0.3 }));
-      pivot.add(ring, node);
-      root.add(pivot);
-      casters.push(ring, node);
-      orbits.push({
-        pivot,
-        node,
-        radius,
-        speed: (0.22 + i * 0.07) * (i === 1 ? -1 : 1),
-        offset: i * 2.1,
-        rest: pivot.quaternion.clone(),
-        axis: spins[i][0].normalize(),
-        spin: spins[i][1],
-      });
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(size, 48, 32), goldSphere ? kit.liquidGold() : kit.chrome({ roughness: 0.04 }));
+      // A second, smaller rider opposite the first on the outer rings.
+      const rider = i > 0 ? new THREE.Mesh(new THREE.SphereGeometry(size * 0.75, 32, 24), goldSphere ? kit.chrome({ roughness: 0.04 }) : kit.liquidGold()) : null;
+      tilt.add(ring, sphere);
+      if (rider) tilt.add(rider);
+      sculpture.add(spin);
+      casters.push(ring, sphere);
+      if (rider) casters.push(rider);
+      return { spin, tilt, ring, sphere, rider, radius, speed, yaw, offset: i * 2.2 };
+    });
 
-      const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: BRAND.goldDeep, transparent: true, opacity: 0.14 }));
-      root.add(line);
-      lines.push(line);
-    }
-
+    // Small metallic spheres drifting in the space around the piece.
     const accents = floaters(kit, [
-      ['sphere', -1.95, 0.85, -0.6, 0.14],
-      ['cube', 1.9, -0.75, 0.2, 0.22],
-      ['ring', -1.7, -1.0, 0.3, 0.17],
-      ['goldSphere', 1.55, 1.15, -0.8, 0.09],
-      ['cube', -1.25, 1.35, -1.1, 0.15],
-      ['silverRing', 2.05, 0.55, -0.9, 0.2],
-      ['sphere', 0.95, -1.35, 0.6, 0.08],
+      ['goldSphere', -2.7, 1.6, -0.8, 0.08],
+      ['sphere', 2.75, 1.9, -1.2, 0.07],
+      ['goldSphere', 2.9, -0.4, 0.3, 0.06],
+      ['sphere', -2.85, -0.5, 0.2, 0.05],
+      ['goldSphere', -1.5, 2.55, -1.4, 0.05],
     ]);
     root.add(accents.group);
     accents.group.traverse((o) => o.isMesh && casters.push(o));
 
-    const dust = new DustField(kit, { count: 320, spread: 5.2, size: 0.026 });
+    const dust = new DustField(kit, { count: 220, spread: 6.4, size: 0.034, opacity: 0.6 });
     root.add(dust.points);
 
-    // Grounding: a soft contact shadow, plus (above low quality) a real
-    // blurred shadow from the key light on an invisible floor.
-    const floorY = -1.6;
-    const shadow = kit.contactShadow(1.6, 0.18);
-    shadow.position.y = floorY;
-    scene.add(shadow);
-    let catcher = null;
+    // Tiered platform: a brushed champagne-gold plinth under a pearl top
+    // with an inlaid gold ring and a softly glowing rim.
+    const platformTop = -2.0;
+    const platform = new THREE.Group();
+    const plinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.05, 3.15, 0.24, kit.seg(200), 1),
+      kit.gold({ color: 0xead6ac, roughness: 0.32 }),
+    );
+    plinth.position.y = platformTop - 0.08 - 0.12;
+    const top = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.86, 2.9, 0.08, kit.seg(200), 1),
+      kit.porcelain({ color: 0xf6efe2, roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.08 }),
+    );
+    top.position.y = platformTop - 0.04;
+    top.receiveShadow = true;
+    plinth.receiveShadow = true;
+    const inlay = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.018, 12, kit.seg(300)), kit.gold({ roughness: 0.1 }));
+    inlay.rotation.x = Math.PI / 2;
+    inlay.position.y = platformTop + 0.002;
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(2.88, 0.028, 16, kit.seg(300)), kit.liquidGold({ roughness: 0.06 }));
+    lip.rotation.x = Math.PI / 2;
+    lip.position.y = platformTop;
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(3.055, 0.016, 12, kit.seg(300)), kit.glow(BRAND.softGold, 1.6));
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = platformTop - 0.08;
+    platform.add(plinth, top, inlay, lip, rim);
+    // Ambient occlusion: a soft pool under the sculpture and under the plinth.
+    const pool = kit.contactShadow(1.6, 0.16);
+    pool.position.y = platformTop + 0.003;
+    const ground = kit.contactShadow(4.0, 0.22);
+    ground.position.y = platformTop - 0.31;
+    platform.add(pool, ground);
+    scene.add(platform);
+
     if (kit.quality.shadow) {
-      const key = new THREE.DirectionalLight(0xfff4e2, 0.9);
-      key.position.set(1.8, 6, 2.4);
+      const key = new THREE.DirectionalLight(0xfff4e2, 1.0);
+      key.position.set(1.2, 6, 1.6);
       key.castShadow = true;
       key.shadow.mapSize.set(kit.quality.shadow, kit.quality.shadow);
-      Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 1, far: 12 });
-      key.shadow.radius = 26;
-      key.shadow.blurSamples = 24;
-      key.shadow.bias = -0.0006;
+      Object.assign(key.shadow.camera, { left: -3.4, right: 3.4, top: 3.4, bottom: -3.4, near: 1, far: 12 });
+      key.shadow.radius = 18;
+      key.shadow.blurSamples = 20;
+      key.shadow.bias = -0.0008;
       scene.add(key, key.target);
       for (const m of casters) m.castShadow = true;
-      catcher = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({ color: BRAND.charcoal, opacity: 0.1 }));
-      catcher.rotation.x = -Math.PI / 2;
-      catcher.position.y = floorY - 0.01;
-      catcher.receiveShadow = true;
-      scene.add(catcher);
     }
+    // Warm light raking across the gold from behind-left, and a soft front fill.
+    const sweep = new THREE.SpotLight(0xffe2ad, 14, 12, 0.6, 0.8, 1.6);
+    sweep.position.set(-3.5, 3.5, -2);
+    sweep.target.position.set(0, 0, 0);
+    const front = new THREE.PointLight(0xfff6e8, 6, 10, 2);
+    front.position.set(0.5, 1.2, 4.2);
+    scene.add(sweep, sweep.target, front);
 
-    // Atmospheric depth: distant pieces fade gently into the backdrop.
-    if (scene.background) scene.fog = new THREE.Fog(scene.background, 6, 14);
-
-    const nodeWorld = new THREE.Vector3();
-    const cursor = new THREE.Vector3();
+    const q = new THREE.Quaternion();
     const look = new THREE.Vector3();
-    const spinQ = new THREE.Quaternion();
-    let distance = 6;
+    let distance = 7;
+    let rest = null;
 
     return {
       frame(cam, aspect) {
-        distance = fitDistance(cam, 2.1, aspect);
-        if (scene.fog) {
-          scene.fog.near = distance - 0.4;
-          scene.fog.far = distance + 9;
-        }
+        distance = fitDistance(cam, 2.85, aspect);
       },
       update(s, dt) {
-        const p = s.progress;
         const t = s.time;
-        const intro = s.reduced ? 1 : introCurve(t);
+        const intro = s.reduced ? 1 : introCurve(t, 2.8);
+        // Scroll measured from where the hero sits when the page opens.
+        if (rest === null) rest = s.targetProgress;
+        const scroll = THREE.MathUtils.clamp((s.progress - rest) / Math.max(0.2, 1 - rest), 0, 1);
 
-        goldRibbon.update(t, 1);
-        silverRibbon.update(t + 1.7, 0.8);
+        // Bands unfold from a closed, aligned stack and then tumble
+        // independently; scrolling opens the gimbal further.
+        for (const b of bands) {
+          q.setFromAxisAngle(b.axis, t * b.speed + b.phase * intro + scroll * 1.4 * Math.sign(b.speed));
+          b.pivot.quaternion.identity().slerp(b.rest, intro).multiply(q);
+        }
+        sculpture.scale.setScalar(0.78 + intro * 0.3);
+        core.rotation.y = t * 0.4;
+        coreLight.intensity = 1.0 + Math.sin(t * 1.8) * 0.25;
 
-        // A slow, continuous turn; the mouse tilts it, scroll turns it further.
-        sculpture.rotation.y += dt * 0.12;
-        sculpture.rotation.x = Math.sin(t * 0.25) * 0.1 + s.pointer.y * 0.4 + p * 0.7;
-        sculpture.rotation.z = -s.pointer.x * 0.22;
-        silverRibbon.mesh.rotation.z = Math.PI / 3 + p * 1.5;
-        silverRibbon.mesh.rotation.y = Math.sin(t * 0.35) * 0.15 + p * 0.5;
-        goldRibbon.mesh.rotation.y = -p * 0.45;
-        root.position.y = Math.sin(t * 0.6) * 0.05 + p * 0.5;
-        root.rotation.y = s.pointer.x * 0.3 + p * 0.8;
+        // The whole sculpture turns slowly; the pointer tilts it.
+        sculpture.rotation.y = t * 0.1 + s.pointer.x * 0.35 + scroll * 0.9;
+        sculpture.rotation.x = s.pointer.y * 0.18 + Math.sin(t * 0.3) * 0.04;
+        sculpture.position.y = 0.36 + Math.sin(t * 0.7) * 0.05 + scroll * 0.25;
 
-        // The core morphs as the page scrolls: sphere → octahedron → cube → bloom.
-        core.morphTargetInfluences.splice(0, 3, ...morphWeights(Math.min(1, p * 1.6), weights));
-        core.rotation.y = t * 0.3;
-        core.rotation.x = t * 0.17;
-        heart.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08);
-        heartLight.intensity = 1.4 + Math.sin(t * 2.2) * 0.3;
-
-        for (let i = 0; i < orbits.length; i++) {
-          const o = orbits[i];
-          // Independent spin about each ring's own axis, plus scroll and a
-          // little pointer lean in alternating directions.
-          spinQ.setFromAxisAngle(o.axis, t * o.spin + p * (0.6 + i * 0.3) * (i % 2 ? -1 : 1));
-          o.pivot.quaternion.copy(o.rest).multiply(spinQ);
-          o.pivot.rotateY(s.pointer.x * 0.18 * (i % 2 ? -1 : 1));
+        for (const o of orbits) {
+          o.spin.rotation.y = o.yaw + t * o.speed * 0.25;
           const a = t * o.speed + o.offset;
-          o.node.position.set(Math.cos(a) * o.radius, Math.sin(a) * o.radius, 0);
-          o.node.getWorldPosition(nodeWorld);
-          root.worldToLocal(nodeWorld);
-          const pos = lines[i].geometry.attributes.position;
-          pos.setXYZ(1, nodeWorld.x, nodeWorld.y, nodeWorld.z);
-          pos.needsUpdate = true;
+          o.sphere.position.set(Math.cos(a) * o.radius, Math.sin(a) * o.radius, 0);
+          if (o.rider) o.rider.position.set(Math.cos(a + Math.PI) * o.radius, Math.sin(a + Math.PI) * o.radius, 0);
+          o.ring.scale.setScalar(0.85 + intro * 0.15 + scroll * 0.08);
+          o.sphere.position.multiplyScalar(0.85 + intro * 0.15 + scroll * 0.08);
         }
 
-        // Layered parallax: nearer layers shift further with the pointer.
-        accents.update(t, dt, p * 0.35 + (1 - intro) * 0.6);
-        accents.group.position.set(s.pointer.x * 0.16, -s.pointer.y * 0.1, 0);
-        dust.points.position.set(s.pointer.x * 0.3, -s.pointer.y * 0.18, 0);
-        root.updateMatrixWorld();
-        const hasPointer = s.pointer.lengthSq() > 0.0001;
-        dust.update(t, dt, hasPointer ? pointerOnPlane(camera, s.pointer, root, 0, cursor) : null);
+        accents.update(t, dt, scroll * 0.3 + (1 - intro) * 0.5);
+        accents.group.position.set(s.pointer.x * 0.18, -s.pointer.y * 0.12, 0);
+        dust.points.position.set(s.pointer.x * 0.3, -s.pointer.y * 0.2, 0);
+        dust.update(t, dt, null);
+        rim.material.emissiveIntensity = 1.4 + Math.sin(t * 1.2) * 0.25;
 
-        shadow.material.opacity = shadow.userData.baseOpacity * (1 - p * 0.7);
-        shadow.scale.setScalar(1 + p * 0.4);
-        if (catcher) catcher.material.opacity = 0.1 * (1 - p * 0.8);
-
-        // Cinematic camera: dolly in on load, then zoom through on scroll.
-        const zoom = 1.45 - intro * 0.45 - THREE.MathUtils.smoothstep(p, 0.15, 0.9) * 0.3;
-        look.set(0, p * 0.35, 0);
-        camOrbit(camera, s, { distance: distance * zoom, height: 0.25 + p * 0.5 + (1 - intro) * 0.8, look, swing: 0.4, base: (1 - intro) * -0.6 });
+        // Cinematic camera: dolly in on load, rise and pull back on scroll.
+        const zoom = 1.3 - intro * 0.3 + scroll * 0.12;
+        look.set(0, -0.3 + scroll * 0.3, 0);
+        camOrbit(camera, s, {
+          distance: distance * zoom,
+          height: -0.35 + scroll * 0.9 + (1 - intro) * 0.8,
+          look,
+          swing: 0.18,
+          base: (1 - intro) * -0.45,
+        });
       },
     };
   },

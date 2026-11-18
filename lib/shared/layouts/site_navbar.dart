@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
@@ -14,15 +15,20 @@ import '../../models/content_models.dart';
 import '../../models/site_section.dart';
 import '../../providers/section_navigator.dart';
 import '../../repositories/content/services_content.dart';
+import '../../services/link_service.dart';
 import '../widgets/brand_logo.dart';
 import '../widgets/buttons.dart';
 import '../widgets/section_widgets.dart';
 import 'navigation_actions.dart';
 
-/// Sticky top navigation. Collapses to logo + menu button below
+/// Sticky main navigation, shown below the [TopInfoBar] by
+/// [SiteHeaderFrame]. Collapses to logo + menu button below
 /// [Breakpoints.navCollapse]; the menu opens [MobileNavDrawer].
 class SiteNavbar extends StatelessWidget {
-  const SiteNavbar({super.key});
+  const SiteNavbar({super.key, this.elevated = false});
+
+  /// Lifts the bar with a soft shadow once the page has scrolled.
+  final bool elevated;
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +38,15 @@ class SiteNavbar extends StatelessWidget {
     final sitePage = currentSitePage(context);
     final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context), page: sitePage);
     final compact = context.useCompactNav;
-    final height = context.isMobile ? 68.0 : 80.0;
+    final height = context.responsive(mobile: 72.0, tablet: 84.0, desktop: 92.0);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       height: height,
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: nav.isScrolled ? 0.97 : 1),
+        color: AppColors.white,
         border: const Border(bottom: BorderSide(color: AppColors.stone)),
-        boxShadow: nav.isScrolled
+        boxShadow: elevated
             ? [BoxShadow(color: AppColors.charcoal.withValues(alpha: 0.08), blurRadius: 24, offset: const Offset(0, 6))]
             : null,
       ),
@@ -52,6 +58,7 @@ class SiteNavbar extends StatelessWidget {
           explicitChildNodes: true,
           label: 'Main navigation',
           child: MaxWidth(
+            maxWidth: Breakpoints.headerMaxWidth,
             child: Row(
               children: [
                 Semantics(
@@ -62,7 +69,7 @@ class SiteNavbar extends StatelessWidget {
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
                       onTap: () => goToSection(context, SiteSection.home),
-                      child: BrandLogo(height: context.isMobile ? 38 : 44),
+                      child: BrandLogo(height: context.responsive(mobile: 46.0, tablet: 56.0, desktop: context.screenWidth >= 1440 ? 66.0 : 56.0), showCategory: !context.isMobile),
                     ),
                   ),
                 ),
@@ -113,7 +120,7 @@ class SiteNavbar extends StatelessWidget {
                           const SizedBox(width: 12),
                           PrimaryButton(
                             label: 'Get Started',
-                            size: ButtonSize.small,
+                            size: ButtonSize.medium,
                             onPressed: () => goToSection(context, SiteSection.contact),
                           ),
                         ],
@@ -200,6 +207,8 @@ class _NavItemState extends State<_NavItem> {
   @override
   Widget build(BuildContext context) {
     final hover = _hover || widget.highlighted;
+    // Larger labels only where the full row fits without scaling down.
+    final roomy = context.screenWidth >= 1440;
     return Semantics(
       button: true,
       selected: widget.active,
@@ -213,7 +222,7 @@ class _NavItemState extends State<_NavItem> {
           onTap: widget.onTap,
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: roomy ? 13 : 10, vertical: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -227,8 +236,8 @@ class _NavItemState extends State<_NavItem> {
                   child: AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 200),
                     style: AppTypography.body(
-                      fontSize: 14.5,
-                      fontWeight: widget.active ? FontWeight.w700 : FontWeight.w500,
+                      fontSize: roomy ? 16 : 15,
+                      fontWeight: widget.active ? FontWeight.w600 : FontWeight.w500,
                       color: widget.active || hover ? AppColors.accent : AppColors.charcoal,
                       height: 1.2,
                     ),
@@ -725,9 +734,9 @@ class _ClientLoginButton extends StatelessWidget {
         overlayColor: AppColors.primary,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         shape: const StadiumBorder(),
-        textStyle: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, height: 1.2),
+        textStyle: AppTypography.body(fontSize: 16, fontWeight: FontWeight.w500, height: 1.2),
       ),
-      icon: const Icon(Icons.account_circle_outlined, size: 20),
+      icon: const Icon(Icons.account_circle_outlined, size: 22),
       label: const Text('Client Login'),
     );
   }
@@ -830,6 +839,18 @@ class MobileNavDrawer extends StatelessWidget {
                   ],
                 ),
               ),
+              const Divider(color: AppColors.border, height: 24),
+              _DrawerContact(
+                icon: Icons.phone_in_talk_outlined,
+                label: ContactConfig.phones.first,
+                onTap: () => LinkService.call(ContactConfig.phones.first),
+              ),
+              _DrawerContact(
+                icon: Icons.mail_outline_rounded,
+                label: ContactConfig.email,
+                onTap: () => LinkService.email(ContactConfig.email),
+              ),
+              const SizedBox(height: 12),
               SecondaryButton(
                 label: 'Client Login',
                 icon: Icons.account_circle_outlined,
@@ -841,6 +862,42 @@ class MobileNavDrawer extends StatelessWidget {
                 label: 'Get Started',
                 expand: true,
                 onPressed: () => navigate(() => goToSection(context, SiteSection.contact)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A phone or email link at the foot of the mobile drawer.
+class _DrawerContact extends StatelessWidget {
+  const _DrawerContact({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      link: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: AppColors.accent),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.body(fontSize: 14.5, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.2),
+                ),
               ),
             ],
           ),

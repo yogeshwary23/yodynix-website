@@ -76,7 +76,7 @@ class SurfaceColors {
     shadowAlpha: 0.06,
     badgeTint: AppColors.goldTint,
     ghostFill: AppColors.softWhite,
-    ghostBorder: AppColors.goldLine,
+    ghostBorder: AppColors.champagneGold,
     ghostHoverFill: AppColors.goldWash,
   );
 

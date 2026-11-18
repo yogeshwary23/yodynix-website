@@ -215,6 +215,8 @@ void main() {
     }
     final target = ServicesContent.services.last;
     await tester.ensureVisible(find.descendant(of: drawer, matching: find.text(target.title)));
+    // ensureVisible jumps the list; lay it out before tapping the new position.
+    await tester.pump();
     await tester.tap(find.descendant(of: drawer, matching: find.text(target.title)));
     await settle(tester);
     expect((topPage(tester) as ServiceDetailPage).service.id, target.id);

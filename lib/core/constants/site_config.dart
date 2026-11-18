@@ -155,10 +155,9 @@ class TeamConfig {
 class HeroStatsConfig {
   HeroStatsConfig._();
 
-  // TODO(yodynix): SAMPLE FIGURES supplied for layout. Verify every value
-  // against real records before presenting them as business achievements,
-  // then set [verified] to true.
-  static const bool verified = false;
+  // Confirmed by YODYNIX as genuine business figures (November 2026). Keep
+  // them current; never publish a value that has not been verified.
+  static const bool verified = true;
 
   /// (value, suffix, label)
   static const List<(int, String, String)> stats = [

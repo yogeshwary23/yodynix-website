@@ -9,11 +9,13 @@ import 'scene3d.dart';
 /// The homepage's signature sculpture. Always live (lighter on phones),
 /// with parallax driven by the pointer anywhere over the hero.
 class Hero3DScene extends StatelessWidget {
-  const Hero3DScene({super.key, required this.fallback, this.pointer, this.background = AppColors.pearlWhite});
+  const Hero3DScene({super.key, required this.fallback, this.pointer, this.background});
 
   final Widget fallback;
   final ValueListenable<Offset>? pointer;
-  final Color background;
+
+  /// Null (the default) keeps the canvas transparent over the hero backdrop.
+  final Color? background;
 
   @override
   Widget build(BuildContext context) {

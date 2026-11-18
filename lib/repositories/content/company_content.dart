@@ -10,9 +10,10 @@ class CompanyContent {
 
   // ---------------------------------------------------------------- Hero
   static const heroEyebrow = 'Technology. Intelligence. Innovation.';
-  static const heroHeadlineLead = 'We Build ';
+  // Explicit breaks give the headline its three-line shape at every width.
+  static const heroHeadlineLead = 'We Build\n';
   static const heroHeadlineAccent = 'Intelligent';
-  static const heroHeadlineTail = ' Digital Experiences.';
+  static const heroHeadlineTail = ' Digital\nExperiences.';
   static const heroDescription =
       'Transforming ideas into powerful digital products through technology, '
       'intelligence and innovation.';

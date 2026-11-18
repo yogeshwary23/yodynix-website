@@ -60,8 +60,9 @@ class Interactive3DObject extends StatefulWidget {
   /// Shown before the scene loads and wherever 3D can't run.
   final Widget fallback;
 
-  /// The surface colour behind the scene; glass refracts it.
-  final Color background;
+  /// The surface colour behind the scene; glass refracts it. Null renders
+  /// on a transparent canvas over whatever the page paints behind it.
+  final Color? background;
 
   /// Hover / emphasis, 0 to 1.
   final double focus;

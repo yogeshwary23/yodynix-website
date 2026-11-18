@@ -10,6 +10,12 @@ class Breakpoints {
   static const double navCollapse = 1280;
 
   static const double maxContentWidth = 1240;
+
+  /// The two-level header spans wider than the page content.
+  static const double headerMaxWidth = 1500;
+
+  /// The hero and its statistics card sit between the two.
+  static const double heroMaxWidth = 1420;
 }
 
 extension ResponsiveContext on BuildContext {

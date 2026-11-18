@@ -44,6 +44,11 @@ class AppColors {
   static const Color mutedInk = Color(0xFF6A645B); // muted text that holds 4.5:1 on beige
   static const Color mist = Color(0xFFDDD8CF); // body copy on dark (≈11:1)
 
+  // ── Header ──────────────────────────────────────────────────────────────
+  static const Color topBar = Color(0xFF292722); // top information bar
+  static const Color topBarGold = Color(0xFFC6A875); // icons and accents on [topBar]
+  static const Color logoCharcoal = Color(0xFF242321); // logo symbol and wordmark on white
+
   // ── Cards ───────────────────────────────────────────────────────────────
   // Content cards are white tiles with a fine platinum edge and a soft, warm
   // shadow; the edge warms to champagne on hover.
@@ -151,6 +156,30 @@ class AppColors {
   static const LinearGradient liquidGold = LinearGradient(
     colors: [Color(0xFF7A5A28), antiqueGold, Color(0xFFD9BC82), antiqueGold, Color(0xFF7A5A28)],
     stops: [0, 0.3, 0.5, 0.7, 1],
+  );
+
+  /// Fill of the primary gold button, and its deeper hover state.
+  static const LinearGradient buttonGold = LinearGradient(
+    colors: [Color(0xFFDDC08A), champagneGold, Color(0xFFB08D52)],
+    stops: [0, 0.45, 1],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient buttonGoldHover = LinearGradient(
+    colors: [Color(0xFFCDAE74), Color(0xFFB8945A), antiqueGold],
+    stops: [0, 0.45, 1],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Polished metallic gold for large display type and figures on light
+  /// surfaces: deep enough at the edges to keep contrast on ivory.
+  static const LinearGradient metallicGoldText = LinearGradient(
+    colors: [Color(0xFF8E6B30), Color(0xFFB48E4E), Color(0xFFCFAE6E), Color(0xFFA9823F), Color(0xFF8A672C)],
+    stops: [0, 0.3, 0.5, 0.72, 1],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
   );
 
   /// Card fill on light surfaces.

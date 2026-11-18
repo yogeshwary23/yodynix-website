@@ -20,8 +20,8 @@ double _fontSize(ButtonSize size) => switch (size) {
   ButtonSize.large => 16,
 };
 
-/// Solid champagne-gold action with a soft lift on hover and an arrow that
-/// nudges forward.
+/// Brushed champagne-gold action with a soft lift on hover and an arrow
+/// that nudges forward.
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
     super.key,
@@ -117,7 +117,13 @@ class _PrimaryButtonState extends State<PrimaryButton> {
               borderRadius: BorderRadius.circular(AppRadius.pill),
               clipBehavior: Clip.antiAlias,
               child: Ink(
-                decoration: BoxDecoration(color: enabled ? (_hover ? hoverFill : base) : AppColors.softGrey),
+                decoration: BoxDecoration(
+                  color: enabled ? (_hover ? hoverFill : base) : AppColors.softGrey,
+                  // The default gold reads as polished metal rather than a flat fill.
+                  gradient: enabled && !widget.warm && widget.fill == null
+                      ? (_hover ? AppColors.buttonGoldHover : AppColors.buttonGold)
+                      : null,
+                ),
                 child: InkWell(
                   onTap: enabled ? widget.onPressed : null,
                   onHover: _setHover,
@@ -248,7 +254,7 @@ class _SecondaryButtonState extends State<SecondaryButton> {
         child: Material(
           color: _hover ? tone.ghostHoverFill : tone.ghostFill,
           shape: StadiumBorder(
-            side: BorderSide(color: _hover ? tone.accent.withValues(alpha: 0.7) : tone.ghostBorder, width: 1.2),
+            side: BorderSide(color: _hover ? tone.accent.withValues(alpha: 0.7) : tone.ghostBorder, width: 1.5),
           ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
