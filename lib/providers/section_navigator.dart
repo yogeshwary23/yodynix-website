@@ -73,7 +73,7 @@ class SectionNavigator extends ChangeNotifier {
   SiteSection _navOwnerOf(SiteSection section) {
     final sections = SiteSection.values;
     for (var i = section.index; i >= 0; i--) {
-      if (sections[i].inNavigation) return sections[i];
+      if (sections[i].inNavigation && sections[i].onHomePage) return sections[i];
     }
     return SiteSection.home;
   }

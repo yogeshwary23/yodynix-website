@@ -25,6 +25,10 @@ class AppRoutes {
   static const String portfolio = '/portfolio';
   static const String industries = '/industries';
 
+  /// All services, and our expertise in AI and technology.
+  static const String services = '/services';
+  static const String expertise = '/expertise';
+
   /// Internship landing page and its programme pages.
   static const String internship = '/internship';
   static const String internshipPrefix = '/internship/';
@@ -43,8 +47,8 @@ class AppRoutes {
   static SiteSection? sectionFor(String route) {
     final normalised = normalise(route);
     for (final s in SiteSection.values) {
-      // `/internship` is its own page; the homepage section is reached by scrolling.
-      if (s == SiteSection.internship) continue;
+      // `/about`, `/services`, `/expertise` and `/internship` are pages.
+      if (!s.onHomePage) continue;
       if (section(s) == normalised) return s;
     }
     return null;

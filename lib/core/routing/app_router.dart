@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../features/about/about_page_view.dart';
 import '../../features/demos/demo_catalog.dart';
 import '../../features/demos/demo_page.dart';
+import '../../features/expertise/expertise_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/home/legal_page.dart';
 import '../../features/industries/industries_page.dart';
@@ -11,6 +12,7 @@ import '../../features/internship/internship_program_page.dart';
 import '../../features/pillars/pillar_detail_page.dart';
 import '../../features/portfolio/portfolio_page.dart';
 import '../../features/services/service_detail_page.dart';
+import '../../features/services/services_page.dart';
 import '../../models/about_page.dart';
 import '../../models/site_section.dart';
 import '../../repositories/content/internship_content.dart';
@@ -46,6 +48,10 @@ class AppRouter {
       page = InternshipPage(scrollToApply: settings.arguments == InternshipPageArgs.apply);
     } else if (program != null) {
       page = InternshipProgramPage(program: program);
+    } else if (name == AppRoutes.services) {
+      page = const ServicesPage();
+    } else if (name == AppRoutes.expertise) {
+      page = const ExpertisePage();
     } else if (name == AppRoutes.portfolio) {
       page = const PortfolioPage();
     } else if (name == AppRoutes.industries) {

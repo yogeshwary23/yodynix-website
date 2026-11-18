@@ -8,6 +8,7 @@ import '../../core/utils/responsive.dart';
 import '../../models/site_section.dart';
 import '../../providers/section_navigator.dart';
 import '../../repositories/content/company_content.dart';
+import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/buttons.dart';
 import '../../shared/widgets/cards.dart';
@@ -198,7 +199,7 @@ class _HeroCopy extends StatelessWidget {
                   PrimaryButton(
                     label: 'Explore Our Expertise',
                     size: ButtonSize.large,
-                    onPressed: () => nav.scrollTo(SiteSection.expertise),
+                    onPressed: () => goToSection(context, SiteSection.expertise),
                   ),
                   SecondaryButton(
                     label: 'Start Your Project',

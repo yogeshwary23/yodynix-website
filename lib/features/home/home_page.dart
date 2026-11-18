@@ -8,11 +8,7 @@ import '../../providers/section_navigator.dart';
 import '../../shared/layouts/site_footer.dart';
 import '../../shared/layouts/site_header.dart';
 import '../../shared/layouts/site_navbar.dart';
-import '../about/about_section.dart';
 import '../contact/contact_section.dart';
-import '../expertise/expertise_section.dart';
-import '../internship/internship_section.dart';
-import '../services/services_section.dart';
 import 'final_cta_section.dart';
 import 'hero_section.dart';
 import 'intro_section.dart';
@@ -28,10 +24,6 @@ class HomePage extends StatelessWidget {
   static const Map<SiteSection, Widget> _sections = {
     SiteSection.home: HeroSection(),
     SiteSection.intro: IntroSection(),
-    SiteSection.about: AboutSection(),
-    SiteSection.services: ServicesSection(),
-    SiteSection.expertise: ExpertiseSection(),
-    SiteSection.internship: InternshipSection(),
     SiteSection.whyChoose: WhyChooseSection(),
     SiteSection.finalCta: FinalCtaSection(),
     SiteSection.contact: ContactSection(),
@@ -51,7 +43,8 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final section in SiteSection.values) KeyedSubtree(key: nav.keyFor(section), child: _sections[section]!),
+                for (final MapEntry(key: section, value: child) in _sections.entries)
+                  KeyedSubtree(key: nav.keyFor(section), child: child),
                 const SiteFooter(),
               ],
             ),

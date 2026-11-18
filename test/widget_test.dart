@@ -3,6 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yodynix_website/app/yodynix_app.dart';
 import 'package:yodynix_website/features/contact/contact_form.dart';
+import 'package:yodynix_website/features/expertise/expertise_page.dart';
+import 'package:yodynix_website/features/expertise/expertise_section.dart';
+import 'package:yodynix_website/features/home/hero_stats_bar.dart';
+import 'package:yodynix_website/features/services/services_page.dart';
+import 'package:yodynix_website/features/services/services_section.dart';
+import 'package:yodynix_website/shared/layouts/site_navbar.dart';
 
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
@@ -19,11 +25,36 @@ void main() {
   for (final (label, size) in const [('desktop', Size(1440, 900)), ('tablet', Size(820, 1180)), ('mobile', Size(390, 844))]) {
     testWidgets('homepage renders without layout errors on $label', (tester) async {
       await pumpAt(tester, size);
-      expect(find.text('Meet Our Team'), findsOneWidget);
+      expect(find.byType(HeroStatsBar), findsOneWidget);
       expect(find.byType(ContactForm), findsOneWidget);
+      // About, Services, Expertise and Internship live on their own pages.
+      expect(find.byType(ServicesSection), findsNothing);
+      expect(find.byType(ExpertiseSection), findsNothing);
+      expect(find.text('Meet Our Team'), findsNothing);
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('Expertise and View all services open their own pages', (tester) async {
+    await pumpAt(tester, const Size(1440, 900));
+    Future<void> settle() async {
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    final navbar = find.byType(SiteNavbar);
+    await tester.tap(find.descendant(of: navbar, matching: find.text('Expertise')));
+    await settle();
+    expect(find.byType(ExpertisePage), findsOneWidget);
+
+    await tester.tap(find.descendant(of: find.byType(SiteNavbar).last, matching: find.text('Services')).last);
+    await settle();
+    await tester.tap(find.text('View all services'));
+    await settle();
+    expect(find.byType(ServicesPage), findsOneWidget);
+    expect(find.byType(ExpertisePage), findsNothing, reason: 'the Services page replaces the Expertise page');
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('enquiry form shows validation errors when empty', (tester) async {
     await pumpAt(tester, const Size(1440, 900));

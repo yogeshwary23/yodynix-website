@@ -11,10 +11,23 @@ import '../widgets/site_dialog.dart';
 
 /// Navigates to a homepage section from anywhere — closing dialogs or
 /// returning from sub-pages first — and optionally pre-selects a service in
-/// the enquiry form.
+/// the enquiry form. Entries with their own page (About, Services, Expertise,
+/// Internship) open that page.
 void goToSection(BuildContext context, SiteSection section, {String? enquiryService}) {
   final nav = SectionNavigatorScope.read(context);
   if (enquiryService != null) nav.contactPrefill.value = enquiryService;
+
+  switch (section) {
+    case SiteSection.about:
+      return openAboutPage(context, AboutPage.defaultPage);
+    case SiteSection.services:
+      return _openPage(context, AppRoutes.services);
+    case SiteSection.expertise:
+      return _openPage(context, AppRoutes.expertise);
+    case SiteSection.internship:
+      return openInternshipPage(context);
+    default:
+  }
 
   final route = ModalRoute.of(context);
   if (route != null && !route.isFirst) {
@@ -118,14 +131,30 @@ SitePage? currentSitePage(BuildContext context) {
 
 /// Opens a [SitePage], pushed from the homepage and replacing any other
 /// sub-page, like [openServicePage].
-void openSitePage(BuildContext context, SitePage page) {
-  if (currentSitePage(context) == page) return;
+void openSitePage(BuildContext context, SitePage page) => _openPage(context, page.route);
+
+/// The navigation entry whose own page (Services or Expertise) owns
+/// [context], if any.
+SiteSection? currentSectionPage(BuildContext context) {
+  final name = ModalRoute.of(context)?.settings.name;
+  return switch (name == null ? null : AppRoutes.resolve(name)) {
+    AppRoutes.services => SiteSection.services,
+    AppRoutes.expertise => SiteSection.expertise,
+    _ => null,
+  };
+}
+
+/// Opens [route] unless it is already showing: pushed from the homepage and
+/// replacing any other sub-page, so "back" always returns home.
+void _openPage(BuildContext context, String route) {
   final current = ModalRoute.of(context);
+  final name = current?.settings.name;
+  if (name != null && AppRoutes.resolve(name) == route) return;
   final navigator = Navigator.of(context);
   if (current == null || current.isFirst) {
-    navigator.pushNamed(page.route);
+    navigator.pushNamed(route);
   } else {
-    navigator.pushReplacementNamed(page.route);
+    navigator.pushReplacementNamed(route);
   }
 }
 

@@ -5,8 +5,8 @@ import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
 import '../../models/content_models.dart';
 import '../../models/site_section.dart';
-import '../../providers/section_navigator.dart';
 import '../../repositories/content/expertise_content.dart';
+import '../../shared/layouts/navigation_actions.dart';
 import '../../core/utils/responsive.dart';
 import '../../shared/three/interactive_3d_object.dart';
 import '../../shared/three/scene3d.dart';
@@ -209,7 +209,7 @@ class _TalkCard extends StatelessWidget {
               label: "Let's Talk",
               size: ButtonSize.small,
               icon: Icons.arrow_forward_rounded,
-              onPressed: () => SectionNavigatorScope.read(context).scrollTo(SiteSection.contact),
+              onPressed: () => goToSection(context, SiteSection.contact),
             ),
           ],
         ),

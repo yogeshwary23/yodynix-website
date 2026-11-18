@@ -36,7 +36,14 @@ class SiteNavbar extends StatelessWidget {
     final aboutPage = currentAboutPage(context);
     final service = currentService(context);
     final sitePage = currentSitePage(context);
-    final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context), page: sitePage);
+    final isActive = _activeResolver(
+      nav.active,
+      aboutPage,
+      service,
+      internship: isInternshipRoute(context),
+      page: sitePage,
+      sectionPage: currentSectionPage(context),
+    );
     final compact = context.useCompactNav;
     final height = context.responsive(mobile: 72.0, tablet: 84.0, desktop: 92.0);
 
@@ -167,17 +174,19 @@ class SiteNavbar extends StatelessWidget {
   }
 }
 
-/// On an About, service or internship page that area's item is active, whatever the
-/// homepage scroll position underneath.
+/// On an About, Services, Expertise, service or internship page that area's
+/// item is active, whatever the homepage scroll position underneath.
 bool Function(SiteSection) _activeResolver(
   SiteSection scrolled,
   AboutPage? aboutPage,
   ServiceOffering? service, {
   bool internship = false,
   SitePage? page,
+  SiteSection? sectionPage,
 }) {
   return (s) {
     if (page != null) return false;
+    if (sectionPage != null) return s == sectionPage;
     if (aboutPage != null) return s == SiteSection.about;
     if (service != null) return s == SiteSection.services;
     if (internship) return s == SiteSection.internship;
@@ -751,7 +760,14 @@ class MobileNavDrawer extends StatelessWidget {
     final aboutPage = currentAboutPage(context);
     final service = currentService(context);
     final sitePage = currentSitePage(context);
-    final isActive = _activeResolver(nav.active, aboutPage, service, internship: isInternshipRoute(context), page: sitePage);
+    final isActive = _activeResolver(
+      nav.active,
+      aboutPage,
+      service,
+      internship: isInternshipRoute(context),
+      page: sitePage,
+      sectionPage: currentSectionPage(context),
+    );
 
     // Closes the drawer first; [context] stays valid for the follow-up action.
     void navigate(VoidCallback action) {
