@@ -44,7 +44,6 @@ const jobs = [
   ['neural', null, 1600, 760, 'f8f6f1', 0.5],
   ['ecosystem', null, 1200, 900, 'f8f6f1', 0.5],
   ['workflow', null, 1600, 640, 'f8f6f1', 0.5],
-  ['network', null, 1600, 560, 'f2eee6', 0.5],
   ['industries', 'finance', 1100, 900, 'f2eee6', 0.5],
   ['industries', 'healthcare', 1100, 900, 'f8f6f1', 0.5],
   ['industries', 'retail', 1100, 900, 'f2eee6', 0.5],

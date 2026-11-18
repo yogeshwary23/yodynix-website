@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
+import 'particle_network.dart';
 import 'reveal.dart';
 
 /// Centres content at the site's maximum width with responsive gutters.
@@ -41,6 +42,7 @@ class SectionShell extends StatelessWidget {
     this.decoration,
     this.glowAt,
     this.glowStrength = 1,
+    this.particles = true,
   });
 
   final Widget child;
@@ -58,6 +60,10 @@ class SectionShell extends StatelessWidget {
   final Alignment? glowAt;
   final double glowStrength;
 
+  /// Paints the site-wide particle network between the background and the
+  /// content (see [ParticleNetworkLayer]).
+  final bool particles;
+
   @override
   Widget build(BuildContext context) {
     final pad = context.sectionPadding;
@@ -72,6 +78,7 @@ class SectionShell extends StatelessWidget {
             ),
           ),
         ),
+      if (particles) const Positioned.fill(child: ParticleNetworkLayer()),
       if (decoration != null) Positioned.fill(child: decoration!),
     ];
     final content = Padding(

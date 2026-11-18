@@ -7,8 +7,6 @@ import '../../core/utils/responsive.dart';
 import '../../repositories/contact_repository.dart';
 import '../../models/social_link.dart';
 import '../../services/link_service.dart';
-import '../../shared/three/scene3d.dart';
-import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
@@ -36,21 +34,6 @@ class ContactSection extends StatelessWidget {
       ],
     );
 
-    // The connection network leans towards the cursor anywhere over the section.
-    final network = Reveal(
-      child: AspectRatio(
-        aspectRatio: context.responsive(mobile: 1.6, tablet: 2.4, desktop: 3.2),
-        child: const Section3DScene(
-          scene: Scene3D.network,
-          background: AppColors.surface,
-          semanticLabel:
-              'A sphere of champagne-gold, platinum and glass nodes linked by fine gold lines, '
-              'with light travelling between connections.',
-          fallback: SizedBox.shrink(),
-        ),
-      ),
-    );
-
     final form = Reveal(
       delay: const Duration(milliseconds: 120),
       child: FormCard(
@@ -61,13 +44,12 @@ class ContactSection extends StatelessWidget {
     );
 
     return SectionShell(
-      background: AppColors.surface,
+      // Light, so it stands apart from the beige Why Choose section above.
+      background: AppColors.background,
       glowAt: const Alignment(0.9, 0.2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          network,
-          SizedBox(height: context.responsive(mobile: 16.0, desktop: 24.0)),
           if (context.isDesktop)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

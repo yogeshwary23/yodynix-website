@@ -10,7 +10,6 @@ enum SiteSection {
   expertise(navLabel: 'Expertise', hasOwnPage: true),
   internship(navLabel: 'Internship', hasOwnPage: true),
   whyChoose,
-  finalCta,
   contact(navLabel: 'Contact');
 
   const SiteSection({this.navLabel, this.hasOwnPage = false});

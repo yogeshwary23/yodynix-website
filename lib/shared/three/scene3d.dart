@@ -43,8 +43,6 @@ enum Scene3D {
   /// Connected delivery workflow whose stages rise in on scroll (process).
   workflow,
 
-  /// Interactive champagne-gold connection network (contact).
-  network,
 
   /// One arrangement per sector; the variant names the industry.
   industries,

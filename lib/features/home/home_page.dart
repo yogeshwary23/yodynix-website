@@ -9,7 +9,6 @@ import '../../shared/layouts/site_footer.dart';
 import '../../shared/layouts/site_header.dart';
 import '../../shared/layouts/site_navbar.dart';
 import '../contact/contact_section.dart';
-import 'final_cta_section.dart';
 import 'hero_section.dart';
 import 'intro_section.dart';
 import 'why_choose_section.dart';
@@ -25,7 +24,6 @@ class HomePage extends StatelessWidget {
     SiteSection.home: HeroSection(),
     SiteSection.intro: IntroSection(),
     SiteSection.whyChoose: WhyChooseSection(),
-    SiteSection.finalCta: FinalCtaSection(),
     SiteSection.contact: ContactSection(),
   };
 
