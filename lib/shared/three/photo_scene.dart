@@ -88,17 +88,16 @@ class PhotoScene extends StatelessWidget {
                             depth: 16,
                             fallback: photoFallback,
                           ),
-                          // Window light from the upper right, the same
-                          // direction as the 3D key light, and a little
-                          // shade settling at the floor.
+                          // Soft daylight blooming from above and behind, the
+                          // direction the 3D is lit from, and the faintest
+                          // shade at the floor to seat the plinth.
                           const IgnorePointer(
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [Color(0x4DFFECC8), Color(0x00FFECC8)],
-                                  stops: [0, 0.5],
+                                gradient: RadialGradient(
+                                  center: Alignment(0.2, -1.1),
+                                  radius: 1.1,
+                                  colors: [Color(0x2EFFF8EC), Color(0x00FFF8EC)],
                                 ),
                               ),
                             ),
@@ -109,8 +108,8 @@ class PhotoScene extends StatelessWidget {
                                 gradient: LinearGradient(
                                   begin: Alignment.bottomCenter,
                                   end: Alignment.topCenter,
-                                  colors: [Color(0x332E2418), Color(0x002E2418)],
-                                  stops: [0, 0.38],
+                                  colors: [Color(0x142E2418), Color(0x002E2418)],
+                                  stops: [0, 0.3],
                                 ),
                               ),
                             ),

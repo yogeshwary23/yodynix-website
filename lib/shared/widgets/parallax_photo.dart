@@ -5,13 +5,13 @@ import '../three/scroll_animation_controller.dart';
 import 'motion_effects.dart';
 import 'smart_image.dart';
 
-/// Warms a photograph towards the champagne-and-ivory palette (a light
-/// sepia, slightly desaturated and lifted), so stock photos from different
-/// sources sit with the gold and pearl 3D renders.
+/// A natural, professional grade for photographs beside the gold and pearl
+/// 3D: about 10% brighter with gently lifted shadows, a touch of warmth, and
+/// nearly full saturation so skin tones and detail stay true.
 const ColorFilter warmPhotoGrade = ColorFilter.matrix(<double>[
-  0.806, 0.244, 0.047, 0, 0, //
-  0.098, 0.930, 0.044, 0, 0, //
-  0.085, 0.203, 0.738, 0, 0, //
+  1.095, 0.024, 0.002, 0, 10, //
+  0.007, 1.091, 0.002, 0, 10, //
+  0.007, 0.023, 1.032, 0, 10, //
   0, 0, 0, 1, 0,
 ]);
 

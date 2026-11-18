@@ -9,6 +9,7 @@ import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
 import '../../shared/three/photo_scene.dart';
 import '../../shared/three/scene3d.dart';
+import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/motion_effects.dart';
 import '../../shared/widgets/parallax_photo.dart';
 import '../../shared/widgets/premium.dart';
@@ -246,19 +247,50 @@ class _PrincipleCardState extends State<_PrincipleCard> {
         child: AnimatedContainer(
           duration: AppMotion.lift,
           curve: AppMotion.ease,
-          transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
+          transform: Matrix4.translationValues(0, _hover ? -8 : 0, 0),
           decoration: premiumGlassCard(lifted: _hover),
           child: Stack(
             children: [
+              // Depth: light catching the glass's upper edge, and a warm
+              // gold glow rising in the lower corner as the card lifts.
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.xl),
+                    child: AnimatedContainer(
+                      duration: AppMotion.lift,
+                      curve: AppMotion.ease,
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(-1, 1.2),
+                          radius: 1.1,
+                          colors: [AppColors.softChampagne.withValues(alpha: _hover ? 0.22 : 0), AppColors.softChampagne.withValues(alpha: 0)],
+                        ),
+                      ),
+                      foregroundDecoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x99FFFFFF), Color(0x00FFFFFF)],
+                          stops: [0, 0.18],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 top: 0,
                 left: 28,
                 child: AnimatedContainer(
                   duration: AppMotion.lift,
                   curve: AppMotion.ease,
-                  width: _hover ? 96 : 36,
-                  height: 2,
-                  decoration: BoxDecoration(gradient: AppColors.brandGradient, borderRadius: BorderRadius.circular(2)),
+                  width: _hover ? 96 : 40,
+                  height: 3,
+                  decoration: const BoxDecoration(
+                    gradient: AppColors.brandGradient,
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(2)),
+                  ),
                 ),
               ),
               Padding(
@@ -272,20 +304,25 @@ class _PrincipleCardState extends State<_PrincipleCard> {
     );
   }
 
-  Widget _number(String number) => Text(
-    number,
-    style: AppTypography.body(
-      fontSize: 13,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 1.6,
-      color: AppColors.goldInk.withValues(alpha: _hover ? 0.9 : 0.55),
-      height: 1,
+  Widget _number(String number) => AnimatedOpacity(
+    duration: AppMotion.hover,
+    opacity: _hover ? 1 : 0.7,
+    child: GradientText(
+      number,
+      style: AppTypography.display(fontSize: 14, fontWeight: FontWeight.w800, letterSpacing: 1.6, height: 1),
+      gradient: AppColors.metallicGoldText,
     ),
   );
 
   Widget _text(double fontSize) => Text(
     widget.text,
-    style: AppTypography.body(fontSize: fontSize, color: AppColors.charcoal, fontWeight: FontWeight.w500, height: 1.55),
+    style: AppTypography.display(
+      fontSize: fontSize,
+      color: AppColors.ink,
+      fontWeight: FontWeight.w600,
+      height: 1.45,
+      letterSpacing: -0.1,
+    ),
   );
 
   /// Icon and number above the text, on wider layouts.
@@ -294,7 +331,7 @@ class _PrincipleCardState extends State<_PrincipleCard> {
     children: [
       Row(children: [GoldIconTile(icon: widget.icon, size: 52), const Spacer(), _number(number)]),
       const SizedBox(height: 20),
-      _text(16.5),
+      _text(17),
     ],
   );
 
@@ -498,7 +535,7 @@ class _PillarCardState extends State<_PillarCard> {
                   gradient: LinearGradient(
                     begin: -towards,
                     end: towards,
-                    colors: const [Color(0x00FAF5EC), Color(0x00FAF5EC), Color(0x99FAF5EC), Color(0xDBFAF5EC)],
+                    colors: const [Color(0x00FAF5EC), Color(0x00FAF5EC), Color(0x5CFAF5EC), Color(0x9EFAF5EC)],
                     // The careers photo's open wall is narrow, so its fade starts later.
                     stops: left ? const [0, 0.72, 0.86, 1] : const [0, 0.5, 0.72, 1],
                   ),
@@ -511,7 +548,7 @@ class _PillarCardState extends State<_PillarCard> {
                   gradient: RadialGradient(
                     center: Alignment(left ? -0.64 : 0.6, -0.1),
                     radius: 0.75,
-                    colors: const [Color(0x6BFFE8BE), Color(0x00FFE8BE)],
+                    colors: const [Color(0x24FFF4E0), Color(0x00FFF4E0)],
                   ),
                 ),
               ),

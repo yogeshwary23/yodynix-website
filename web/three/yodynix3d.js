@@ -2174,17 +2174,18 @@ const SCENES = {
    * frame; this transparent scene adds what stands in and around it,
    * positioned in the same normalised coordinates (see [viewPlane]):
    *
-   *   - a glass globe banded in gold meridians and linked by gold arcs,
-   *     turning on a gold-and-pearl plinth below the photo's lower right;
+   *   - a glass globe with two gold meridians, the equator and a few gold
+   *     arcs, turning slowly on a gold-and-pearl plinth below the photo's
+   *     lower right, with one small sphere in orbit;
    *   - a glass panel of rising gold bars at the photo's left edge;
-   *   - a gold halo over the upper right;
-   *   - a liquid-gold ribbon sweeping under the plinth and up the right
-   *     edge, framing the photograph;
-   *   - small spheres orbiting the globe, and drifting gold dust.
+   *   - a fine gold halo over the upper right;
+   *   - a slender gold ribbon along the photo's lower and right edges;
+   *   - drifting gold dust.
    *
-   * Real shadows fall on an invisible floor (a shadow catcher) so they
-   * darken whatever lies beneath. The pointer sways the camera, separating
-   * near and far elements; scrolling turns the globe and lifts the bars.
+   * Lit to match the photograph: daylight from behind and above, so the
+   * gold takes rim light and shadows fall softly towards the viewer. The
+   * pointer sways the camera, separating near and far elements; scrolling
+   * turns the globe and lifts the bars.
    */
   about(kit) {
     const { scene, camera } = kit;
@@ -2204,80 +2205,75 @@ const SCENES = {
     globeStand.position.copy(base);
     globeStand.rotation.x = 0.16; // show a little of the plinth's top
     root.add(globeStand);
-    const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.85, 0.12, kit.seg(120)), gold({ roughness: 0.22 }));
-    plinth.position.y = 0.06;
-    const deck = new THREE.Mesh(new THREE.CylinderGeometry(0.73, 0.75, 0.07, kit.seg(120)), kit.pearl());
-    deck.position.y = 0.155;
-    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.016, 12, kit.seg(160)), gold({ roughness: 0.08 }));
+    const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.64, 0.1, kit.seg(120)), gold({ roughness: 0.24 }));
+    plinth.position.y = 0.05;
+    const deck = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.57, 0.06, kit.seg(120)), kit.pearl());
+    deck.position.y = 0.13;
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.012, 12, kit.seg(160)), gold({ roughness: 0.08 }));
     lip.rotation.x = Math.PI / 2;
-    lip.position.y = 0.19;
+    lip.position.y = 0.16;
     deck.receiveShadow = true;
     globeStand.add(plinth, deck, lip);
     cast(plinth);
 
-    const globeR = 0.7;
+    const globeR = 0.5;
     const globe = new THREE.Group();
-    globe.position.y = 0.19 + 0.06 + globeR;
+    globe.position.y = 0.16 + 0.05 + globeR;
     globe.rotation.z = 0.4; // the axis's tilt
     globeStand.add(globe);
-    const glassBall = new THREE.Mesh(new THREE.SphereGeometry(globeR, 64, 48), kit.clearGlass({ opacity: 0.2, envMapIntensity: 2 }));
-    const coreBall = new THREE.Mesh(new THREE.SphereGeometry(0.13, 48, 32), gold({ roughness: 0.05 }));
+    const glassBall = new THREE.Mesh(new THREE.SphereGeometry(globeR, 64, 48), kit.clearGlass({ opacity: 0.3, envMapIntensity: 2.3 }));
+    const coreBall = new THREE.Mesh(new THREE.SphereGeometry(0.09, 48, 32), gold({ roughness: 0.05 }));
     globe.add(glassBall, coreBall);
-    const wire = (r, tube = 0.007) => new THREE.TorusGeometry(r, tube, 8, kit.seg(160));
-    for (let i = 0; i < 4; i++) {
-      const meridian = new THREE.Mesh(wire(globeR * 1.004), gold({ roughness: 0.12 }));
-      meridian.rotation.y = (i / 4) * Math.PI;
+    // A restrained armillary: two meridians and the equator, fine as wire.
+    const wire = (r) => new THREE.TorusGeometry(r, 0.0065, 8, kit.seg(160));
+    for (let i = 0; i < 2; i++) {
+      const meridian = new THREE.Mesh(wire(globeR * 1.004), gold({ roughness: 0.16 }));
+      meridian.rotation.y = (i / 2) * Math.PI;
       globe.add(meridian);
     }
-    for (const lat of [-0.5, 0, 0.5]) {
-      const ring = new THREE.Mesh(wire(globeR * Math.cos(lat) * 1.004), gold({ roughness: 0.12 }));
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = globeR * Math.sin(lat);
-      globe.add(ring);
-    }
+    const equator = new THREE.Mesh(wire(globeR * 1.004), gold({ roughness: 0.16 }));
+    equator.rotation.x = Math.PI / 2;
+    globe.add(equator);
     // Gold nodes on the surface, linked by arcs that rise off it: a network
     // spanning the globe.
     const rand = mulberry32(5);
     const nodes = [];
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 6; i++) {
       const lat = (rand() - 0.5) * 2.2;
       const lon = rand() * Math.PI * 2;
       const p = new THREE.Vector3(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon)).multiplyScalar(globeR);
       nodes.push(p);
-      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 12), gold({ roughness: 0.06 }));
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.022, 16, 12), gold({ roughness: 0.06 }));
       dot.position.copy(p);
       globe.add(dot);
     }
-    for (const [a, b] of [[0, 3], [1, 4], [2, 6], [3, 7], [5, 8], [4, 8], [0, 6]]) {
-      const mid = nodes[a].clone().add(nodes[b]).normalize().multiplyScalar(globeR * 1.28);
+    for (const [a, b] of [[0, 3], [1, 4], [2, 5]]) {
+      const mid = nodes[a].clone().add(nodes[b]).normalize().multiplyScalar(globeR * 1.18);
       const arc = new THREE.QuadraticBezierCurve3(nodes[a], mid, nodes[b]);
-      globe.add(new THREE.Mesh(new THREE.TubeGeometry(arc, 32, 0.006, 6), gold({ roughness: 0.1 })));
+      globe.add(new THREE.Mesh(new THREE.TubeGeometry(arc, 32, 0.004, 6), gold({ roughness: 0.1 })));
     }
     cast(coreBall);
 
-    // Small spheres on their own tilted orbits around the globe.
-    const orbits = [
-      [1.0, 0.5, 0.35, 0.06, true],
-      [1.12, -0.7, -0.5, 0.05, false],
-    ].map(([r, tilt, speed, size, isGold], i) => {
+    // One small platinum sphere on a tilted orbit; its path is left unseen.
+    const orbits = [[0.74, 0.5, 0.22, 0.04]].map(([r, tilt, speed, size], i) => {
       const pivot = new THREE.Group();
       pivot.position.copy(globe.position);
-      pivot.rotation.set(Math.PI / 2 + tilt, 0, 0.3 * i);
-      const path = new THREE.Mesh(new THREE.TorusGeometry(r, 0.005, 6, kit.seg(200)), gold({ roughness: 0.14 }));
-      const rider = new THREE.Mesh(new THREE.SphereGeometry(size, 32, 24), isGold ? gold() : silver({ roughness: 0.04 }));
-      pivot.add(path, rider);
+      pivot.rotation.set(Math.PI / 2 + tilt, 0, 0.3);
+      const rider = new THREE.Mesh(new THREE.SphereGeometry(size, 32, 24), silver({ roughness: 0.04 }));
+      pivot.add(rider);
       globeStand.add(pivot);
       cast(rider);
       return { rider, r, speed, phase: i * 2.4 };
     });
 
-    // Invisible floor under the plinth: only its shadows show.
-    const floor = shadowCatcher(4.5, 3.2, 0.24);
-    floor.position.copy(base).add(new THREE.Vector3(-0.4, 0.002, -0.4));
-    root.add(floor);
-    const contact = kit.contactShadow(1.05, 0.3, { tight: true, warm: true });
-    contact.position.copy(base).add(new THREE.Vector3(0, 0.003, 0));
-    root.add(contact);
+    // Soft shadows under the plinth, falling a little towards the viewer as
+    // they do in the photograph, which is lit from the windows behind.
+    const contact = kit.contactShadow(0.8, 0.32, { tight: true, warm: true });
+    contact.position.copy(base).add(new THREE.Vector3(0, 0.003, 0.08));
+    const pool = kit.contactShadow(1.15, 0.16, { warm: true });
+    pool.position.copy(base).add(new THREE.Vector3(0.05, 0.002, 0.3));
+    pool.scale.set(1, 0.55, 1);
+    root.add(contact, pool);
 
     // ── Glass panel of rising gold bars at the photo's left edge ──────────
     const chart = new THREE.Group();
@@ -2301,27 +2297,26 @@ const SCENES = {
     chart.add(trendLine);
 
     // ── Halo over the upper right ─────────────────────────────────────────
-    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.035, 24, kit.seg(200)), gold({ roughness: 0.06 }));
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.018, 20, kit.seg(200)), gold({ roughness: 0.08 }));
     halo.position.copy(at(0.84, 0.07, -0.6));
     halo.rotation.set(1.22, 0, -0.08);
     root.add(halo);
 
     // ── Liquid-gold ribbon framing the photo's lower and right edges ─────
     const ribbonCurve = new THREE.CatmullRomCurve3([
-      at(0.02, 0.86, 0.1),
-      at(0.22, 0.95, 0.6),
-      at(0.52, 0.975, 1.0),
-      at(0.84, 0.93, 0.7),
-      at(0.96, 0.66, 0.1),
-      at(0.955, 0.34, -0.5),
-      at(0.88, 0.1, -1.0),
-      at(0.74, 0.03, -1.4),
+      at(0.05, 0.88, 0.1),
+      at(0.26, 0.955, 0.5),
+      at(0.53, 0.975, 0.8),
+      at(0.8, 0.95, 0.6),
+      at(0.95, 0.76, 0.1),
+      at(0.97, 0.52, -0.4),
+      at(0.94, 0.32, -0.8),
     ]);
     const ribbonGeo = openRibbonGeometry(ribbonCurve, {
       segments: kit.seg(320),
-      width: 0.27,
-      thickness: 0.022,
-      twist: (u) => Math.sin(u * Math.PI * 2.2) * 0.9,
+      width: 0.15,
+      thickness: 0.016,
+      twist: (u) => Math.sin(u * Math.PI * 2) * 0.6,
       taper: (u) => Math.pow(Math.sin(Math.PI * u), 0.45),
     });
     const ribbon = new THREE.Mesh(ribbonGeo, kit.liquidGold({ roughness: 0.07, clearcoat: 0.9, clearcoatRoughness: 0.03, envMapIntensity: 1.4 }));
@@ -2336,14 +2331,17 @@ const SCENES = {
     ]);
     root.add(accents.group);
     cast(accents.group, halo, ...bars);
-    const dust = new DustField(kit, { count: 160, spread: 6.5, size: 0.032, opacity: 0.6 });
+    const dust = new DustField(kit, { count: 120, spread: 6.5, size: 0.026, opacity: 0.5 });
     scene.add(dust.points);
 
     // ── Light ─────────────────────────────────────────────────────────────
-    if (keyLight(kit, scene, 4.5, [4, 7, 5])) for (const m of casters) m.castShadow = true;
-    const sweep = new THREE.SpotLight(0xffe2ad, 16, 16, 0.7, 0.8, 1.4);
-    sweep.position.set(-5, 4, 2);
-    const front = new THREE.PointLight(0xfff6e8, 7, 14, 2);
+    // Lit as the photograph is: daylight from the windows behind and above
+    // the team (the key, giving gold rims and forward-falling shadows), a
+    // warm rim from behind left, and a soft fill from the room in front.
+    if (keyLight(kit, scene, 4.5, [1.5, 7, -5])) for (const m of casters) m.castShadow = true;
+    const sweep = new THREE.SpotLight(0xffe2ad, 14, 16, 0.7, 0.8, 1.4);
+    sweep.position.set(-4, 5, -3);
+    const front = new THREE.PointLight(0xfff6e8, 5.5, 14, 2);
     front.position.set(0.5, 0.5, 6);
     const bounce = new THREE.PointLight(0xffe4b8, 2.2, 3, 2);
     bounce.position.copy(base).add(new THREE.Vector3(0, 0.5, 1));
@@ -2361,7 +2359,7 @@ const SCENES = {
         ribbonGeo.setDrawRange(0, Math.floor(ribbonCount * introCurve(s.reduced ? 99 : t, 2.2) / 6) * 6);
         ribbon.rotation.z = Math.sin(t * 0.3) * 0.006 + k * 0.01;
 
-        globe.rotation.y = t * 0.22 + k * 0.8;
+        globe.rotation.y = t * 0.12 + k * 0.5;
         globeStand.scale.setScalar(0.85 + intro * 0.15);
         for (const o of orbits) {
           const a = t * o.speed + o.phase;
@@ -2384,6 +2382,9 @@ const SCENES = {
         accents.update(t, dt, 0);
         dust.points.position.set(s.pointer.x * 0.3, -s.pointer.y * 0.2, 0);
         dust.update(t, dt, null);
+
+        // A barely perceptible sway of the whole composition.
+        root.rotation.y = Math.sin(t * 0.15) * 0.02;
 
         // The pointer sways the camera: near and far elements separate.
         camera.position.set(s.pointer.x * 0.35, -s.pointer.y * 0.22, distance * (1 + k * 0.025));
