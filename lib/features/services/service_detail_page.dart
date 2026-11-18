@@ -114,10 +114,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               ),
             ),
           ),
-          ServiceProjectCta(service: service, onStart: _startProject, background: AppColors.background),
           // How We Deliver sits last, after every service and demo section.
           SectionShell(
-            background: AppColors.surface,
+            background: AppColors.background,
             glowAt: const Alignment(-1.1, -0.4),
             glowStrength: 0.6,
             child: Column(

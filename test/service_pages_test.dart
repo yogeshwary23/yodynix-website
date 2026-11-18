@@ -215,7 +215,6 @@ void main() {
 
       // How We Deliver comes after every other section on the page.
       double top(String text) => tester.getTopLeft(find.text(text, skipOffstage: false).first).dy;
-      expect(top('How We Deliver It'), greaterThan(top('EXPLORE OTHER SERVICES')));
       expect(top('How We Deliver It'), greaterThan(top('${service.title} Samples')));
 
       final requestDemo = find.text('Request Demo', skipOffstage: false).first;
@@ -253,6 +252,13 @@ void main() {
         }
         expect(onPage(find.byType(Portfolio3DPreview, skipOffstage: false)), findsNothing, reason: service.title);
         expect(onPage(find.text('PROJECT DETAILS', skipOffstage: false)), findsNothing, reason: service.title);
+        // No closing Start Your Project band or Explore Other Services links.
+        expect(onPage(find.byType(ServiceProjectCta, skipOffstage: false)), findsNothing, reason: service.title);
+        expect(onPage(find.text('START YOUR PROJECT', skipOffstage: false)), findsNothing, reason: service.title);
+        expect(onPage(find.textContaining('Ready to plan', skipOffstage: false)), findsNothing, reason: service.title);
+        expect(onPage(find.textContaining(RegExp('explore other services', caseSensitive: false), skipOffstage: false)), findsNothing, reason: service.title);
+        // The hero's Start Your Project button is the page's only one.
+        expect(onPage(find.text('Start Your Project', skipOffstage: false)), findsOneWidget, reason: service.title);
         // No other service's projects leak onto this page.
         for (final other in ServicesContent.services.where((s) => s.id != service.id)) {
           for (final p in ServicePagesContent.of(other).projects) {
