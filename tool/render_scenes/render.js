@@ -41,12 +41,14 @@ const jobs = [
   ['overlay', 'business', 1200, 750, 'none', 0.5],
   ['overlay', 'innovation', 1200, 750, 'none', 0.5],
   ['overlay', 'careers', 1200, 750, 'none', 0.5],
-  ['neural', null, 1600, 760, 'f8f6f1', 0.5],
   ['ecosystem', null, 1200, 900, 'f8f6f1', 0.5],
   ['workflow', null, 1600, 640, 'f8f6f1', 0.5],
+  // Industries rows alternate surface / pearl in IndustriesContent order.
   ['industries', 'finance', 1100, 900, 'f2eee6', 0.5],
-  ['industries', 'healthcare', 1100, 900, 'f8f6f1', 0.5],
-  ['industries', 'retail', 1100, 900, 'f2eee6', 0.5],
+  ['industries', 'oilgas', 1100, 900, 'f8f6f1', 0.5],
+  ['industries', 'logistics', 1100, 900, 'f2eee6', 0.5],
+  ['industries', 'ecommerce', 1100, 900, 'f8f6f1', 0.5],
+  ['industries', 'healthcare', 1100, 900, 'f2eee6', 0.5],
   ['industries', 'education', 1100, 900, 'f8f6f1', 0.5],
   ['industries', 'realestate', 1100, 900, 'f2eee6', 0.5],
   ['industries', 'hospitality', 1100, 900, 'f8f6f1', 0.5],
@@ -77,7 +79,7 @@ function serve() {
   });
   const page = await browser.newPage();
   let failed = false;
-  // `node render.js workflow industries_retail` renders only those stills.
+  // `node render.js workflow industries_ecommerce` renders only those stills.
   const only = process.argv.slice(2);
   for (const [scene, variant, w, h, bg, p] of jobs) {
     if (only.length && !only.includes(variant ? `${scene}_${variant}` : scene)) continue;

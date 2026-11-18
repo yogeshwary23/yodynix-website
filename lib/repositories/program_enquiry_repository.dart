@@ -1,7 +1,7 @@
 import '../models/contact_enquiry.dart' show SubmissionResult, SubmissionStatus;
 import '../models/program_enquiry.dart';
 
-/// Contract for submitting pillar-page enquiries and internship applications.
+/// Contract for submitting pillar-page enquiries.
 /// A Firebase (or API) implementation replaces
 /// [PendingBackendProgramEnquiryRepository] in the backend phase.
 abstract class ProgramEnquiryRepository {

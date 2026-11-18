@@ -8,7 +8,7 @@ enum SiteSection {
   about(navLabel: 'About', hasOwnPage: true),
   services(navLabel: 'Services', hasOwnPage: true),
   expertise(navLabel: 'Expertise', hasOwnPage: true),
-  internship(navLabel: 'Internship', hasOwnPage: true),
+  careers(navLabel: 'Careers', hasOwnPage: true),
   whyChoose,
   contact(navLabel: 'Contact');
 

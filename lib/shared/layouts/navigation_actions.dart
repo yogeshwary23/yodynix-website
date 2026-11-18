@@ -11,9 +11,10 @@ import '../widgets/site_dialog.dart';
 
 /// Navigates to a homepage section from anywhere — closing dialogs or
 /// returning from sub-pages first — and optionally pre-selects a service in
-/// the enquiry form. Entries with their own page (About, Services, Expertise,
-/// Internship) open that page.
-void goToSection(BuildContext context, SiteSection section, {String? enquiryService}) {
+/// the enquiry form. [showForm] scrolls to the form itself rather than the
+/// top of the Contact section. Entries with their own page (About, Services,
+/// Expertise, Careers) open that page.
+void goToSection(BuildContext context, SiteSection section, {String? enquiryService, bool showForm = false}) {
   final nav = SectionNavigatorScope.read(context);
   if (enquiryService != null) nav.contactPrefill.value = enquiryService;
 
@@ -24,17 +25,17 @@ void goToSection(BuildContext context, SiteSection section, {String? enquiryServ
       return _openPage(context, AppRoutes.services);
     case SiteSection.expertise:
       return _openPage(context, AppRoutes.expertise);
-    case SiteSection.internship:
-      return openInternshipPage(context);
+    case SiteSection.careers:
+      return openCareersPage(context);
     default:
   }
 
   final route = ModalRoute.of(context);
   if (route != null && !route.isFirst) {
     Navigator.of(context).popUntil((r) => r.isFirst);
-    WidgetsBinding.instance.addPostFrameCallback((_) => nav.scrollTo(section));
+    WidgetsBinding.instance.addPostFrameCallback((_) => nav.scrollTo(section, toForm: showForm));
   } else {
-    nav.scrollTo(section);
+    nav.scrollTo(section, toForm: showForm);
   }
 }
 
@@ -81,25 +82,22 @@ void openServicePage(BuildContext context, ServiceOffering service) {
   }
 }
 
-/// Whether [context] belongs to the Internship landing page or one of its
-/// programme pages.
-bool isInternshipRoute(BuildContext context) {
+/// Whether [context] belongs to the Careers page.
+bool isCareersRoute(BuildContext context) {
   final name = ModalRoute.of(context)?.settings.name;
   if (name == null) return false;
-  final route = AppRoutes.resolve(name);
-  return route == AppRoutes.internship || route.startsWith(AppRoutes.internshipPrefix);
+  return AppRoutes.resolve(name) == AppRoutes.careers;
 }
 
-/// Opens the Internship landing page, or a programme page when [slug] is
-/// given. Pushed from the homepage and replacing any other sub-page, like
-/// [openServicePage]. [apply] scrolls the landing page to its form.
-void openInternshipPage(BuildContext context, {String? slug, bool apply = false}) {
-  final target = slug == null ? AppRoutes.internship : AppRoutes.internshipProgram(slug);
+/// Opens the Careers page. Pushed from the homepage and replacing any other
+/// sub-page, like [openServicePage]. [apply] scrolls the page to its form.
+void openCareersPage(BuildContext context, {bool apply = false}) {
+  const target = AppRoutes.careers;
   final current = ModalRoute.of(context);
   final name = current?.settings.name;
   if (!apply && name != null && AppRoutes.resolve(name) == target) return;
   final navigator = Navigator.of(context);
-  final arguments = apply ? InternshipPageArgs.apply : null;
+  final arguments = apply ? CareersPageArgs.apply : null;
   if (current == null || current.isFirst) {
     navigator.pushNamed(target, arguments: arguments);
   } else {

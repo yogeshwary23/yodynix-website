@@ -8,7 +8,6 @@ import '../../models/site_section.dart';
 import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/layouts/subpage_scaffold.dart';
 import '../../shared/widgets/buttons.dart';
-import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/section_widgets.dart';
 import '../services/service_detail_page.dart';
 import 'demo_catalog.dart';
@@ -58,12 +57,6 @@ class DemoPage extends StatelessWidget {
                     project.summary,
                     style: AppTypography.body(fontSize: context.responsive(mobile: 15.5, desktop: 17.0), height: 1.7),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [for (final t in project.technologies) TagChip(t, color: AppColors.accent, filled: true)],
                 ),
                 const SizedBox(height: 22),
                 const _Notice(),

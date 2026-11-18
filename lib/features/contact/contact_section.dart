@@ -6,6 +6,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../repositories/contact_repository.dart';
 import '../../models/social_link.dart';
+import '../../providers/section_navigator.dart';
 import '../../services/link_service.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/reveal.dart';
@@ -35,6 +36,7 @@ class ContactSection extends StatelessWidget {
     );
 
     final form = Reveal(
+      key: SectionNavigatorScope.read(context).enquiryFormKey,
       delay: const Duration(milliseconds: 120),
       child: FormCard(
         padding: EdgeInsets.all(context.responsive(mobile: 22.0, desktop: 40.0)),

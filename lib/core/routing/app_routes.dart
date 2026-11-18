@@ -1,8 +1,8 @@
 import '../../models/about_page.dart';
 import '../../models/site_section.dart';
 
-/// Route arguments understood by the Internship landing page.
-enum InternshipPageArgs {
+/// Route arguments understood by the Careers page.
+enum CareersPageArgs {
   /// Open with the application form in view.
   apply,
 }
@@ -29,10 +29,8 @@ class AppRoutes {
   static const String services = '/services';
   static const String expertise = '/expertise';
 
-  /// Internship landing page and its programme pages.
-  static const String internship = '/internship';
-  static const String internshipPrefix = '/internship/';
-  static String internshipProgram(String slug) => '$internshipPrefix$slug';
+  /// Careers page: open positions and the job application form.
+  static const String careers = '/careers';
 
   /// Service detail pages and their working demos.
   static const String servicePrefix = '/services/';
@@ -47,7 +45,7 @@ class AppRoutes {
   static SiteSection? sectionFor(String route) {
     final normalised = normalise(route);
     for (final s in SiteSection.values) {
-      // `/about`, `/services`, `/expertise` and `/internship` are pages.
+      // `/about`, `/services`, `/expertise` and `/careers` are pages.
       if (!s.onHomePage) continue;
       if (section(s) == normalised) return s;
     }
@@ -65,8 +63,12 @@ class AppRoutes {
       '/process' || '/how-we-work' => AboutPage.howWeWork.route,
       // Retired pages: the old Students area now opens the homepage.
       '/student-development' || '/students' => home,
-      '/internship-careers' || '/internships' || '/careers' => internship,
+      // The former Internship pages now open Careers.
+      '/internship' || '/internship-careers' || '/internships' || '/jobs' => careers,
+      _ when normalised.startsWith('/internship/') => careers,
       '/projects' || '/work' => portfolio,
+      // Flutter is now part of Mobile Application Development.
+      '/services/flutter-development' => service('mobile-app-development'),
       _ when normalised.startsWith('/portfolio/') => portfolio,
       _ => normalised,
     };

@@ -3,8 +3,7 @@ import 'package:flutter/painting.dart';
 import '../../models/social_link.dart';
 import '../../models/team_member.dart';
 
-/// Central, editable configuration for brand, contact, founder and
-/// programme details.
+/// Central, editable configuration for brand, contact and team details.
 ///
 /// Everything marked `TODO(yodynix)` is a placeholder waiting for official
 /// information. Values left as `null` are shown on the site as
@@ -41,15 +40,15 @@ class ContactConfig {
   );
 
   /// Official phone numbers in display format; `tel:` links strip the spaces.
-  static const List<String> phones = ['+91 97661 82320', '+91 74480 49320'];
+  static const List<String> phones = ['+91 97661 82320'];
 
   // TODO(yodynix): add the WhatsApp number with country code, digits only, e.g. '910000000000'.
   static const String? whatsappNumber = null;
 
-  static const String address = 'Yashada Supreme, B-802, Dudulogoan, Moshi – 412105';
+  static const String address = 'Yashada Supreme, 8th Floor, Office No. 802, Moshi, Pune – 412105, Maharashtra, India.';
 
-  /// Short form of [address] for compact spots such as the internship card.
-  static const String locality = 'Moshi – 412105';
+  /// Short form of [address] for compact spots such as the job cards.
+  static const String city = 'Moshi, Pune';
 
   /// Google Maps directions to [address], resolved by Google from the text
   /// itself rather than hard-coded coordinates.
@@ -167,34 +166,4 @@ class HeroStatsConfig {
     (35, '+', 'Happy Clients'),
     (12, '+', 'Technology Solutions'),
   ];
-}
-
-class InternshipConfig {
-  InternshipConfig._();
-
-  // Shared defaults for every internship programme. Each programme can
-  // override any of them in `InternshipContent` via `ProgramTerms`.
-  // TODO(yodynix): fill in values only once officially confirmed. `null`
-  // displays as "To Be Announced" — no fee, stipend, certificate or placement
-  // is implied.
-
-  /// Duration is flexible: it depends on the programme, the intern's progress
-  /// and the arrangement agreed for each opportunity.
-  static const String duration = 'Flexible';
-  static const String? mode = null;
-  static const String? eligibility = null;
-  static const String? fees = null;
-  static const String? stipend = null;
-  static const String? certificatePolicy = null;
-
-  /// e.g. 'Open now' or 'Opening soon'. `null` reads "To Be Announced".
-  static const String? availability = null;
-
-  /// Whether free and paid opportunities are offered. Availability and
-  /// conditions still depend on each specific opportunity.
-  static const bool offersFreeOpportunities = true;
-  static const bool offersPaidOpportunities = true;
-
-  /// Switches CTAs from "Register Interest" to "Apply Now".
-  static const bool applicationsOpen = false;
 }

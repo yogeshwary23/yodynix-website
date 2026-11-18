@@ -76,7 +76,7 @@ class DemoCatalog {
     ),
     DemoEntry(
       slug: 'responsive-task-board',
-      serviceId: 'flutter_development',
+      serviceId: 'mobile_app_development',
       windowTitle: 'TaskFlow · responsive preview',
       light: false,
       builder: (_) => const TaskBoardDemo(),

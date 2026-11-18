@@ -44,7 +44,7 @@ class Service3DVisual extends StatelessWidget {
   /// Scene for each service, by `ServiceOffering.id`.
   static Scene3D sceneFor(String serviceId) => switch (serviceId) {
     'website_development' || 'ecommerce_development' => Scene3D.web,
-    'mobile_app_development' || 'flutter_development' => Scene3D.mobile,
+    'mobile_app_development' => Scene3D.mobile,
     'ai_solutions_chatbots' => Scene3D.ai,
     'custom_software_development' || 'ui_ux_design' => Scene3D.software,
     'business_automation' => Scene3D.automation,
@@ -54,7 +54,6 @@ class Service3DVisual extends StatelessWidget {
   /// Variation that keeps services sharing a scene visually distinct.
   static String? variantFor(String serviceId) => switch (serviceId) {
     'ecommerce_development' => 'shop',
-    'flutter_development' => 'single',
     'ui_ux_design' => 'design',
     'branding_digital_presence' => 'brand',
     _ => null,

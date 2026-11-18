@@ -84,7 +84,6 @@ class ServicePagesContent {
           Icons.build_circle_outlined,
         ),
       ],
-      technologies: ['HTML', 'CSS', 'JavaScript', 'React', 'Flutter Web', 'Node.js', 'MySQL & PostgreSQL', 'Cloud Hosting'],
       process: [
         PillarStep('Discover', 'Understand your audience, goals and the pages they need.', Icons.travel_explore_rounded),
         PillarStep('Structure', 'Plan the sitemap, content and calls to action.', Icons.account_tree_outlined),
@@ -110,7 +109,6 @@ class ServicePagesContent {
             'Opening hours panel',
             'Validated appointment request form',
           ],
-          technologies: ['Flutter Web', 'Responsive Layouts', 'Form Validation'],
           imageAlt: 'Screenshot of the Lumen Dental Care demo website.',
           demoRoute: '${AppRoutes.demoPrefix}clinic-website',
         ),
@@ -126,7 +124,6 @@ class ServicePagesContent {
               'Large imagery, a filterable project index and a short studio story lead visitors '
               'to a simple enquiry page.',
           features: ['Filterable project index', 'Full-width image galleries', 'Studio and team pages', 'Enquiry page'],
-          technologies: ['HTML', 'CSS', 'JavaScript', 'SEO-friendly Builds'],
           imageAlt: 'An architect drawing building plans by hand.',
         ),
         SampleProject(
@@ -140,7 +137,6 @@ class ServicePagesContent {
               'Concept for an independent restaurant: a mobile-first menu, opening times, '
               'a table-reservation request and a simple way for staff to post seasonal specials.',
           features: ['Mobile-first menu', 'Reservation request', 'Seasonal specials', 'Location and hours'],
-          technologies: ['React', 'Node.js', 'Responsive Layouts'],
           imageAlt: 'A warmly lit restaurant dining room with set tables.',
         ),
         SampleProject(
@@ -155,7 +151,6 @@ class ServicePagesContent {
               'price and size, detailed property pages with galleries and a viewing-request form '
               'that goes straight to the agent.',
           features: ['Listing search and filters', 'Property gallery pages', 'Viewing requests', 'Agent profiles'],
-          technologies: ['React', 'Node.js', 'MySQL & PostgreSQL'],
           imageAlt: 'A modern white villa with a swimming pool.',
         ),
       ],
@@ -193,7 +188,6 @@ class ServicePagesContent {
         ServiceFeature('Inventory Management', 'Stock tracking and low-stock alerts across products.', Icons.warehouse_outlined),
         ServiceFeature('Order Management', 'Track orders from payment to dispatch and delivery.', Icons.local_shipping_outlined),
       ],
-      technologies: ['Flutter Web', 'React', 'Node.js', 'Firebase', 'Payment Gateways', 'REST APIs', 'MySQL & PostgreSQL'],
       process: [
         PillarStep('Plan the Catalogue', 'Map products, categories and variants.', Icons.category_outlined),
         PillarStep('Design the Journey', 'Shape browsing, cart and checkout around buyers.', Icons.route_outlined),
@@ -223,7 +217,6 @@ class ServicePagesContent {
             'Live totals and delivery fee',
             'Mock checkout confirmation',
           ],
-          technologies: ['Flutter Web', 'State Management', 'Responsive Layouts'],
           imageAlt: 'Screenshot of the Weave & Co. demo online store.',
           demoRoute: '${AppRoutes.demoPrefix}handloom-store',
         ),
@@ -237,7 +230,6 @@ class ServicePagesContent {
               'delivery-slot selection at checkout and substitution preferences for items that '
               'run out.',
           features: ['Delivery slot picker', 'One-tap repeat orders', 'Substitution preferences', 'Stock-aware catalogue'],
-          technologies: ['Flutter', 'Firebase', 'Payment Gateways'],
           imageAlt: 'A paper grocery bag filled with fresh fruit and vegetables.',
         ),
         SampleProject(
@@ -250,7 +242,6 @@ class ServicePagesContent {
               'filters that hide out-of-stock sizes, wishlists and email alerts when a '
               'limited release goes live.',
           features: ['Size-aware filtering', 'Wishlists', 'Release-drop alerts', 'Size guide'],
-          technologies: ['React', 'Node.js', 'Payment Gateways'],
           imageAlt: 'A wall display of colourful sneakers in a shop.',
         ),
         SampleProject(
@@ -263,7 +254,6 @@ class ServicePagesContent {
               'message at checkout and an order board that shows the team what to prepare '
               'each morning.',
           features: ['Scheduled delivery dates', 'Gift messages', 'Daily preparation board', 'Occasion collections'],
-          technologies: ['Flutter Web', 'Firebase', 'Payment Gateways'],
           imageAlt: 'A flower shop full of fresh bouquets and plants.',
         ),
       ],
@@ -307,13 +297,12 @@ class ServicePagesContent {
           Icons.people_outline_rounded,
         ),
         ServiceFeature(
-          'Cross-platform Apps',
-          'One codebase for Android and iOS, maintained together.',
+          'Cross-platform Flutter Apps',
+          'One Flutter codebase for Android and iOS, maintained together.',
           Icons.devices_other_rounded,
         ),
         ServiceFeature('API Integrations', 'Secure connections to your backend and third-party services.', Icons.api_rounded),
       ],
-      technologies: ['Flutter Mobile', 'Dart', 'Firebase', 'REST APIs', 'Node.js', 'Push Notifications'],
       process: [
         PillarStep('Define', 'Agree the core journeys and success measures.', Icons.flag_outlined),
         PillarStep('Prototype', 'Click through key screens before code is written.', Icons.touch_app_outlined),
@@ -334,7 +323,6 @@ class ServicePagesContent {
               'class with live seat counts, confirm the booking and cancel it from "My Bookings". '
               'That is the core loop of any booking app.',
           features: ['Day picker', 'Classes with live seat counts', 'Booking confirmation', 'My Bookings with cancel'],
-          technologies: ['Flutter Mobile', 'Dart', 'State Management'],
           imageAlt: 'Screenshot of the FitSlot demo booking app.',
           demoRoute: '${AppRoutes.demoPrefix}class-booking-app',
         ),
@@ -347,7 +335,6 @@ class ServicePagesContent {
               'Concept for a multi-doctor clinic: patients book with a preferred doctor, '
               'receive reminders and see past visits and prescriptions in one place.',
           features: ['Doctor and slot selection', 'Appointment reminders', 'Visit history', 'Secure patient login'],
-          technologies: ['Flutter Mobile', 'Firebase', 'REST APIs'],
           imageAlt: 'Two doctors reviewing information on a tablet.',
         ),
         SampleProject(
@@ -359,7 +346,6 @@ class ServicePagesContent {
               'Concept for a restaurant group: customers order ahead, pay in the app, '
               'follow live order status and reorder favourites in one tap.',
           features: ['Menu with customisation', 'In-app payment', 'Live order status', 'Saved favourites'],
-          technologies: ['Flutter Mobile', 'Node.js', 'Payment Gateways'],
           imageAlt: 'A hand holding a phone showing a food ordering app.',
         ),
         SampleProject(
@@ -371,53 +357,8 @@ class ServicePagesContent {
               'Concept for a local delivery business: riders see the day’s drops in '
               'order, capture proof of delivery with a photo and track their earnings.',
           features: ['Ordered drop list', 'Proof-of-delivery photos', 'Earnings summary', 'Offline-friendly'],
-          technologies: ['Flutter Mobile', 'Firebase', 'Maps Integration'],
           imageAlt: 'A delivery rider handing a bag of fruit to a customer.',
         ),
-      ],
-    ),
-
-    // ------------------------------------------------------------ Flutter
-    'flutter_development': ServicePageContent(
-      heroHeading: 'One Flutter Codebase. Every Screen.',
-      heroLead:
-          'Flutter applications for Android, iOS, web and desktop that stay consistent, '
-          'perform well and cost far less to maintain than separate builds.',
-      overview: [
-        'Flutter lets one well-structured codebase run natively on phones, tablets, browsers '
-            'and desktops. That means features ship everywhere at once and behave the same on '
-            'every platform.',
-        'Our builds use clean architecture, responsive layouts and predictable state '
-            'management. We also help teams improve or extend Flutter projects already in use.',
-      ],
-      idealFor: [
-        'Products that need mobile and web together',
-        'Teams consolidating separate apps',
-        'Internal tools on desktop and tablet',
-        'Existing Flutter apps that need help',
-      ],
-      offers: [
-        ServiceFeature('Cross-platform Apps', 'Android, iOS, web and desktop from one codebase.', Icons.devices_other_rounded),
-        ServiceFeature('Flutter Web', 'Rich browser applications with Flutter’s rendering.', Icons.web_rounded),
-        ServiceFeature('Flutter Desktop', 'Windows and macOS apps for internal teams.', Icons.desktop_windows_outlined),
-        ServiceFeature('Responsive UI', 'Layouts that adapt from phone to wide screen.', Icons.aspect_ratio_rounded),
-        ServiceFeature('State Management', 'Predictable, testable state with proven patterns.', Icons.account_tree_outlined),
-        ServiceFeature('API & Backend Integration', 'Connected to your APIs, Firebase or custom backend.', Icons.api_rounded),
-        ServiceFeature(
-          'Existing App Improvements',
-          'Performance, refactoring and new features for live apps.',
-          Icons.tune_rounded,
-        ),
-      ],
-      technologies: ['Flutter', 'Dart', 'Null-safe Dart', 'Clean Architecture', 'Firebase', 'REST APIs', 'Git & Version Control'],
-      process: [
-        PillarStep('Assess', 'Review goals, platforms and any existing code.', Icons.search_rounded),
-        PillarStep('Architect', 'Choose structure, state and data layers.', Icons.account_tree_outlined),
-        PillarStep('Build Responsively', 'Develop once, check every breakpoint.', Icons.aspect_ratio_rounded),
-        PillarStep('Test Across Platforms', 'Verify behaviour on mobile, web and desktop.', Icons.devices_rounded),
-        PillarStep('Release', 'Ship to stores and the web together.', Icons.rocket_launch_outlined),
-      ],
-      projects: [
         SampleProject(
           id: 'taskflow',
           name: 'TaskFlow Board',
@@ -435,45 +376,8 @@ class ServicePagesContent {
             'Move tasks between columns',
             'Adaptive layout from one codebase',
           ],
-          technologies: ['Flutter Web', 'Dart', 'Responsive Layouts'],
           imageAlt: 'Screenshot of the TaskFlow responsive task board demo.',
           demoRoute: '${AppRoutes.demoPrefix}responsive-task-board',
-        ),
-        SampleProject(
-          id: 'pulse_wellness',
-          name: 'Pulse Wellness',
-          category: 'Health tracker',
-          summary: 'A wellness tracker for phone and web with goals, streaks and summaries.',
-          overview:
-              'Concept for a wellness brand: members log activity on their phone and '
-              'review weekly summaries on the web, with goals and streaks shared across both.',
-          features: ['Daily goals and streaks', 'Weekly web summaries', 'Shared account across devices', 'Reminders'],
-          technologies: ['Flutter Mobile', 'Flutter Web', 'Firebase'],
-          imageAlt: 'A hand holding a phone showing a health app.',
-        ),
-        SampleProject(
-          id: 'ledgerly',
-          name: 'Ledgerly',
-          category: 'Expense tracker',
-          summary: 'An expense and bill tracker for mobile and desktop.',
-          overview:
-              'Concept for small-business owners: capture receipts on the phone, '
-              'categorise them on the desktop and export monthly summaries for the accountant.',
-          features: ['Receipt capture', 'Categories and budgets', 'Desktop review screen', 'Monthly exports'],
-          technologies: ['Flutter Mobile', 'Flutter Desktop', 'MySQL & PostgreSQL'],
-          imageAlt: 'Bills and a calculator on a desk beside a laptop.',
-        ),
-        SampleProject(
-          id: 'counterpoint_pos',
-          name: 'CounterPoint POS',
-          category: 'Tablet point of sale',
-          summary: 'A café point-of-sale app for tablets with a web back office.',
-          overview:
-              'Concept for cafés and small shops: a tablet POS for taking orders and a '
-              'web back office for menus, prices and daily sales, both from the same Flutter codebase.',
-          features: ['Tablet order screen', 'Menu and price management', 'Daily sales view', 'Works offline'],
-          technologies: ['Flutter', 'Flutter Web', 'Firebase'],
-          imageAlt: 'A barista using a tablet point-of-sale at a café counter.',
         ),
       ],
     ),
@@ -509,7 +413,6 @@ class ServicePagesContent {
         ServiceFeature('Internal Business Applications', 'Purpose-built tools for everyday tasks.', Icons.widgets_outlined),
         ServiceFeature('Workflow Systems', 'Approvals, assignments and status tracking.', Icons.account_tree_outlined),
       ],
-      technologies: ['Flutter Web', 'React', 'Node.js', 'MySQL & PostgreSQL', 'Firebase', 'REST APIs', 'Cloud Hosting'],
       process: [
         PillarStep('Map the Workflow', 'Document how work moves today.', Icons.schema_outlined),
         PillarStep('Prioritise', 'Pick the highest-value first release.', Icons.low_priority_rounded),
@@ -530,7 +433,6 @@ class ServicePagesContent {
               'validation and update a lead’s stage, and the pipeline counts and value change '
               'immediately. Data stays in your browser session only.',
           features: ['Searchable lead table', 'Status filters', 'Pipeline summary', 'Add and update leads'],
-          technologies: ['Flutter Web', 'State Management', 'Data Tables'],
           imageAlt: 'Screenshot of the LeadDesk CRM demo.',
           demoRoute: '${AppRoutes.demoPrefix}mini-crm',
         ),
@@ -544,7 +446,6 @@ class ServicePagesContent {
               'managers see stock levels by location and the system raises low-stock alerts '
               'before shelves run empty.',
           features: ['Barcode scanning', 'Stock by location', 'Low-stock alerts', 'Movement history'],
-          technologies: ['Flutter', 'Node.js', 'MySQL & PostgreSQL'],
           imageAlt: 'Two warehouse staff walking between tall storage shelves.',
         ),
         SampleProject(
@@ -557,7 +458,6 @@ class ServicePagesContent {
               'look-up, visit notes and simple billing, with role-based access for doctors '
               'and reception staff.',
           features: ['Appointment day view', 'Patient records', 'Billing and receipts', 'Role-based access'],
-          technologies: ['Flutter Web', 'Node.js', 'MySQL & PostgreSQL'],
           imageAlt: 'Clinic staff working together at a reception desk.',
         ),
         SampleProject(
@@ -569,7 +469,6 @@ class ServicePagesContent {
               'Concept for a logistics operator: see every vehicle’s schedule, plan '
               'maintenance before it is due and assign drivers to routes from one dashboard.',
           features: ['Vehicle schedule board', 'Maintenance planner', 'Driver assignments', 'Utilisation reports'],
-          technologies: ['React', 'Node.js', 'MySQL & PostgreSQL'],
           imageAlt: 'A row of white delivery vans parked in a lot.',
         ),
       ],
@@ -605,7 +504,6 @@ class ServicePagesContent {
           Icons.auto_awesome_outlined,
         ),
       ],
-      technologies: ['AI APIs', 'Chatbots & Assistants', 'Prompt Design', 'Node.js', 'Python', 'REST APIs', 'Firebase'],
       process: [
         PillarStep('Pick the Problem', 'Choose questions or tasks worth automating.', Icons.help_outline_rounded),
         PillarStep('Gather Knowledge', 'Collect and approve the source information.', Icons.library_books_outlined),
@@ -627,7 +525,6 @@ class ServicePagesContent {
               'and offers to connect a person when it cannot help. This demo uses keyword '
               'matching; no AI model is connected.',
           features: ['Suggested questions', 'Topic recognition', 'Typing indicator', 'Hand-off to a person'],
-          technologies: ['Flutter Web', 'Conversation Design', 'Intent Matching'],
           imageAlt: 'Screenshot of the HelpDesk Assistant demo chatbot.',
           demoRoute: '${AppRoutes.demoPrefix}support-assistant',
         ),
@@ -641,7 +538,6 @@ class ServicePagesContent {
               'price questions, builds an order through the conversation and passes it to '
               'staff for confirmation.',
           features: ['Product questions', 'Conversational ordering', 'Staff confirmation', 'Order summaries'],
-          technologies: ['AI APIs', 'Messaging API', 'Node.js'],
           imageAlt: 'A person typing a message on a smartphone.',
         ),
         SampleProject(
@@ -654,7 +550,6 @@ class ServicePagesContent {
               'questions in plain language and get short answers linked to the exact source '
               'pages.',
           features: ['Plain-language questions', 'Answers with sources', 'Access by role', 'Document upload'],
-          technologies: ['AI APIs', 'Python', 'Vector Search'],
           imageAlt: 'Shelves of colourful ring binders in an office.',
         ),
         SampleProject(
@@ -667,7 +562,6 @@ class ServicePagesContent {
               'cleanliness or check-in, trends are tracked month to month and staff get '
               'draft replies to approve.',
           features: ['Theme detection', 'Monthly trends', 'Draft replies for approval', 'Alerts for urgent issues'],
-          technologies: ['AI APIs', 'Node.js', 'Dashboards'],
           imageAlt: 'A modern hotel lobby with a reception desk.',
         ),
       ],
@@ -708,7 +602,6 @@ class ServicePagesContent {
         ServiceFeature('Report Generation', 'Daily and weekly reports delivered automatically.', Icons.summarize_outlined),
         ServiceFeature('System Integrations', 'Connect forms, CRMs, email and spreadsheets.', Icons.hub_outlined),
       ],
-      technologies: ['Workflow Automation', 'Node.js', 'Python', 'REST APIs', 'Webhooks', 'Email & Notifications', 'Data Sync'],
       process: [
         PillarStep('Audit Routines', 'List repetitive tasks and their cost.', Icons.checklist_rounded),
         PillarStep('Design Flows', 'Define triggers, steps and exceptions.', Icons.schema_outlined),
@@ -730,7 +623,6 @@ class ServicePagesContent {
               'notified and a follow-up task is scheduled. This is a simulation; no emails are '
               'actually sent.',
           features: ['Trigger from a form', 'Step-by-step run', 'Live run log', 'Toggle steps on and off'],
-          technologies: ['Flutter Web', 'Workflow Design', 'Event Logs'],
           imageAlt: 'Screenshot of the FlowRunner workflow automation demo.',
           demoRoute: '${AppRoutes.demoPrefix}enquiry-automation',
         ),
@@ -744,7 +636,6 @@ class ServicePagesContent {
               'overdue each trigger a different reminder, and payments automatically stop '
               'the sequence.',
           features: ['Scheduled reminders', 'Stop on payment', 'Overdue summary', 'Accounting sync'],
-          technologies: ['Workflow Automation', 'Email & Notifications', 'REST APIs'],
           imageAlt: 'A person reviewing invoices and forms with a calculator.',
         ),
         SampleProject(
@@ -756,7 +647,6 @@ class ServicePagesContent {
               'Concept for a salon: every booking sends a confirmation, a reminder the '
               'day before and a rebooking prompt a few weeks after the visit.',
           features: ['Booking confirmations', 'Day-before reminders', 'Rebooking prompts', 'No-show tracking'],
-          technologies: ['Scheduling Automation', 'Messaging API', 'Node.js'],
           imageAlt: 'A stylist washing a client’s hair at a salon basin.',
         ),
         SampleProject(
@@ -768,7 +658,6 @@ class ServicePagesContent {
               'Concept for a retail shop: point-of-sale data is collected at closing time '
               'and a clear one-page digest is emailed to the owner every evening.',
           features: ['Automatic data collection', 'Top items and refunds', 'Evening email digest', 'Weekly comparisons'],
-          technologies: ['Python', 'Report Generation', 'Email & Notifications'],
           imageAlt: 'A card payment terminal printing a long receipt.',
         ),
       ],
@@ -802,15 +691,6 @@ class ServicePagesContent {
         ServiceFeature('Campaign Management', 'Planning, launching and optimising campaigns.', Icons.campaign_outlined),
         ServiceFeature('Performance Analysis', 'Clear reports with honest, actionable insights.', Icons.insights_rounded),
       ],
-      technologies: [
-        'Google Ads',
-        'Meta Ads Manager',
-        'Google Analytics',
-        'Search Console',
-        'Tag Manager',
-        'SEO Tools',
-        'Looker Studio',
-      ],
       process: [
         PillarStep('Set the Goal', 'Agree the result that matters and how to measure it.', Icons.flag_outlined),
         PillarStep('Research', 'Understand audience, competitors and keywords.', Icons.manage_search_rounded),
@@ -831,7 +711,6 @@ class ServicePagesContent {
               'planner estimates clicks, leads, customers, revenue and return on ad spend. '
               'Figures are illustrative estimates for planning, not guaranteed results.',
           features: ['Channel presets', 'Live funnel estimates', 'Return on ad spend', 'Break-even check'],
-          technologies: ['Flutter Web', 'Funnel Modelling', 'Data Visualisation'],
           imageAlt: 'Screenshot of the Campaign ROI Planner demo.',
           demoRoute: '${AppRoutes.demoPrefix}campaign-planner',
         ),
@@ -845,7 +724,6 @@ class ServicePagesContent {
               'reels, a local awareness campaign and an opening-week offer tracked through to '
               'in-store redemptions.',
           features: ['Four-week content calendar', 'Local awareness ads', 'Opening offer tracking', 'Weekly reporting'],
-          technologies: ['Meta Ads Manager', 'Instagram', 'Google Analytics'],
           imageAlt: 'The counter and espresso machines of a modern coffee shop.',
         ),
         SampleProject(
@@ -857,7 +735,6 @@ class ServicePagesContent {
               'Concept for a fitness studio: ads lead to a free trial-class landing page, '
               'sign-ups receive reminders and the studio tracks trial-to-member conversion.',
           features: ['Trial-class landing page', 'Facebook and Instagram ads', 'Reminder sequence', 'Conversion tracking'],
-          technologies: ['Meta Ads Manager', 'Landing Pages', 'Tag Manager'],
           imageAlt: 'A bright gym with dumbbell racks and training equipment.',
         ),
         SampleProject(
@@ -870,7 +747,6 @@ class ServicePagesContent {
               'searches, a Google Business Profile refresh and a small search campaign for '
               'high-intent keywords.',
           features: ['Local keyword research', 'Service page optimisation', 'Business Profile refresh', 'Search ads for intent'],
-          technologies: ['Search Console', 'Google Ads', 'SEO Tools'],
           imageAlt: 'A styled modern living room with a grey sofa.',
         ),
       ],
@@ -902,7 +778,6 @@ class ServicePagesContent {
         ServiceFeature('User Journey', 'Maps of how people move through your product.', Icons.route_outlined),
         ServiceFeature('Design Systems', 'Reusable components and rules for consistency.', Icons.dashboard_customize_outlined),
       ],
-      technologies: ['Figma', 'Interactive Prototypes', 'Design Systems', 'User Testing', 'Accessibility (WCAG)', 'FigJam'],
       process: [
         PillarStep('Research', 'Understand users, goals and pain points.', Icons.record_voice_over_outlined),
         PillarStep('Map Journeys', 'Chart the key tasks step by step.', Icons.route_outlined),
@@ -923,7 +798,6 @@ class ServicePagesContent {
               'polish. Toggle between wireframe and high-fidelity views of the same screens '
               'and click through browse, detail and confirmation steps.',
           features: ['Wireframe / UI toggle', 'Clickable three-step flow', 'Shared component styles', 'Annotated design notes'],
-          technologies: ['Figma-style Prototype', 'Flutter Web', 'Design Systems'],
           imageAlt: 'Screenshot of the Bookly interactive prototype demo.',
           demoRoute: '${AppRoutes.demoPrefix}app-prototype',
         ),
@@ -936,7 +810,6 @@ class ServicePagesContent {
               'Concept redesign of a banking app’s most used tasks: sending money in '
               'three steps, clearer spending insights and reassuring confirmation screens.',
           features: ['Three-step transfer flow', 'Spending insights', 'Accessible contrast and type', 'Usability test plan'],
-          technologies: ['Figma', 'User Testing', 'Accessibility (WCAG)'],
           imageAlt: 'A person using a finance app on a smartphone.',
         ),
         SampleProject(
@@ -949,7 +822,6 @@ class ServicePagesContent {
               'journey map from inspiration to booking and wireframes for building a '
               'multi-city itinerary.',
           features: ['Traveller interviews', 'Journey map', 'Itinerary builder wireframes', 'Prototype for testing'],
-          technologies: ['FigJam', 'Figma', 'Interactive Prototypes'],
           imageAlt: 'A hand tracing a route on a paper city map.',
         ),
         SampleProject(
@@ -962,7 +834,6 @@ class ServicePagesContent {
               'token-based design system and documented components for forms, tables and '
               'charts.',
           features: ['Interface audit', 'Design tokens', 'Component library', 'Usage guidelines'],
-          technologies: ['Figma', 'Design Systems', 'Documentation'],
           imageAlt: 'A designer sketching interface layouts beside a keyboard.',
         ),
       ],
@@ -994,7 +865,6 @@ class ServicePagesContent {
         ServiceFeature('Brand Guidelines', 'A clear guide so everyone applies the brand correctly.', Icons.menu_book_outlined),
         ServiceFeature('Online Presence Setup', 'Website, Business Profile and social channels aligned.', Icons.public_rounded),
       ],
-      technologies: ['Adobe Illustrator', 'Adobe Photoshop', 'Figma', 'Canva Templates', 'Brand Guidelines'],
       process: [
         PillarStep('Discover', 'Learn your story, audience and competitors.', Icons.travel_explore_rounded),
         PillarStep('Define', 'Agree personality, values and positioning.', Icons.psychology_alt_outlined),
@@ -1015,7 +885,6 @@ class ServicePagesContent {
               'the identity applied instantly to a logo lockup, a business card and a social '
               'post. It mirrors how we explore directions with clients.',
           features: ['Live name input', 'Palette presets', 'Font pairings', 'Logo, card and social previews'],
-          technologies: ['Flutter Web', 'Typography', 'Colour Systems'],
           imageAlt: 'Screenshot of the Brand Kit Builder demo.',
           demoRoute: '${AppRoutes.demoPrefix}brand-kit-builder',
         ),
@@ -1028,7 +897,6 @@ class ServicePagesContent {
               'Concept for a specialty tea brand: a confident wordmark, a colour code for '
               'each blend and a packaging system that stands out on crowded shelves.',
           features: ['Wordmark', 'Colour-coded blends', 'Pouch packaging system', 'Social launch templates'],
-          technologies: ['Adobe Illustrator', 'Packaging Design', 'Brand Guidelines'],
           imageAlt: 'A colourful tea pouch surrounded by loose tea leaves.',
         ),
         SampleProject(
@@ -1040,7 +908,6 @@ class ServicePagesContent {
               'Concept rebrand for a family bakery: a hand-drawn logo, a warm palette, '
               'shopfront signage, pastry boxes and a matching Instagram grid.',
           features: ['Hand-drawn logo', 'Shopfront signage', 'Pastry box design', 'Instagram grid templates'],
-          technologies: ['Adobe Illustrator', 'Adobe Photoshop', 'Canva Templates'],
           imageAlt: 'Fresh breads and pastries on bakery shelves.',
         ),
         SampleProject(
@@ -1052,7 +919,6 @@ class ServicePagesContent {
               'Concept for a coworking space: a modular identity, wayfinding signage for '
               'floors and rooms, membership cards and a website style guide.',
           features: ['Modular logo system', 'Wayfinding signage', 'Membership cards', 'Website style guide'],
-          technologies: ['Figma', 'Adobe Illustrator', 'Brand Guidelines'],
           imageAlt: 'A bright coworking lounge with plants and seating.',
         ),
       ],

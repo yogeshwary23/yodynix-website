@@ -1,5 +1,5 @@
 // Scrolls the entire homepage (so every reveal animation paints), opens each
-// dialog type and visits every service page, demo, internship, pillar, About
+// dialog type and visits every service page, demo, Careers, pillar, About
 // and legal page at four widths, failing on any Flutter layout or paint error.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,8 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yodynix_website/app/yodynix_app.dart';
 import 'package:yodynix_website/core/routing/app_routes.dart';
 import 'package:yodynix_website/models/about_page.dart';
-import 'package:yodynix_website/repositories/content/internship_content.dart';
 import 'package:yodynix_website/repositories/content/pillar_pages_content.dart';
+import 'package:yodynix_website/repositories/content/service_pages_content.dart';
 import 'package:yodynix_website/features/demos/demo_catalog.dart';
 import 'package:yodynix_website/repositories/content/services_content.dart';
 
@@ -65,7 +65,12 @@ void main() {
       for (final r in routes) {
         nav.pushNamed(r);
         await tester.pump(const Duration(milliseconds: 500));
-        if (r.startsWith('/services/')) await openAndClose(find.text('View Project Details', skipOffstage: false));
+        // Tapping a project card opens its details dialog.
+        final service = r.startsWith('/services/') ? ServicePagesContent.bySlug(r.substring('/services/'.length)) : null;
+        if (service != null) {
+          final concept = ServicePagesContent.of(service).projects.firstWhere((p) => !p.hasDemo);
+          await openAndClose(find.text(concept.name, skipOffstage: false));
+        }
         final s = find.byType(Scrollable).last;
         for (var i = 0; i < 24; i++) {
           await tester.drag(s, const Offset(0, -500), warnIfMissed: false);
@@ -74,7 +79,7 @@ void main() {
         nav.pop();
         await tester.pump(const Duration(milliseconds: 500));
       }
-      for (final r in [AppRoutes.internship, AppRoutes.portfolio, AppRoutes.industries, for (final p in InternshipContent.programs) p.route]) {
+      for (final r in [AppRoutes.careers, AppRoutes.portfolio, AppRoutes.industries]) {
         nav.pushNamed(r);
         await tester.pump(const Duration(milliseconds: 500));
         final s = find.byType(Scrollable).last;

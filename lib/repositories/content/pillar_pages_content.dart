@@ -6,8 +6,8 @@ import '../../models/pillar_page.dart';
 
 /// Content for the Business Solutions and Technology & Innovation pillar
 /// pages. Copy describes what YODYNIX offers and how it works — no figures
-/// or guarantees are stated here. Internships have their own pages
-/// (`InternshipContent`).
+/// or guarantees are stated here. Careers has its own page
+/// (`CareersContent`).
 class PillarPagesContent {
   PillarPagesContent._();
 

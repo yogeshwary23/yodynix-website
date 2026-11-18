@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yodynix_website/app/yodynix_app.dart';
+import 'package:yodynix_website/features/expertise/expertise_page.dart';
 import 'package:yodynix_website/features/industries/industries_page.dart';
 import 'package:yodynix_website/features/portfolio/portfolio_page.dart';
+import 'package:yodynix_website/repositories/content/expertise_content.dart';
 import 'package:yodynix_website/repositories/content/industries_content.dart';
 import 'package:yodynix_website/repositories/content/service_pages_content.dart';
 import 'package:yodynix_website/repositories/content/services_content.dart';
@@ -26,6 +28,24 @@ void main() {
   Future<void> settle(WidgetTester tester) async {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 800));
+  }
+
+  for (final (label, size) in const [('desktop', Size(1440, 900)), ('mobile', Size(390, 844))]) {
+    testWidgets('Expertise opens on Our Expertise, with no AI & Technology hero, on $label', (tester) async {
+      await pumpAt(tester, size);
+      tester.state<NavigatorState>(find.byType(Navigator).first).pushNamed('/expertise');
+      await settle(tester);
+      final page = find.byType(ExpertisePage);
+      expect(page, findsOneWidget);
+      Finder onPage(Finder f) => find.descendant(of: page, matching: f);
+      expect(onPage(find.text('Intelligence, Applied With Care.', skipOffstage: false)), findsNothing);
+      expect(onPage(find.textContaining(RegExp('AI & Technology', caseSensitive: false), skipOffstage: false)), findsNothing);
+      // The page now opens straight on the Our Expertise heading, in view.
+      final heading = onPage(find.text(ExpertiseContent.heading));
+      expect(heading, findsOneWidget);
+      expect(tester.getTopLeft(heading).dy, lessThan(size.height * 0.6));
+      expect(tester.takeException(), isNull);
+    });
   }
 
   testWidgets('Portfolio opens from the navbar and labels every project as a demonstration', (tester) async {
@@ -52,6 +72,18 @@ void main() {
     expect(find.text(other.name, skipOffstage: false), findsNothing);
     for (final p in ServicePagesContent.of(service).projects) {
       expect(find.text(p.name, skipOffstage: false), findsAtLeastNWidgets(1));
+    }
+  });
+
+  test('industry categories: the four required sectors are separate, with no duplicates', () {
+    final names = [for (final i in IndustriesContent.industries) i.name];
+    expect(names.toSet(), hasLength(names.length));
+    expect({for (final i in IndustriesContent.industries) i.id}, hasLength(names.length));
+    for (final n in ['Financial Services', 'Oil & Gas', 'Retail & Logistics', 'E-commerce']) {
+      expect(names, contains(n));
+    }
+    for (final old in ['Finance & Professional Services', 'Retail & E-commerce', 'E-commerce & Retail']) {
+      expect(names, isNot(contains(old)));
     }
   });
 

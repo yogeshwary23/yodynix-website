@@ -17,6 +17,10 @@ class SectionNavigator extends ChangeNotifier {
   /// Service name requested by a CTA, consumed by the contact form.
   final ValueNotifier<String?> contactPrefill = ValueNotifier<String?>(null);
 
+  /// The enquiry form card, so a CTA can bring the form itself into view:
+  /// on narrow screens it sits below the contact details.
+  final GlobalKey enquiryFormKey = GlobalKey(debugLabel: 'enquiryForm');
+
   SiteSection _active = SiteSection.home;
   bool _isScrolled = false;
   bool _isAnimating = false;
@@ -26,8 +30,11 @@ class SectionNavigator extends ChangeNotifier {
 
   GlobalKey keyFor(SiteSection section) => _keys[section]!;
 
-  Future<void> scrollTo(SiteSection section) async {
-    final context = _keys[section]!.currentContext;
+  /// [toForm] targets the enquiry form rather than the top of the Contact
+  /// section.
+  Future<void> scrollTo(SiteSection section, {bool toForm = false}) async {
+    final form = toForm && section == SiteSection.contact ? enquiryFormKey.currentContext : null;
+    final context = form ?? _keys[section]!.currentContext;
     if (context == null) return;
     _setActive(section.inNavigation ? section : _navOwnerOf(section));
     _isAnimating = true;
@@ -40,7 +47,7 @@ class SectionNavigator extends ChangeNotifier {
   }
 
   /// Jumps to [section] once the homepage has laid out — used for deep links
-  /// such as `/#/internship`.
+  /// such as `/#/why-choose`.
   void revealOnLaunch(SiteSection section) {
     void attempt([int tries = 0]) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

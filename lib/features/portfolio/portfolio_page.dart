@@ -243,8 +243,6 @@ class _Viewer extends StatelessWidget {
               ],
             ),
           ),
-        const SizedBox(height: 12),
-        Wrap(spacing: 6, runSpacing: 6, children: [for (final t in project.technologies) _Badge(t, quiet: true)]),
         const SizedBox(height: 24),
         Wrap(
           spacing: 12,
@@ -377,23 +375,22 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _Badge extends StatelessWidget {
-  const _Badge(this.text, {this.quiet = false});
+  const _Badge(this.text);
 
   final String text;
-  final bool quiet;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: quiet ? AppColors.cardField : AppColors.goldWash,
+        color: AppColors.goldWash,
         borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(color: quiet ? AppColors.cardBorder : AppColors.goldLine),
+        border: Border.all(color: AppColors.goldLine),
       ),
       child: Text(
         text,
-        style: AppTypography.body(fontSize: 12, fontWeight: FontWeight.w600, color: quiet ? AppColors.body : AppColors.accent),
+        style: AppTypography.body(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.accent),
       ),
     );
   }

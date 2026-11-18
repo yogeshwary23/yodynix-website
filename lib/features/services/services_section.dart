@@ -44,24 +44,11 @@ class ServicesSection extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = ((constraints.maxWidth + _spacing) / (_minCard + _spacing)).floor().clamp(1, 3);
-              // Balance ten services across the grid: wide feature cards absorb
-              // the remainder so no row is left with a lone card.
-              final List<ServiceOffering> wideTop;
-              final List<ServiceOffering> grid;
-              final List<ServiceOffering> wideBottom;
-              if (columns == 3) {
-                wideTop = const [];
-                grid = services.sublist(0, 9);
-                wideBottom = [services[9]];
-              } else if (columns == 2) {
-                wideTop = [services[0]];
-                grid = services.sublist(1, 9);
-                wideBottom = [services[9]];
-              } else {
-                wideTop = const [];
-                grid = services;
-                wideBottom = const [];
-              }
+              // Balance the services across the grid: a wide feature card
+              // absorbs a remainder of one, so no row is left with a lone card
+              // (nine services fill three columns exactly).
+              final List<ServiceOffering> wideTop = columns > 1 && services.length % columns == 1 ? [services.first] : const [];
+              final grid = services.sublist(wideTop.length);
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -78,7 +65,6 @@ class ServicesSection extends StatelessWidget {
                         ),
                     ],
                   ),
-                  for (final s in wideBottom) ...[const SizedBox(height: _spacing), Reveal(child: _WideServiceCard(service: s))],
                 ],
               );
             },

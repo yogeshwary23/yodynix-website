@@ -7,7 +7,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/site_section.dart';
-import '../../repositories/content/internship_content.dart';
+import '../../repositories/content/careers_content.dart';
 import '../../repositories/content/services_content.dart';
 import '../../services/link_service.dart';
 import '../widgets/brand_logo.dart';
@@ -29,10 +29,10 @@ class SiteFooter extends StatelessWidget {
             SiteSection.about,
             SiteSection.services,
             SiteSection.expertise,
-            SiteSection.internship,
+            SiteSection.careers,
             SiteSection.contact,
           ])
-            _FooterLink(s.navLabel!, () => s == SiteSection.internship ? openInternshipPage(context) : goToSection(context, s)),
+            _FooterLink(s.navLabel!, () => s == SiteSection.careers ? openCareersPage(context) : goToSection(context, s)),
           for (final page in SitePage.values) _FooterLink(page.label, () => openSitePage(context, page)),
         ],
       ),
@@ -46,10 +46,9 @@ class SiteFooter extends StatelessWidget {
       _FooterColumn(
         title: 'Careers',
         links: [
-          _FooterLink('Internship Programs', () => openInternshipPage(context)),
-          for (final p in InternshipContent.programs.take(3))
-            _FooterLink(p.shortTitle, () => openInternshipPage(context, slug: p.slug)),
-          _FooterLink('Register Interest', () => openInternshipPage(context, apply: true)),
+          _FooterLink('Open Positions', () => openCareersPage(context)),
+          for (final o in CareersContent.openings) _FooterLink(o.title, () => openCareersPage(context)),
+          _FooterLink('Apply Now', () => openCareersPage(context, apply: true)),
         ],
       ),
       _FooterColumn(title: 'Contact', links: _contactLinks(context)),

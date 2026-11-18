@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yodynix_website/app/yodynix_app.dart';
 import 'package:yodynix_website/core/routing/app_router.dart';
-import 'package:yodynix_website/features/internship/internship_page.dart';
+import 'package:yodynix_website/features/careers/careers_page.dart';
 import 'package:yodynix_website/features/pillars/pillar_detail_page.dart';
 import 'package:yodynix_website/features/pillars/pillar_enquiry_form.dart';
 import 'package:yodynix_website/repositories/content/company_content.dart';
@@ -32,7 +32,7 @@ void main() {
   test('every pillar card links to a detail page with a unique set of photos', () {
     final images = <String>{};
     for (final pillar in CompanyContent.corePillars) {
-      if (pillar.route == '/internship') continue; // Its own page; see internship_pages_test.
+      if (pillar.route == '/careers') continue; // Its own page; see careers_page_test.
       final page = PillarPagesContent.byRoute(pillar.route);
       expect(page, isNotNull, reason: pillar.route);
       expect(images.add(pillar.image), isTrue, reason: pillar.image);
@@ -42,7 +42,7 @@ void main() {
       }
     }
     expect(PillarPagesContent.pages.map((p) => p.route).toSet(), {'/business-solutions', '/technology-innovation'});
-    expect(CompanyContent.corePillars.map((p) => p.route), contains('/internship'));
+    expect(CompanyContent.corePillars.map((p) => p.route), contains('/careers'));
   });
 
   testWidgets('every referenced pillar photo is bundled', (tester) async {
@@ -64,9 +64,9 @@ void main() {
   testWidgets('direct URL load keeps the homepage underneath for back navigation', (tester) async {
     final routes = AppRouter.onGenerateInitialRoutes('/business-solutions', onSectionLink: (_) {});
     expect(routes.map((r) => r.settings.name), ['/', '/business-solutions']);
-    // The retired Internship & Careers page now opens the Internship page.
+    // The retired Internship pages now open the Careers page.
     final retired = AppRouter.onGenerateInitialRoutes('/internship-careers', onSectionLink: (_) {});
-    expect(retired.map((r) => r.settings.name), ['/', '/internship']);
+    expect(retired.map((r) => r.settings.name), ['/', '/careers']);
     final trailing = AppRouter.onGenerateInitialRoutes('/business-solutions/', onSectionLink: (_) {});
     expect(trailing.length, 2);
   });
@@ -81,7 +81,7 @@ void main() {
       await settle(tester);
       final page = PillarPagesContent.byRoute(pillar.route);
       if (page == null) {
-        expect(find.byType(InternshipPage), findsOneWidget);
+        expect(find.byType(CareersPage), findsOneWidget);
       } else {
         expect(find.byType(PillarDetailPage), findsOneWidget);
         expect(find.text(page.heroHeading), findsOneWidget);
@@ -91,7 +91,7 @@ void main() {
       await tester.tap(find.text('Home').first);
       await settle(tester);
       expect(find.byType(PillarDetailPage), findsNothing);
-      expect(find.byType(InternshipPage), findsNothing);
+      expect(find.byType(CareersPage), findsNothing);
     });
   }
 

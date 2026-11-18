@@ -44,14 +44,45 @@ class IndustriesContent {
   static const List<IndustryProfile> industries = [
     IndustryProfile(
       id: 'finance',
-      name: 'Finance & Professional Services',
+      name: 'Financial Services',
       icon: Icons.account_balance_outlined,
       summary:
-          '[Placeholder] Describe the digital needs of finance and professional-services firms, '
-          'and how your team would approach them.',
+          '[Placeholder] Describe the digital needs of banks, lenders, insurers and financial '
+          'advisers, and how your team would approach them.',
       solutions: ['Client portals', 'Secure enquiry and onboarding forms', 'Reporting dashboards'],
       serviceIds: ['custom_software_development', 'website_development', 'business_automation'],
       sceneLabel: 'Stacks of gold coins beside rising glass bars and a floating chrome ring.',
+    ),
+    IndustryProfile(
+      id: 'oilgas',
+      name: 'Oil & Gas',
+      icon: Icons.oil_barrel_outlined,
+      summary:
+          '[Placeholder] Describe how oil and gas operators and service companies could use '
+          'field apps, asset tracking and safety workflows.',
+      solutions: ['Field operations and inspection apps', 'Asset and maintenance dashboards', 'Safety reporting workflows'],
+      serviceIds: ['mobile_app_development', 'custom_software_development', 'business_automation'],
+      sceneLabel: 'A chrome refinery column and gold-banded storage tanks beside a liquid-gold drop.',
+    ),
+    IndustryProfile(
+      id: 'logistics',
+      name: 'Retail & Logistics',
+      icon: Icons.local_shipping_outlined,
+      summary:
+          '[Placeholder] Describe the inventory, store operations and delivery-tracking needs '
+          'of retailers, distributors and logistics providers.',
+      solutions: ['Inventory and stock management', 'Shipment and delivery tracking', 'Store sales reporting'],
+      serviceIds: ['custom_software_development', 'mobile_app_development', 'business_automation'],
+      sceneLabel: 'Stacked champagne-gold and glass crates beside a platinum delivery van on a porcelain route.',
+    ),
+    IndustryProfile(
+      id: 'ecommerce',
+      name: 'E-commerce',
+      icon: Icons.shopping_bag_outlined,
+      summary: '[Placeholder] Describe the online-store, catalogue, payment and marketing needs of e-commerce brands.',
+      solutions: ['Online stores', 'Product catalogues', 'Campaign planning'],
+      serviceIds: ['ecommerce_development', 'digital_marketing', 'branding_digital_presence'],
+      sceneLabel: 'A champagne-gold shopping bag with platinum handles beside a glass gift box tied in gold.',
     ),
     IndustryProfile(
       id: 'healthcare',
@@ -65,15 +96,6 @@ class IndustriesContent {
       sceneLabel: 'A glass capsule filled with liquid gold beside a polished platinum cross.',
     ),
     IndustryProfile(
-      id: 'retail',
-      name: 'Retail & E-commerce',
-      icon: Icons.shopping_bag_outlined,
-      summary: '[Placeholder] Describe the online-store, catalogue and marketing needs of retail brands.',
-      solutions: ['Online stores', 'Product catalogues', 'Campaign planning'],
-      serviceIds: ['ecommerce_development', 'digital_marketing', 'branding_digital_presence'],
-      sceneLabel: 'A champagne-gold shopping bag with platinum handles beside a glass gift box tied in gold.',
-    ),
-    IndustryProfile(
       id: 'education',
       name: 'Education & Training',
       icon: Icons.school_outlined,
@@ -81,7 +103,7 @@ class IndustriesContent {
           '[Placeholder] Describe how institutes and trainers could use class booking, learning '
           'portals and student communication.',
       solutions: ['Course and institute websites', 'Class booking apps', 'Student enquiry automation'],
-      serviceIds: ['mobile_app_development', 'flutter_development', 'business_automation'],
+      serviceIds: ['mobile_app_development', 'website_development', 'business_automation'],
       sceneLabel: 'A stack of porcelain, gold and charcoal books beneath a graduation cap with a gold tassel.',
     ),
     IndustryProfile(

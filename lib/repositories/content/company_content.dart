@@ -71,19 +71,19 @@ class CompanyContent {
       actionLabel: 'Explore More',
     ),
     CorePillar(
-      title: 'Internship & Career Opportunities',
-      headline: 'Learn by Building Real Projects',
+      title: 'Careers at YODYNIX',
+      headline: 'Build Your Career With Us',
       description:
-          'Mentored internships in Flutter, web development, UI/UX, Python, AI and '
-          'digital marketing.',
+          'Open positions for Flutter, mobile app and web developers at our '
+          'Pune office.',
       icon: Icons.rocket_launch_rounded,
       art: PillarArt.careers,
       image: 'assets/images/pillars/internship_careers',
-      imageAlt: 'A mentor explaining work to a young intern at a laptop.',
+      imageAlt: 'A senior developer explaining work to a colleague at a laptop.',
       artwork: 'assets/images/renders/overlay_careers',
       artworkAlt: 'A gold path rising through glass beads to a gold sphere ringed in platinum.',
       artworkOnLeft: true,
-      route: AppRoutes.internship,
+      route: AppRoutes.careers,
       actionLabel: 'Explore More',
     ),
   ];

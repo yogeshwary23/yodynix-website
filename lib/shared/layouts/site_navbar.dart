@@ -40,7 +40,7 @@ class SiteNavbar extends StatelessWidget {
       nav.active,
       aboutPage,
       service,
-      internship: isInternshipRoute(context),
+      careers: isCareersRoute(context),
       page: sitePage,
       sectionPage: currentSectionPage(context),
     );
@@ -91,7 +91,7 @@ class SiteNavbar extends StatelessWidget {
                       child: Row(
                         children: [
                           for (final section in SiteSection.navigation) ...[
-                            if (section == SiteSection.internship)
+                            if (section == SiteSection.careers)
                               for (final page in SitePage.values)
                                 _NavItem(label: page.label, active: page == sitePage, onTap: () => openSitePage(context, page)),
                             if (section == SiteSection.about)
@@ -117,8 +117,8 @@ class SiteNavbar extends StatelessWidget {
                               _NavItem(
                                 label: section.navLabel!,
                                 active: isActive(section),
-                                onTap: () => section == SiteSection.internship
-                                    ? openInternshipPage(context)
+                                onTap: () => section == SiteSection.careers
+                                    ? openCareersPage(context)
                                     : goToSection(context, section),
                               ),
                           ],
@@ -174,13 +174,13 @@ class SiteNavbar extends StatelessWidget {
   }
 }
 
-/// On an About, Services, Expertise, service or internship page that area's
+/// On an About, Services, Expertise, service or Careers page that area's
 /// item is active, whatever the homepage scroll position underneath.
 bool Function(SiteSection) _activeResolver(
   SiteSection scrolled,
   AboutPage? aboutPage,
   ServiceOffering? service, {
-  bool internship = false,
+  bool careers = false,
   SitePage? page,
   SiteSection? sectionPage,
 }) {
@@ -189,7 +189,7 @@ bool Function(SiteSection) _activeResolver(
     if (sectionPage != null) return s == sectionPage;
     if (aboutPage != null) return s == SiteSection.about;
     if (service != null) return s == SiteSection.services;
-    if (internship) return s == SiteSection.internship;
+    if (careers) return s == SiteSection.careers;
     return scrolled == s;
   };
 }
@@ -576,7 +576,7 @@ class _AboutMenuItemState extends State<_AboutMenuItem> {
   }
 }
 
-/// Two-column menu of the ten services, each opening its own page.
+/// Two-column menu of the services, each opening its own page.
 class _ServicesMenu extends StatelessWidget {
   const _ServicesMenu({required this.current, required this.onSelect, required this.onViewAll});
 
@@ -764,7 +764,7 @@ class MobileNavDrawer extends StatelessWidget {
       nav.active,
       aboutPage,
       service,
-      internship: isInternshipRoute(context),
+      careers: isCareersRoute(context),
       page: sitePage,
       sectionPage: currentSectionPage(context),
     );
@@ -800,7 +800,7 @@ class MobileNavDrawer extends StatelessWidget {
                 child: ListView(
                   children: [
                     for (final section in SiteSection.navigation) ...[
-                      if (section == SiteSection.internship)
+                      if (section == SiteSection.careers)
                         for (final page in SitePage.values)
                           _DrawerItem(
                             label: page.label,
@@ -848,7 +848,7 @@ class MobileNavDrawer extends StatelessWidget {
                           label: section.navLabel!,
                           active: isActive(section),
                           onTap: () => navigate(
-                            () => section == SiteSection.internship ? openInternshipPage(context) : goToSection(context, section),
+                            () => section == SiteSection.careers ? openCareersPage(context) : goToSection(context, section),
                           ),
                         ),
                     ],

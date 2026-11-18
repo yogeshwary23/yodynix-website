@@ -23,7 +23,6 @@ class SampleProject {
     required this.summary,
     required this.overview,
     required this.features,
-    required this.technologies,
     required this.imageAlt,
     this.demoRoute,
   });
@@ -37,7 +36,6 @@ class SampleProject {
   final String summary;
   final String overview;
   final List<String> features;
-  final List<String> technologies;
   final String imageAlt;
 
   /// In-site route of the working demo; null for concepts.
@@ -56,7 +54,6 @@ class ServicePageContent {
     required this.overview,
     required this.idealFor,
     required this.offers,
-    required this.technologies,
     required this.process,
     required this.projects,
   });
@@ -70,10 +67,6 @@ class ServicePageContent {
   /// Who the service suits, listed beside the overview.
   final List<String> idealFor;
   final List<ServiceFeature> offers;
-  final List<String> technologies;
   final List<PillarStep> process;
   final List<SampleProject> projects;
-
-  /// The project with a working demo, featured in "Project Details".
-  SampleProject get featured => projects.firstWhere((p) => p.hasDemo, orElse: () => projects.first);
 }

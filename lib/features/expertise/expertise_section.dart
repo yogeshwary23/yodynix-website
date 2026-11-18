@@ -8,7 +8,6 @@ import '../../models/site_section.dart';
 import '../../repositories/content/expertise_content.dart';
 import '../../shared/layouts/navigation_actions.dart';
 import '../../core/utils/responsive.dart';
-import '../../shared/three/interactive_3d_object.dart';
 import '../../shared/three/scene3d.dart';
 import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/buttons.dart';
@@ -24,31 +23,11 @@ class ExpertiseSection extends StatelessWidget {
     final categories = ExpertiseContent.categories;
     return SectionShell(
       background: AppColors.pearlWhite,
+      // The page opens on this section, so it sits close under the header.
+      topPadding: context.responsive(mobile: 36.0, desktop: 48.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionHeader(
-            eyebrow: 'AI & Technology',
-            title: ExpertiseContent.aiHeading,
-            lead: ExpertiseContent.aiLead,
-            centered: true,
-          ),
-          const SizedBox(height: 24),
-          // The neural network: glass neurons with signals travelling between them.
-          Reveal(
-            child: AspectRatio(
-              aspectRatio: context.responsive(mobile: 1.3, tablet: 1.8, desktop: 2.3),
-              child: const Interactive3DObject(
-                scene: Scene3D.neural,
-                semanticLabel:
-                    'A neural network of transparent glass and metal spheres, connected by fine lines '
-                    'with points of golden light travelling between them.',
-                background: AppColors.pearlWhite,
-                fallback: SizedBox.shrink(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 40),
           const _TechnologyHeader(),
           const SizedBox(height: 48),
           ResponsiveGrid(

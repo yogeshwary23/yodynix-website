@@ -1970,11 +1970,6 @@ const SCENES = {
     return neuralScene(kit, { layers: [4, 6, 6, 3], spread: 2.6, radius: 0.11, ...options });
   },
 
-  /** Large neural network for the AI & Technology section. */
-  neural(kit, options) {
-    return neuralScene(kit, { layers: [5, 8, 10, 8, 4], spread: 4.2, radius: 0.12, pulses: 26, wide: true, ...options });
-  },
-
   /** Custom software: an exploded stack of glass architecture layers. */
   software(kit, options) {
     const { scene, camera } = kit;
@@ -2600,7 +2595,82 @@ const SCENES = {
       cross.add(kit.roundedBox(0.26, 0.85, 0.2, 0.05, kit.chrome({ roughness: 0.12 }), 4));
       cross.add(kit.roundedBox(0.85, 0.26, 0.2, 0.05, kit.chrome({ roughness: 0.12 }), 4));
       add(cross, 0.65, 0.15, -0.2);
-    } else if (variant === 'retail') {
+    } else if (variant === 'oilgas') {
+      // A refinery column and storage tanks on a porcelain site, beside a
+      // floating drop of liquid gold.
+      add(kit.roundedBox(2.2, 0.08, 1.4, 0.03, kit.porcelain(), 3), 0, -0.85, 0);
+      const column = new THREE.Group();
+      column.add(new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.19, 1.55, 48), kit.chrome({ roughness: 0.14 })));
+      [-0.45, 0, 0.45].forEach((y) => {
+        const band = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.022, 16, 48), kit.gold({ roughness: 0.2 }));
+        band.rotation.x = Math.PI / 2;
+        band.position.y = y;
+        column.add(band);
+      });
+      const cap = new THREE.Mesh(new THREE.SphereGeometry(0.15, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), kit.chrome({ roughness: 0.14 }));
+      cap.position.y = 0.775;
+      column.add(cap);
+      column.position.set(-0.6, -0.035, -0.2);
+      group.add(column);
+      [[0.1, 0.32, -0.2, kit.chrome({ roughness: 0.2 })], [0.6, 0.24, 0.2, kit.porcelain()]].forEach(([x, r, z, mat]) => {
+        const tank = new THREE.Group();
+        tank.add(new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.5, 48), mat));
+        const dome = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 16, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+        dome.scale.y = 0.35;
+        dome.position.y = 0.25;
+        tank.add(dome);
+        const band = new THREE.Mesh(new THREE.TorusGeometry(r + 0.004, 0.018, 16, 64), kit.gold({ roughness: 0.2 }));
+        band.rotation.x = Math.PI / 2;
+        band.position.y = 0.1;
+        tank.add(band);
+        tank.position.set(x, -0.56, z);
+        group.add(tank);
+      });
+      // Teardrop: pointed at the top, round at the bottom.
+      const profile = [];
+      for (let i = 24; i >= 0; i--) {
+        const a = (i / 24) * Math.PI;
+        profile.push(new THREE.Vector2(Math.sin(a) * Math.sin(a / 2) * 0.24, Math.cos(a) * 0.3));
+      }
+      add(new THREE.Mesh(new THREE.LatheGeometry(profile, 64), kit.liquidGold()), 0.45, 0.55, 0.1);
+    } else if (variant === 'logistics') {
+      // Stacked crates and a delivery van on a porcelain route, with a gold
+      // location pin hovering above.
+      add(kit.roundedBox(2.2, 0.08, 1.4, 0.03, kit.porcelain(), 3), 0, -0.85, 0);
+      add(kit.roundedBox(2.0, 0.012, 0.06, 0.005, kit.liquidGold(), 2), 0, -0.805, 0.45);
+      [
+        [-0.82, -0.61, -0.1, kit.gold({ roughness: 0.3 })],
+        [-0.38, -0.61, -0.1, kit.glass({ thickness: 0.3 })],
+        [-0.6, -0.2, -0.1, kit.charcoalMetal()],
+      ].forEach(([x, y, z, mat], i) => {
+        const crate = kit.roundedBox(0.4, 0.4, 0.4, 0.03, mat, 3);
+        crate.position.set(x, y, z);
+        crate.rotation.y = i === 2 ? 0.25 : 0;
+        group.add(crate);
+      });
+      const van = new THREE.Group();
+      van.add(kit.roundedBox(0.8, 0.46, 0.44, 0.05, kit.chrome({ roughness: 0.18 }), 4).translateY(0.33));
+      van.add(kit.roundedBox(0.3, 0.34, 0.42, 0.05, kit.glass({ thickness: 0.3 }), 4).translateX(0.55).translateY(0.27));
+      van.add(kit.roundedBox(0.81, 0.05, 0.45, 0.02, kit.liquidGold(), 2).translateY(0.24));
+      const wheel = new THREE.CylinderGeometry(0.09, 0.09, 0.07, 32);
+      [[-0.25, 0.22], [-0.25, -0.22], [0.5, 0.22], [0.5, -0.22]].forEach(([x, z]) => {
+        const w = new THREE.Mesh(wheel, kit.charcoalMetal());
+        w.rotation.x = Math.PI / 2;
+        w.position.set(x, 0.09, z);
+        van.add(w);
+      });
+      van.rotation.y = -0.35;
+      van.position.set(0.3, -0.81, 0.0);
+      group.add(van);
+      const pin = new THREE.Group();
+      const point = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.24, 32), kit.liquidGold());
+      point.rotation.x = Math.PI;
+      pin.add(point);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16), kit.liquidGold());
+      head.position.y = 0.12;
+      pin.add(head);
+      add(pin, -0.6, 0.35, -0.1);
+    } else if (variant === 'ecommerce') {
       // A champagne shopping bag with platinum handles and a glass gift box.
       const bag = kit.roundedBox(0.9, 1.0, 0.42, 0.04, kit.gold({ roughness: 0.32, clearcoat: 0.6 }), 4);
       add(bag, -0.25, -0.25, 0);
@@ -3184,7 +3254,7 @@ const SCENES = {
   },
 };
 
-function neuralScene(kit, { layers, spread, radius, pulses = 14, wide = false }) {
+function neuralScene(kit, { layers, spread, radius, pulses = 14 }) {
   const { scene, camera } = kit;
   const group = new THREE.Group();
   scene.add(group);
@@ -3220,7 +3290,7 @@ function neuralScene(kit, { layers, spread, radius, pulses = 14, wide = false })
   for (const a of nodes) {
     for (const b of nodes) {
       if (b.userData.layer !== a.userData.layer + 1) continue;
-      if (rand() < (wide ? 0.42 : 0.55)) edges.push([a, b]);
+      if (rand() < 0.55) edges.push([a, b]);
     }
   }
   const edgePositions = new Float32Array(edges.length * 6);
@@ -3238,7 +3308,7 @@ function neuralScene(kit, { layers, spread, radius, pulses = 14, wide = false })
     pulseList.push({ mesh: m, edge: edges[Math.floor(rand() * edges.length)], t: rand(), speed: 0.35 + rand() * 0.4 });
   }
 
-  const dust = kit.particles(wide ? 220 : 120, spread * 1.3, BRAND.gold, 0.016);
+  const dust = kit.particles(120, spread * 1.3, BRAND.gold, 0.016);
   group.add(dust);
 
   const shadow = kit.contactShadow(spread * 0.65, 0.12);

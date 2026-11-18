@@ -7,6 +7,7 @@ import 'package:yodynix_website/core/routing/app_router.dart';
 import 'package:yodynix_website/core/routing/app_routes.dart';
 import 'package:yodynix_website/features/demos/demo_catalog.dart';
 import 'package:yodynix_website/features/demos/demo_page.dart';
+import 'package:yodynix_website/features/contact/contact_form.dart';
 import 'package:yodynix_website/features/home/home_page.dart';
 import 'package:yodynix_website/features/services/service_detail_page.dart';
 import 'package:yodynix_website/models/site_section.dart';
@@ -14,6 +15,7 @@ import 'package:yodynix_website/repositories/content/service_pages_content.dart'
 import 'package:yodynix_website/repositories/content/services_content.dart';
 import 'package:yodynix_website/services/asset_registry.dart';
 import 'package:yodynix_website/shared/layouts/site_navbar.dart';
+import 'package:yodynix_website/shared/three/scene_widgets.dart';
 
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
@@ -45,7 +47,7 @@ void main() {
   test('homepage section navigation has no Students item, in the agreed order', () {
     expect(
       [for (final s in SiteSection.values) ?s.navLabel],
-      ['Home', 'About', 'Services', 'Expertise', 'Internship', 'Contact'],
+      ['Home', 'About', 'Services', 'Expertise', 'Careers', 'Contact'],
     );
   });
 
@@ -70,11 +72,32 @@ void main() {
       final content = ServicePagesContent.of(s);
       expect(content.projects.length, inInclusiveRange(4, 5), reason: s.title);
       expect(content.offers, isNotEmpty);
-      expect(content.technologies, isNotEmpty);
       expect(content.process, isNotEmpty);
-      expect(content.projects.where((p) => p.hasDemo), hasLength(1), reason: s.title);
+      expect(content.projects.where((p) => p.hasDemo), isNotEmpty, reason: s.title);
     }
-    expect(routes, hasLength(10));
+    expect(routes, hasLength(9));
+  });
+
+  test('nine services in the agreed order, with no standalone Flutter service', () {
+    expect([for (final s in ServicesContent.services) s.title], [
+      'Website Development',
+      'Mobile Application Development',
+      'Custom Software Development',
+      'E-commerce Development',
+      'Digital Marketing',
+      'UI/UX Design',
+      'Branding & Digital Presence',
+      'Business Automation',
+      'AI Solutions & Chatbots',
+    ]);
+    expect(ServicesContent.enquiryOptions, isNot(contains('Flutter Development')));
+    // Flutter remains the technology behind Mobile Application Development.
+    final mobile = ServicesContent.services[1];
+    expect(mobile.description, contains('Flutter'));
+    // The TaskFlow demo moved with it, and old Flutter links land there.
+    expect(DemoCatalog.byRoute('/demos/responsive-task-board')!.serviceId, mobile.id);
+    expect(AppRoutes.resolve('/services/flutter-development'), mobile.route);
+    expect(AppRoutes.resolve('/services/flutter-development/'), mobile.route);
   });
 
   test('demo links only exist where a working demo exists', () {
@@ -159,7 +182,7 @@ void main() {
   });
 
   for (final (label, size) in [('desktop', Size(1440, 900)), ('mobile', Size(390, 844))]) {
-    testWidgets('service page shows one live demo and labelled concepts on $label', (tester) async {
+    testWidgets('service page: no toolkit, Request Demo opens the enquiry form, process last on $label', (tester) async {
       await pumpAt(tester, size);
       final service = ServicesContent.services.first;
       navigator(tester).pushNamed(service.route);
@@ -180,25 +203,92 @@ void main() {
       }
       expect(find.text('Concept · no live demo yet', skipOffstage: false), findsNWidgets(3));
 
-      final demoButton = find.text('View Live Demo', skipOffstage: false).first;
+      // The Technologies & Tools section is gone.
+      expect(find.text('The Toolkit Behind The Work', skipOffstage: false), findsNothing);
+      expect(find.textContaining(RegExp('Technologies & Tools', caseSensitive: false), skipOffstage: false), findsNothing);
+
+      // One Request Demo button per project card; the old demo and details
+      // buttons are gone.
+      expect(find.text('View Live Demo', skipOffstage: false), findsNothing);
+      expect(find.text('View Project Details', skipOffstage: false), findsNothing);
+      expect(find.text('Request Demo', skipOffstage: false), findsNWidgets(content.projects.length));
+
+      // How We Deliver comes after every other section on the page.
+      double top(String text) => tester.getTopLeft(find.text(text, skipOffstage: false).first).dy;
+      expect(top('How We Deliver It'), greaterThan(top('EXPLORE OTHER SERVICES')));
+      expect(top('How We Deliver It'), greaterThan(top('${service.title} Samples')));
+
+      final requestDemo = find.text('Request Demo', skipOffstage: false).first;
       // Centre it in the viewport, as a visitor would see it.
-      Scrollable.ensureVisible(tester.element(demoButton), alignment: 0.5);
+      Scrollable.ensureVisible(tester.element(requestDemo), alignment: 0.5);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 900));
-      await tester.tap(demoButton);
+      await tester.tap(requestDemo);
       await settle(tester);
-      expect(topPage(tester), isA<DemoPage>());
-      expect(find.textContaining('not a client', skipOffstage: false), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 900));
+      expect(topPage(tester), isNull);
+      final form = find.byType(ContactForm);
+      expect(form, findsOneWidget);
+      expect(find.descendant(of: form, matching: find.text(ServicesContent.websiteDemoRequest)), findsOneWidget);
+      // The form has been scrolled into view.
+      final formRect = tester.getRect(form);
+      expect(formRect.top, lessThan(size.height));
+      expect(formRect.bottom, greaterThan(0));
+      expect(tester.takeException(), isNull);
+    });
 
-      // "Back" from a demo returns to its service page.
-      navigator(tester).pop();
+    testWidgets('every service page shows each of its own projects once, without technology sections, on $label', (
+      tester,
+    ) async {
+      await pumpAt(tester, size);
+      for (final service in ServicesContent.services) {
+        navigator(tester).pushNamed(service.route);
+        await settle(tester);
+        final page = find.byType(ServiceDetailPage);
+        Finder onPage(Finder f) => find.descendant(of: page, matching: f);
+        final projects = ServicePagesContent.of(service).projects;
+        // Each project appears once, as its own card: no featured repeat.
+        for (final p in projects) {
+          expect(onPage(find.text(p.name, skipOffstage: false)), findsOneWidget, reason: '${service.title}: ${p.name}');
+        }
+        expect(onPage(find.byType(Portfolio3DPreview, skipOffstage: false)), findsNothing, reason: service.title);
+        expect(onPage(find.text('PROJECT DETAILS', skipOffstage: false)), findsNothing, reason: service.title);
+        // No other service's projects leak onto this page.
+        for (final other in ServicesContent.services.where((s) => s.id != service.id)) {
+          for (final p in ServicePagesContent.of(other).projects) {
+            expect(onPage(find.text(p.name, skipOffstage: false)), findsNothing, reason: '${service.title} shows ${p.name}');
+          }
+        }
+        // No technology headings or tags (the brand line in the header and
+        // footer, 'Digital Technology Company', is not a section).
+        expect(
+          onPage(
+            find.textContaining(
+              RegExp(r'^(technologies|technology used|technology stack|technologies & tools)$', caseSensitive: false),
+              skipOffstage: false,
+            ),
+          ),
+          findsNothing,
+          reason: service.title,
+        );
+        navigator(tester).pop();
+        await settle(tester);
+      }
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a working demo is still reachable by its own link on $label', (tester) async {
+      await pumpAt(tester, size);
+      final service = ServicesContent.services.first;
+      final project = ServicePagesContent.of(service).projects.firstWhere((p) => p.hasDemo);
+      navigator(tester).pushNamed(project.demoRoute!);
       await settle(tester);
-      expect((topPage(tester) as ServiceDetailPage).service.id, service.id);
+      expect(find.textContaining('not a client', skipOffstage: false), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('mobile drawer expands Services into the ten service pages', (tester) async {
+  testWidgets('mobile drawer expands Services into the nine service pages', (tester) async {
     await pumpAt(tester, const Size(390, 844));
     await tester.tap(find.byTooltip('Open menu'));
     await settle(tester);
@@ -206,7 +296,8 @@ void main() {
     expect(find.descendant(of: drawer, matching: find.text('Students')), findsNothing);
     expect(find.descendant(of: drawer, matching: find.text('Portfolio')), findsOneWidget);
     expect(find.descendant(of: drawer, matching: find.text('Industries')), findsOneWidget);
-    expect(find.descendant(of: drawer, matching: find.text('Internship')), findsOneWidget);
+    expect(find.descendant(of: drawer, matching: find.text('Careers')), findsOneWidget);
+    expect(find.descendant(of: drawer, matching: find.text('Internship')), findsNothing);
 
     await tester.tap(find.descendant(of: drawer, matching: find.text('Services')));
     await settle(tester);

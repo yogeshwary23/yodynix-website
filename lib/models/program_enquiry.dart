@@ -12,13 +12,13 @@ class ProgramEnquiry {
     this.extraValue,
   });
 
-  /// Which form produced this, e.g. `internship_application`.
+  /// Which form produced this, e.g. `business_enquiry`.
   final String kind;
   final String fullName;
   final String email;
   final String phone;
 
-  /// Chosen service, technology area, learning track or internship domain.
+  /// Chosen service, technology area or learning track.
   final String option;
 
   /// Label and value of the page-specific field (business name, education…).

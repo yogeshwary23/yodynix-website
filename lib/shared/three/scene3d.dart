@@ -15,8 +15,6 @@ enum Scene3D {
   /// Compact network of glass neurons.
   ai,
 
-  /// Large neural network for the AI & Technology section.
-  neural,
 
   /// Exploded stack of glass architecture layers.
   software,

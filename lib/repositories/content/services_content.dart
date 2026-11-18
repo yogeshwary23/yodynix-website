@@ -8,7 +8,7 @@ class ServicesContent {
 
   static const heading = 'Digital Solutions Built Around Your Vision.';
   static const lead =
-      'Ten service areas held to one standard. A single landing page or a complete '
+      'Nine service areas held to one standard. A single landing page or a complete '
       'digital system, each engagement is planned around your goals and delivered with '
       'care.';
 
@@ -40,29 +40,6 @@ class ServicesContent {
       imageAlt: 'Modern business website interface displayed on a laptop screen',
     ),
     ServiceOffering(
-      id: 'ecommerce_development',
-      title: 'E-commerce Development',
-      summary:
-          'Online stores with smooth product discovery, secure checkout and simple '
-          'back-office management.',
-      description:
-          'An online store should be easy to buy from and easy to run. We build the '
-          'product catalogue, cart and checkout, connect payments, and set up inventory '
-          'and order management, with every step designed to earn trust and convert.',
-      capabilities: [
-        'Online Stores',
-        'Product Management',
-        'Shopping Cart',
-        'Checkout',
-        'Payment Integration',
-        'Inventory Management',
-        'Order Management',
-      ],
-      icon: Icons.shopping_bag_outlined,
-      color: AppColors.accent,
-      imageAlt: 'Online storefront interface with product cards and a shopping cart',
-    ),
-    ServiceOffering(
       id: 'mobile_app_development',
       title: 'Mobile Application Development',
       summary:
@@ -79,36 +56,12 @@ class ServicesContent {
         'Business Applications',
         'Booking Applications',
         'Customer Applications',
-        'Cross-platform Apps',
+        'Cross-platform Flutter Apps',
         'API Integrations',
       ],
       icon: Icons.phone_iphone_rounded,
       color: AppColors.violet,
       imageAlt: 'Smartphones displaying modern mobile application screens',
-    ),
-    ServiceOffering(
-      id: 'flutter_development',
-      title: 'Flutter Development',
-      summary:
-          'One Flutter codebase for Android, iOS, web and desktop. Consistent, fast and '
-          'easier to maintain.',
-      description:
-          'Flutter runs one well-structured codebase natively on mobile, web and '
-          'desktop. Our Flutter apps use clean architecture, responsive layouts and smooth '
-          'animation, and connect to your APIs and backend services. We also extend and '
-          'improve existing Flutter projects.',
-      capabilities: [
-        'Cross-platform Apps',
-        'Flutter Web',
-        'Flutter Desktop',
-        'Responsive UI',
-        'State Management',
-        'API & Backend Integration',
-        'Existing App Improvements',
-      ],
-      icon: Icons.flutter_dash,
-      color: AppColors.accent,
-      imageAlt: 'Flutter code editor rendering the same interface on web, phone and desktop',
     ),
     ServiceOffering(
       id: 'custom_software_development',
@@ -133,49 +86,27 @@ class ServicesContent {
       imageAlt: 'Software development workspace with code editor and system architecture',
     ),
     ServiceOffering(
-      id: 'ai_solutions_chatbots',
-      title: 'AI Solutions & Chatbots',
+      id: 'ecommerce_development',
+      title: 'E-commerce Development',
       summary:
-          'AI assistants and chatbots that answer questions, guide customers and '
-          'support your team around the clock.',
+          'Online stores with smooth product discovery, secure checkout and simple '
+          'back-office management.',
       description:
-          'AI earns its place when it is practical. We build chatbots that answer from '
-          'your own information, add features such as smart search, summaries and writing '
-          'help to your applications, and integrate proven AI APIs. Every assistant is '
-          'implemented responsibly, with a clear hand-off to a person.',
+          'An online store should be easy to buy from and easy to run. We build the '
+          'product catalogue, cart and checkout, connect payments, and set up inventory '
+          'and order management, with every step designed to earn trust and convert.',
       capabilities: [
-        'AI Chatbots',
-        'Website & WhatsApp Assistants',
-        'Knowledge-based Q&A',
-        'AI API Integration',
-        'Intelligent App Features',
+        'Online Stores',
+        'Product Management',
+        'Shopping Cart',
+        'Checkout',
+        'Payment Integration',
+        'Inventory Management',
+        'Order Management',
       ],
-      icon: Icons.smart_toy_outlined,
+      icon: Icons.shopping_bag_outlined,
       color: AppColors.accent,
-      imageAlt: 'AI assistant chat window beside its knowledge sources',
-    ),
-    ServiceOffering(
-      id: 'business_automation',
-      title: 'Business Automation',
-      summary:
-          'Automated workflows that remove repetitive tasks and keep your tools in '
-          'sync.',
-      description:
-          'Hours disappear into copying data, sending reminders and updating '
-          'spreadsheets. We map those processes and automate them by connecting your forms, '
-          'CRM, email, scheduling and reporting, so the work keeps moving without the manual '
-          'effort.',
-      capabilities: [
-        'Workflow Automation',
-        'Email & Notification Flows',
-        'CRM & Data Sync',
-        'Scheduling Automation',
-        'Report Generation',
-        'System Integrations',
-      ],
-      icon: Icons.settings_suggest_outlined,
-      color: AppColors.mint,
-      imageAlt: 'Automation hub connecting customer chat, scheduling, email and CRM tasks',
+      imageAlt: 'Online storefront interface with product cards and a shopping cart',
     ),
     ServiceOffering(
       id: 'digital_marketing',
@@ -239,10 +170,62 @@ class ServicesContent {
       color: AppColors.charcoal,
       imageAlt: 'Brand identity board with colour swatches, typography and stationery',
     ),
+    ServiceOffering(
+      id: 'business_automation',
+      title: 'Business Automation',
+      summary:
+          'Automated workflows that remove repetitive tasks and keep your tools in '
+          'sync.',
+      description:
+          'Hours disappear into copying data, sending reminders and updating '
+          'spreadsheets. We map those processes and automate them by connecting your forms, '
+          'CRM, email, scheduling and reporting, so the work keeps moving without the manual '
+          'effort.',
+      capabilities: [
+        'Workflow Automation',
+        'Email & Notification Flows',
+        'CRM & Data Sync',
+        'Scheduling Automation',
+        'Report Generation',
+        'System Integrations',
+      ],
+      icon: Icons.settings_suggest_outlined,
+      color: AppColors.mint,
+      imageAlt: 'Automation hub connecting customer chat, scheduling, email and CRM tasks',
+    ),
+    ServiceOffering(
+      id: 'ai_solutions_chatbots',
+      title: 'AI Solutions & Chatbots',
+      summary:
+          'AI assistants and chatbots that answer questions, guide customers and '
+          'support your team around the clock.',
+      description:
+          'AI earns its place when it is practical. We build chatbots that answer from '
+          'your own information, add features such as smart search, summaries and writing '
+          'help to your applications, and integrate proven AI APIs. Every assistant is '
+          'implemented responsibly, with a clear hand-off to a person.',
+      capabilities: [
+        'AI Chatbots',
+        'Website & WhatsApp Assistants',
+        'Knowledge-based Q&A',
+        'AI API Integration',
+        'Intelligent App Features',
+      ],
+      icon: Icons.smart_toy_outlined,
+      color: AppColors.accent,
+      imageAlt: 'AI assistant chat window beside its knowledge sources',
+    ),
   ];
 
   /// Options for the enquiry form's "Service Required" field.
-  static List<String> get enquiryOptions => [...services.map((s) => s.title), internshipEnquiry, 'Other / Not sure yet'];
+  static List<String> get enquiryOptions => [
+    ...services.map((s) => s.title),
+    websiteDemoRequest,
+    careersEnquiry,
+    'Other / Not sure yet',
+  ];
 
-  static const internshipEnquiry = 'Internship Enquiry';
+  /// Pre-selected by the "Request Demo" buttons on the service pages.
+  static const websiteDemoRequest = 'Website Demo Request';
+  static const careersEnquiry = 'Careers Enquiry';
 }
