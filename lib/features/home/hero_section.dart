@@ -151,7 +151,7 @@ class _HeroCopy extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Reveal(child: _HeroEyebrow(CompanyContent.heroEyebrow)),
+            const Reveal(child: RuleEyebrow(CompanyContent.heroEyebrow)),
             SizedBox(height: size * 0.36),
             Reveal(
               delay: const Duration(milliseconds: 80),
@@ -212,41 +212,6 @@ class _HeroCopy extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-/// A short gold rule followed by the spaced, uppercase brand line.
-class _HeroEyebrow extends StatelessWidget {
-  const _HeroEyebrow(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final mobile = context.isMobile;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: mobile ? 24 : 32,
-          height: 2,
-          decoration: BoxDecoration(gradient: AppColors.brandGradient, borderRadius: BorderRadius.circular(2)),
-        ),
-        SizedBox(width: mobile ? 10 : 14),
-        Flexible(
-          child: Text(
-            text.toUpperCase(),
-            style: AppTypography.body(
-              fontSize: mobile ? 11 : 15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: mobile ? 1.2 : 2.4,
-              height: 1.3,
-              color: AppColors.accent,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

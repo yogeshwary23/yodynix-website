@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
@@ -141,6 +142,42 @@ class Eyebrow extends StatelessWidget {
 }
 
 /// Eyebrow + display heading + optional lead paragraph.
+/// The hero's eyebrow: a short gold rule followed by a spaced, uppercase
+/// brand line. Used where a section continues the hero's look.
+class RuleEyebrow extends StatelessWidget {
+  const RuleEyebrow(this.text, {super.key});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = context.isMobile;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: mobile ? 24 : 32,
+          height: 2,
+          decoration: BoxDecoration(gradient: AppColors.brandGradient, borderRadius: BorderRadius.circular(2)),
+        ),
+        SizedBox(width: mobile ? 10 : 14),
+        Flexible(
+          child: Text(
+            text.toUpperCase(),
+            style: AppTypography.body(
+              fontSize: mobile ? 11 : 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: mobile ? 1.2 : 2.4,
+              height: 1.3,
+              color: AppColors.accent,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,

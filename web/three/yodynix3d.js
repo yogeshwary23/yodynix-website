@@ -489,6 +489,46 @@ class Kit {
     return this.gold({ color: 0xecd09b, roughness: 0.05, clearcoat: 0.6, clearcoatRoughness: 0.03, envMapIntensity: 1.25, ...extra });
   }
 
+  /**
+   * Signature finishes shared by the hero and About sculptures: a deep
+   * champagne gold under a thin, glassy lacquer (the warm metal reflection
+   * plus a crisp white highlight on top), and a warm polished platinum with
+   * a faint clearcoat for the same layered depth.
+   */
+  lacqueredGold(extra = {}) {
+    return this.liquidGold({ color: 0xe8c890, roughness: 0.1, clearcoat: 0.85, clearcoatRoughness: 0.035, envMapIntensity: 1.35, ...extra });
+  }
+
+  polishedPlatinum(extra = {}) {
+    return this.chrome({ color: 0xf1efea, roughness: 0.06, clearcoat: 0.5, clearcoatRoughness: 0.04, envMapIntensity: 1.3, ...extra });
+  }
+
+  /**
+   * Glass for transparent canvases: no transmission pass (which needs an
+   * opaque backdrop and an extra render), just a pale pane whose
+   * clearcoat carries the reflections.
+   */
+  clearGlass(extra = {}) {
+    return new THREE.MeshPhysicalMaterial({
+      color: 0xfffbf2,
+      metalness: 0,
+      roughness: 0.05,
+      transparent: true,
+      opacity: 0.22,
+      clearcoat: 1,
+      clearcoatRoughness: 0.02,
+      envMapIntensity: 1.8,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+      ...extra,
+    });
+  }
+
+  /** Pearl porcelain under a glossy coat: the plinths the sculptures stand on. */
+  pearl(extra = {}) {
+    return this.porcelain({ color: 0xf6efe2, roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.08, ...extra });
+  }
+
   charcoalMetal(extra = {}) {
     return new THREE.MeshPhysicalMaterial({
       color: 0x2f2c29,
@@ -775,6 +815,100 @@ class TrefoilCurve extends THREE.Curve {
       -Math.sin(3 * a) * this.scale * this.depth,
     );
   }
+}
+
+/**
+ * A flat ribbon swept along an open [curve] lying roughly in the view
+ * plane. Its width runs across the curve in that plane, so the ribbon faces
+ * the camera, and [twist] (radians, by position 0..1 along the curve) turns
+ * it about its length to catch the light, and [taper] scales its section,
+ * so its ends can narrow to nothing. No Frenet frames, so no flips.
+ */
+function openRibbonGeometry(curve, { segments = 240, width = 0.25, thickness = 0.02, profile = 12, twist = () => 0, taper = () => 1 } = {}) {
+  const prof = [];
+  for (let i = 0; i < profile; i++) {
+    const a = (i / profile) * Math.PI * 2;
+    const c = Math.cos(a);
+    const s = Math.sin(a);
+    prof.push([Math.sign(c) * Math.pow(Math.abs(c), 0.3) * width * 0.5, Math.sign(s) * Math.pow(Math.abs(s), 0.3) * thickness * 0.5]);
+  }
+  const forward = new THREE.Vector3(0, 0, 1);
+  const point = new THREE.Vector3();
+  const tangent = new THREE.Vector3();
+  const across = new THREE.Vector3();
+  const depth = new THREE.Vector3();
+  const positions = [];
+  for (let i = 0; i <= segments; i++) {
+    const u = i / segments;
+    curve.getPointAt(u, point);
+    curve.getTangentAt(u, tangent);
+    across.crossVectors(tangent, forward).normalize();
+    depth.crossVectors(across, tangent).normalize();
+    across.applyAxisAngle(tangent, twist(u));
+    depth.applyAxisAngle(tangent, twist(u));
+    const size = taper(u);
+    for (const [x, y] of prof) {
+      const px = x * size;
+      const py = y * size;
+      positions.push(point.x + across.x * px + depth.x * py, point.y + across.y * px + depth.y * py, point.z + across.z * px + depth.z * py);
+    }
+  }
+  const index = [];
+  for (let i = 0; i < segments; i++) {
+    for (let j = 0; j < profile; j++) {
+      const a = i * profile + j;
+      const b = i * profile + ((j + 1) % profile);
+      const c = (i + 1) * profile + j;
+      const d = (i + 1) * profile + ((j + 1) % profile);
+      index.push(a, c, b, b, c, d);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setIndex(index);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+/**
+ * Maps normalised view coordinates (0..1 across and down, as a Flutter
+ * layout sees them) to world space for a camera [distance] away on +z with
+ * a 30° field of view, so 3D elements can be placed against a photograph
+ * laid out in Flutter. A point at any depth [z] projects to (nx, ny).
+ */
+function viewPlane(distance, aspect) {
+  const halfH = distance * Math.tan(THREE.MathUtils.degToRad(15));
+  const halfW = halfH * aspect;
+  return (nx, ny, z = 0) => {
+    const k = (distance - z) / distance;
+    return new THREE.Vector3((nx * 2 - 1) * halfW * k, (1 - ny * 2) * halfH * k, z);
+  };
+}
+
+/** A floor that shows only the shadows falling on it, for compositing over photographs. */
+function shadowCatcher(width, depth, opacity = 0.22) {
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, depth),
+    new THREE.ShadowMaterial({ color: 0x3a2e20, opacity, depthWrite: false }),
+  );
+  plane.rotation.x = -Math.PI / 2;
+  plane.receiveShadow = true;
+  return plane;
+}
+
+/** A shadow-casting key light from the upper right, as in the hero. */
+function keyLight(kit, scene, extent, position = [2, 6, 3]) {
+  if (!kit.quality.shadow) return null;
+  const key = new THREE.DirectionalLight(0xfff4e2, 1.0);
+  key.position.set(...position);
+  key.castShadow = true;
+  key.shadow.mapSize.set(kit.quality.shadow, kit.quality.shadow);
+  Object.assign(key.shadow.camera, { left: -extent, right: extent, top: extent, bottom: -extent, near: 0.5, far: 20 });
+  key.shadow.radius = 14;
+  key.shadow.blurSamples = 16;
+  key.shadow.bias = -0.0008;
+  scene.add(key, key.target);
+  return key;
 }
 
 function gearGeometry(teeth, outer, inner, hole, depth) {
@@ -1489,14 +1623,8 @@ const SCENES = {
       [1.46, 0.5, 0.07, true, [0.55, -0.4, 0.95], [0.4, 0, 1], -0.12],
       [1.7, 0.2, 0.045, false, [1.35, 0.9, 0], [1, 0, 0.2], 0.09],
     ];
-    // Hero finishes: the gold is a deep champagne under a thin, glassy
-    // lacquer, so it shows both the warm metal reflection and a crisp white
-    // highlight on top; the silver is a warm polished platinum with a faint
-    // clearcoat for the same layered depth.
-    const heroGold = (extra = {}) =>
-      kit.liquidGold({ color: 0xe8c890, roughness: 0.1, clearcoat: 0.85, clearcoatRoughness: 0.035, envMapIntensity: 1.35, ...extra });
-    const heroSilver = (extra = {}) =>
-      kit.chrome({ color: 0xf1efea, roughness: 0.06, clearcoat: 0.5, clearcoatRoughness: 0.04, envMapIntensity: 1.3, ...extra });
+    const heroGold = (extra) => kit.lacqueredGold(extra);
+    const heroSilver = (extra) => kit.polishedPlatinum(extra);
 
     const bands = bandSpecs.map(([R, w, t, isGold, rest, axis, speed], i) => {
       const material = isGold ? heroGold() : heroSilver();
@@ -1569,7 +1697,7 @@ const SCENES = {
     plinth.position.y = platformTop - 0.08 - 0.12;
     const top = new THREE.Mesh(
       new THREE.CylinderGeometry(2.86, 2.9, 0.08, kit.seg(200), 1),
-      kit.porcelain({ color: 0xf6efe2, roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.08 }),
+      kit.pearl(),
     );
     top.position.y = platformTop - 0.04;
     top.receiveShadow = true;
@@ -2041,65 +2169,225 @@ const SCENES = {
     };
   },
 
-  /** About: a floating pavilion of glass planes and metal beams. */
+  /**
+   * Who We Are: 3D laid over a photograph. Flutter places the photo in the
+   * frame; this transparent scene adds what stands in and around it,
+   * positioned in the same normalised coordinates (see [viewPlane]):
+   *
+   *   - a glass globe banded in gold meridians and linked by gold arcs,
+   *     turning on a gold-and-pearl plinth below the photo's lower right;
+   *   - a glass panel of rising gold bars at the photo's left edge;
+   *   - a gold halo over the upper right;
+   *   - a liquid-gold ribbon sweeping under the plinth and up the right
+   *     edge, framing the photograph;
+   *   - small spheres orbiting the globe, and drifting gold dust.
+   *
+   * Real shadows fall on an invisible floor (a shadow catcher) so they
+   * darken whatever lies beneath. The pointer sways the camera, separating
+   * near and far elements; scrolling turns the globe and lifts the bars.
+   */
   about(kit) {
     const { scene, camera } = kit;
-    const group = new THREE.Group();
-    scene.add(group);
+    const distance = 10;
+    // The Flutter frame is laid out at this aspect ratio.
+    const at = viewPlane(distance, 1.08);
+    const gold = (extra) => kit.lacqueredGold(extra);
+    const silver = (extra) => kit.polishedPlatinum(extra);
+    const root = new THREE.Group();
+    scene.add(root);
+    const casters = [];
+    const cast = (...meshes) => meshes.forEach((m) => m.traverse((o) => o.isMesh && casters.push(o)));
 
-    const plinth = kit.roundedBox(2.6, 0.12, 1.6, 0.05, kit.porcelain(), 4);
-    plinth.position.y = -0.9;
-    group.add(plinth);
+    // ── Globe on its plinth, below the photo's lower right ────────────────
+    const base = at(0.78, 0.875);
+    const globeStand = new THREE.Group();
+    globeStand.position.copy(base);
+    globeStand.rotation.x = 0.16; // show a little of the plinth's top
+    root.add(globeStand);
+    const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.85, 0.12, kit.seg(120)), gold({ roughness: 0.22 }));
+    plinth.position.y = 0.06;
+    const deck = new THREE.Mesh(new THREE.CylinderGeometry(0.73, 0.75, 0.07, kit.seg(120)), kit.pearl());
+    deck.position.y = 0.155;
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.016, 12, kit.seg(160)), gold({ roughness: 0.08 }));
+    lip.rotation.x = Math.PI / 2;
+    lip.position.y = 0.19;
+    deck.receiveShadow = true;
+    globeStand.add(plinth, deck, lip);
+    cast(plinth);
 
-    const panes = [];
-    const layout = [
-      [-0.85, 0.3, 1.2, 0.0, 0.0],
-      [-0.2, 0.55, 1.75, 0.4, 0.0],
-      [0.5, 0.2, 1.05, -0.2, Math.PI / 2],
-      [0.95, 0.45, 1.5, 0.3, 0.0],
-    ];
-    layout.forEach(([x, z, h, offsetZ, rot], i) => {
-      const pane = kit.roundedBox(0.62, h, 0.05, 0.02, kit.glass({ thickness: 0.2 }), 4);
-      pane.position.set(x, -0.84 + h / 2 + 0.08, z - 0.4 + offsetZ * 0.3);
-      pane.rotation.y = rot;
-      pane.userData.base = pane.position.y;
-      group.add(pane);
-      panes.push(pane);
-    });
-    // Beams spanning the panes.
-    const beams = [];
-    for (const [y, z, w] of [[0.95, 0.0, 2.3], [0.62, 0.35, 1.8]]) {
-      const beam = kit.roundedBox(w, 0.05, 0.05, 0.015, kit.chrome({ roughness: 0.18 }), 3);
-      beam.position.set(0.05, y, z - 0.3);
-      group.add(beam);
-      beams.push(beam);
+    const globeR = 0.7;
+    const globe = new THREE.Group();
+    globe.position.y = 0.19 + 0.06 + globeR;
+    globe.rotation.z = 0.4; // the axis's tilt
+    globeStand.add(globe);
+    const glassBall = new THREE.Mesh(new THREE.SphereGeometry(globeR, 64, 48), kit.clearGlass({ opacity: 0.2, envMapIntensity: 2 }));
+    const coreBall = new THREE.Mesh(new THREE.SphereGeometry(0.13, 48, 32), gold({ roughness: 0.05 }));
+    globe.add(glassBall, coreBall);
+    const wire = (r, tube = 0.007) => new THREE.TorusGeometry(r, tube, 8, kit.seg(160));
+    for (let i = 0; i < 4; i++) {
+      const meridian = new THREE.Mesh(wire(globeR * 1.004), gold({ roughness: 0.12 }));
+      meridian.rotation.y = (i / 4) * Math.PI;
+      globe.add(meridian);
     }
-    const accent = kit.roundedBox(0.5, 0.5, 0.5, 0.06, kit.gold(), 4);
-    accent.position.set(0.35, -0.58, 0.45);
-    accent.rotation.y = 0.5;
-    group.add(accent);
-    const orb = new THREE.Mesh(new THREE.SphereGeometry(0.17, 48, 32), kit.chrome({ roughness: 0.06 }));
-    orb.position.set(-0.55, -0.66, 0.55);
-    group.add(orb);
+    for (const lat of [-0.5, 0, 0.5]) {
+      const ring = new THREE.Mesh(wire(globeR * Math.cos(lat) * 1.004), gold({ roughness: 0.12 }));
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = globeR * Math.sin(lat);
+      globe.add(ring);
+    }
+    // Gold nodes on the surface, linked by arcs that rise off it: a network
+    // spanning the globe.
+    const rand = mulberry32(5);
+    const nodes = [];
+    for (let i = 0; i < 9; i++) {
+      const lat = (rand() - 0.5) * 2.2;
+      const lon = rand() * Math.PI * 2;
+      const p = new THREE.Vector3(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon)).multiplyScalar(globeR);
+      nodes.push(p);
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 12), gold({ roughness: 0.06 }));
+      dot.position.copy(p);
+      globe.add(dot);
+    }
+    for (const [a, b] of [[0, 3], [1, 4], [2, 6], [3, 7], [5, 8], [4, 8], [0, 6]]) {
+      const mid = nodes[a].clone().add(nodes[b]).normalize().multiplyScalar(globeR * 1.28);
+      const arc = new THREE.QuadraticBezierCurve3(nodes[a], mid, nodes[b]);
+      globe.add(new THREE.Mesh(new THREE.TubeGeometry(arc, 32, 0.006, 6), gold({ roughness: 0.1 })));
+    }
+    cast(coreBall);
 
-    const shadow = kit.contactShadow(2, 0.2);
-    shadow.position.y = -0.97;
-    scene.add(shadow);
+    // Small spheres on their own tilted orbits around the globe.
+    const orbits = [
+      [1.0, 0.5, 0.35, 0.06, true],
+      [1.12, -0.7, -0.5, 0.05, false],
+    ].map(([r, tilt, speed, size, isGold], i) => {
+      const pivot = new THREE.Group();
+      pivot.position.copy(globe.position);
+      pivot.rotation.set(Math.PI / 2 + tilt, 0, 0.3 * i);
+      const path = new THREE.Mesh(new THREE.TorusGeometry(r, 0.005, 6, kit.seg(200)), gold({ roughness: 0.14 }));
+      const rider = new THREE.Mesh(new THREE.SphereGeometry(size, 32, 24), isGold ? gold() : silver({ roughness: 0.04 }));
+      pivot.add(path, rider);
+      globeStand.add(pivot);
+      cast(rider);
+      return { rider, r, speed, phase: i * 2.4 };
+    });
 
-    let distance = 6;
+    // Invisible floor under the plinth: only its shadows show.
+    const floor = shadowCatcher(4.5, 3.2, 0.24);
+    floor.position.copy(base).add(new THREE.Vector3(-0.4, 0.002, -0.4));
+    root.add(floor);
+    const contact = kit.contactShadow(1.05, 0.3, { tight: true, warm: true });
+    contact.position.copy(base).add(new THREE.Vector3(0, 0.003, 0));
+    root.add(contact);
+
+    // ── Glass panel of rising gold bars at the photo's left edge ──────────
+    const chart = new THREE.Group();
+    chart.position.copy(at(0.12, 0.6, 0.9));
+    chart.rotation.set(0.04, 0.42, 0);
+    root.add(chart);
+    const pane = kit.roundedBox(1.34, 0.98, 0.03, 0.05, kit.clearGlass({ opacity: 0.18 }), 4);
+    const frame = kit.roundedBox(1.36, 0.022, 0.05, 0.01, gold({ roughness: 0.12 }), 2);
+    frame.position.y = -0.5;
+    chart.add(pane, frame);
+    const barHeights = [0.24, 0.34, 0.46, 0.6, 0.78];
+    const bars = barHeights.map((h, i) => {
+      const bar = kit.roundedBox(0.15, 1, 0.08, 0.02, i === barHeights.length - 1 ? gold({ roughness: 0.06 }) : gold({ roughness: 0.16 }), 3);
+      bar.userData.h = h;
+      bar.position.set(-0.46 + i * 0.23, 0, 0.07);
+      chart.add(bar);
+      return bar;
+    });
+    const trend = new THREE.CatmullRomCurve3(barHeights.map((h, i) => new THREE.Vector3(-0.46 + i * 0.23, -0.49 + h + 0.1, 0.1)));
+    const trendLine = new THREE.Mesh(new THREE.TubeGeometry(trend, 64, 0.008, 6), gold({ roughness: 0.08 }));
+    chart.add(trendLine);
+
+    // ── Halo over the upper right ─────────────────────────────────────────
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.035, 24, kit.seg(200)), gold({ roughness: 0.06 }));
+    halo.position.copy(at(0.84, 0.07, -0.6));
+    halo.rotation.set(1.22, 0, -0.08);
+    root.add(halo);
+
+    // ── Liquid-gold ribbon framing the photo's lower and right edges ─────
+    const ribbonCurve = new THREE.CatmullRomCurve3([
+      at(0.02, 0.86, 0.1),
+      at(0.22, 0.95, 0.6),
+      at(0.52, 0.975, 1.0),
+      at(0.84, 0.93, 0.7),
+      at(0.96, 0.66, 0.1),
+      at(0.955, 0.34, -0.5),
+      at(0.88, 0.1, -1.0),
+      at(0.74, 0.03, -1.4),
+    ]);
+    const ribbonGeo = openRibbonGeometry(ribbonCurve, {
+      segments: kit.seg(320),
+      width: 0.27,
+      thickness: 0.022,
+      twist: (u) => Math.sin(u * Math.PI * 2.2) * 0.9,
+      taper: (u) => Math.pow(Math.sin(Math.PI * u), 0.45),
+    });
+    const ribbon = new THREE.Mesh(ribbonGeo, kit.liquidGold({ roughness: 0.07, clearcoat: 0.9, clearcoatRoughness: 0.03, envMapIntensity: 1.4 }));
+    root.add(ribbon);
+    const ribbonCount = ribbonGeo.index.count;
+
+    // ── Small accents and dust ────────────────────────────────────────────
+    const accents = floaters(kit, [
+      ['sphere', ...at(0.07, 0.2, 0.4).toArray(), 0.07],
+      ['goldSphere', ...at(0.5, 0.06, -0.3).toArray(), 0.05],
+      ['goldSphere', ...at(0.32, 0.9, 0.8).toArray(), 0.045],
+    ]);
+    root.add(accents.group);
+    cast(accents.group, halo, ...bars);
+    const dust = new DustField(kit, { count: 160, spread: 6.5, size: 0.032, opacity: 0.6 });
+    scene.add(dust.points);
+
+    // ── Light ─────────────────────────────────────────────────────────────
+    if (keyLight(kit, scene, 4.5, [4, 7, 5])) for (const m of casters) m.castShadow = true;
+    const sweep = new THREE.SpotLight(0xffe2ad, 16, 16, 0.7, 0.8, 1.4);
+    sweep.position.set(-5, 4, 2);
+    const front = new THREE.PointLight(0xfff6e8, 7, 14, 2);
+    front.position.set(0.5, 0.5, 6);
+    const bounce = new THREE.PointLight(0xffe4b8, 2.2, 3, 2);
+    bounce.position.copy(base).add(new THREE.Vector3(0, 0.5, 1));
+    scene.add(sweep, sweep.target, front, bounce);
+
+    const look = new THREE.Vector3();
     return {
-      frame(cam, aspect) {
-        distance = fitDistance(cam, 1.7, aspect);
-      },
       update(s, dt) {
         const t = s.time;
-        panes.forEach((pane, i) => {
-          pane.position.y = pane.userData.base + Math.sin(t * 0.6 + i) * 0.03 + s.progress * 0.05 * (i % 2 ? 1 : -1);
+        const intro = s.reduced ? 1 : introCurve(t, 2.6);
+        // -1 as the section enters, 0 centred in the viewport, 1 as it leaves.
+        const k = THREE.MathUtils.clamp((s.progress - 0.5) * 2, -1, 1);
+
+        // The ribbon draws itself in, then catches the light as it sways.
+        ribbonGeo.setDrawRange(0, Math.floor(ribbonCount * introCurve(s.reduced ? 99 : t, 2.2) / 6) * 6);
+        ribbon.rotation.z = Math.sin(t * 0.3) * 0.006 + k * 0.01;
+
+        globe.rotation.y = t * 0.22 + k * 0.8;
+        globeStand.scale.setScalar(0.85 + intro * 0.15);
+        for (const o of orbits) {
+          const a = t * o.speed + o.phase;
+          o.rider.position.set(Math.cos(a) * o.r, Math.sin(a) * o.r, 0);
+        }
+
+        // Bars rise in turn, and a little further as the section scrolls up.
+        bars.forEach((bar, i) => {
+          const grow = s.reduced ? 1 : introCurve(Math.max(0, t - 0.4 - i * 0.12), 1.2);
+          const h = bar.userData.h * grow * (1 + Math.max(0, k) * 0.08);
+          bar.scale.y = Math.max(0.001, h);
+          bar.position.y = -0.49 + h / 2;
         });
-        beams[0].position.y = 0.95 + Math.sin(t * 0.5) * 0.02;
-        accent.rotation.y = 0.5 + t * 0.15;
-        group.rotation.y = -0.5 + s.pointer.x * 0.25 + s.progress * 0.5;
-        camOrbit(camera, s, { distance, height: 1.2, look: new THREE.Vector3(0, -0.1, 0), swing: 0.1 });
+        chart.position.y = at(0.12, 0.6).y + Math.sin(t * 0.6) * 0.04;
+        chart.rotation.y = 0.42 + Math.sin(t * 0.35) * 0.04;
+
+        halo.position.y = at(0.84, 0.07).y + Math.sin(t * 0.7 + 1) * 0.05;
+        halo.rotation.z = -0.08 + Math.sin(t * 0.4) * 0.05;
+
+        accents.update(t, dt, 0);
+        dust.points.position.set(s.pointer.x * 0.3, -s.pointer.y * 0.2, 0);
+        dust.update(t, dt, null);
+
+        // The pointer sways the camera: near and far elements separate.
+        camera.position.set(s.pointer.x * 0.35, -s.pointer.y * 0.22, distance * (1 + k * 0.025));
+        camera.lookAt(look);
       },
     };
   },
@@ -2481,6 +2769,205 @@ const SCENES = {
         dust.update(t, dt, null);
         group.rotation.y = -0.35 + Math.sin(t * 0.25) * 0.12 + s.pointer.x * 0.35 + (s.progress - 0.5) * 0.3;
         camOrbit(camera, s, { distance, height: 0.75, look: new THREE.Vector3(0, -0.1, 0), swing: 0.15 });
+      },
+    };
+  },
+
+  /**
+   * 3D overlays for the three core pillar cards, composited by Flutter over
+   * each card's photograph, in the space where the photo fades to ivory
+   * (the right for business and innovation, the left for careers).
+   * Rendered to transparent stills (see
+   * tool/render_scenes), so a row of cards costs three images, not three
+   * live scenes. Each tells its own story; none shares a platform or form:
+   *
+   *   business:   a floating glass website with a gold header and product
+   *               tiles, and a platinum phone beside it.
+   *   innovation: a platinum processor with a gold "AI" die and gold
+   *               traces fanning out from its pins.
+   *   careers:    a gold path rising through glass beads to a gold sphere
+   *               ringed in gold: growth, step by step.
+   *
+   * Shadows fall on an invisible floor, so they land on the photograph.
+   */
+  overlay(kit, options) {
+    const { scene, camera } = kit;
+    const distance = 10;
+    const at = viewPlane(distance, 1.6); // the cards' 16:10 artwork
+    const gold = (extra) => kit.lacqueredGold(extra);
+    const silver = (extra) => kit.polishedPlatinum(extra);
+    const root = new THREE.Group();
+    scene.add(root);
+    const casters = [];
+    const cast = (...meshes) => meshes.forEach((m) => m.traverse((o) => o.isMesh && !o.material.transparent && casters.push(o)));
+    let floorAt = at(0.7, 0.98);
+
+    const variant = options.variant || 'business';
+    if (variant === 'business') {
+      // A glass browser window: gold frame, header bar and product tiles.
+      const site = new THREE.Group();
+      site.position.copy(at(0.74, 0.42, 0));
+      site.rotation.set(0.06, -0.48, 0.02);
+      site.scale.setScalar(0.9);
+      const pane = kit.roundedBox(2.7, 1.75, 0.04, 0.07, kit.clearGlass({ opacity: 0.34, envMapIntensity: 2 }), 4);
+      const frame = [
+        [0, 0.875, 2.7, 0.03], [0, -0.875, 2.7, 0.03],
+        [-1.35, 0, 0.03, 1.75], [1.35, 0, 0.03, 1.75],
+      ].map(([x, y, w, h]) => {
+        const edge = kit.roundedBox(w, h, 0.05, 0.012, gold({ roughness: 0.1 }), 2);
+        edge.position.set(x, y, 0);
+        return edge;
+      });
+      const header = kit.roundedBox(2.4, 0.14, 0.03, 0.03, gold({ roughness: 0.14 }), 2);
+      header.position.set(0, 0.63, 0.04);
+      const hero = kit.roundedBox(1.1, 0.44, 0.03, 0.04, gold({ roughness: 0.22 }), 3);
+      hero.position.set(-0.62, 0.22, 0.04);
+      const copy = [0.32, 0.2, 0.08].map((y, i) => {
+        const line = kit.roundedBox(i === 2 ? 0.6 : 0.95, 0.06, 0.02, 0.02, kit.pearl({ roughness: 0.2 }), 2);
+        line.position.set(i === 2 ? 0.32 : 0.5, y, 0.04);
+        return line;
+      });
+      const tiles = [0, 1, 2].map((i) => {
+        const tile = kit.roundedBox(0.68, 0.5, 0.04, 0.05, i === 1 ? silver({ roughness: 0.14 }) : gold({ roughness: 0.18 }), 3);
+        tile.position.set(-0.8 + i * 0.8, -0.42, 0.05);
+        return tile;
+      });
+      site.add(pane, ...frame, header, hero, ...copy, ...tiles);
+      root.add(site);
+      cast(...frame, header, hero, ...tiles);
+
+      // A platinum phone standing slightly forward.
+      const phone = new THREE.Group();
+      phone.position.copy(at(0.91, 0.64, 1.0));
+      phone.rotation.set(0.04, -0.6, 0.05);
+      phone.scale.setScalar(0.8);
+      const body = kit.roundedBox(0.58, 1.18, 0.07, 0.1, silver({ roughness: 0.1 }), 5);
+      const face = kit.roundedBox(0.5, 1.08, 0.012, 0.07, kit.pearl({ roughness: 0.14 }), 4);
+      face.position.z = 0.04;
+      const banner = kit.roundedBox(0.4, 0.3, 0.012, 0.03, gold({ roughness: 0.18 }), 2);
+      banner.position.set(0, 0.25, 0.05);
+      const rows = [-0.06, -0.2, -0.34].map((y) => {
+        const row = kit.roundedBox(0.4, 0.07, 0.01, 0.02, silver({ roughness: 0.2 }), 2);
+        row.position.set(0, y, 0.05);
+        return row;
+      });
+      phone.add(body, face, banner, ...rows);
+      root.add(phone);
+      cast(body);
+      floorAt = at(0.82, 0.97);
+    } else if (variant === 'innovation') {
+      // A processor: platinum package, gold pins, a gold die engraved "AI".
+      const chip = new THREE.Group();
+      chip.position.copy(at(0.76, 0.5, 0));
+      chip.rotation.set(0.78, -0.5, 0);
+      chip.scale.setScalar(0.78);
+      const pkg = kit.roundedBox(2.0, 0.16, 2.0, 0.06, silver({ roughness: 0.16 }), 4);
+      chip.add(pkg);
+      const pinGeo = new RoundedBoxGeometry(0.09, 0.04, 0.32, 2, 0.015);
+      const pinMat = gold({ roughness: 0.12 });
+      for (let side = 0; side < 4; side++) {
+        for (let i = 0; i < 9; i++) {
+          const pin = new THREE.Mesh(pinGeo, pinMat);
+          const along = -0.8 + i * 0.2;
+          const out = 1.12;
+          const [x, z, rot] = [[along, out, 0], [along, -out, 0], [out, along, Math.PI / 2], [-out, along, Math.PI / 2]][side];
+          pin.position.set(x, -0.04, z);
+          pin.rotation.y = rot;
+          chip.add(pin);
+        }
+      }
+      const engraving = kit.canvasTexture(512, 512, (g, w, h) => {
+        const grad = g.createLinearGradient(0, 0, w, h);
+        grad.addColorStop(0, '#f1dcac');
+        grad.addColorStop(0.5, '#e2c48a');
+        grad.addColorStop(1, '#f0d9a6');
+        g.fillStyle = grad;
+        g.fillRect(0, 0, w, h);
+        g.strokeStyle = 'rgba(120,88,40,0.55)';
+        g.lineWidth = 10;
+        g.strokeRect(34, 34, w - 68, h - 68);
+        g.fillStyle = 'rgba(110,80,36,0.9)';
+        g.font = `800 230px ${FONT}`;
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        g.fillText('AI', w / 2, h / 2 + 10);
+      });
+      const dieMats = Array.from({ length: 6 }, (_, i) => (i === 2 ? gold({ color: 0xffffff, map: engraving, roughness: 0.18 }) : gold({ roughness: 0.1 })));
+      const die = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.12, 1.1), dieMats);
+      die.position.y = 0.14;
+      chip.add(die);
+      // Gold traces fanning out from the pins, ending in small pads.
+      const traceMat = gold({ roughness: 0.14 });
+      const rand = mulberry32(9);
+      for (let side = 0; side < 4; side++) {
+        for (let i = 0; i < 9; i += 2) {
+          const along = -0.8 + i * 0.2;
+          const len = 0.5 + rand() * 0.9;
+          const trace = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.012, len), traceMat);
+          const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.014, 16), traceMat);
+          const out = 1.28 + len / 2;
+          const end = 1.28 + len;
+          const [x, z, px, pz, rot] = [
+            [along, out, along, end, 0], [along, -out, along, -end, 0],
+            [out, along, end, along, Math.PI / 2], [-out, along, -end, along, Math.PI / 2],
+          ][side];
+          trace.position.set(x, -0.06, z);
+          trace.rotation.y = rot;
+          pad.position.set(px, -0.06, pz);
+          chip.add(trace, pad);
+        }
+      }
+      root.add(chip);
+      cast(pkg, die);
+      const glow = new THREE.PointLight(0xffd99a, 3, 3, 2);
+      glow.position.copy(chip.position).add(new THREE.Vector3(0, 0.9, 0.9));
+      scene.add(glow);
+      floorAt = at(0.76, 1.0);
+    } else {
+      // A gold path rising through glass beads to a ringed gold sphere.
+      const points = [at(0.03, 0.94, 0.6), at(0.07, 0.76, 0.4), at(0.11, 0.58, 0.1), at(0.14, 0.42, -0.2), at(0.16, 0.28, -0.4)];
+      const path = new THREE.CatmullRomCurve3(points);
+      const track = new THREE.Mesh(new THREE.TubeGeometry(path, 160, 0.034, 12), gold({ roughness: 0.08 }));
+      root.add(track);
+      cast(track);
+      [[0.2, 0.12], [0.45, 0.15], [0.7, 0.18]].forEach(([u, r]) => {
+        const p = path.getPointAt(u);
+        const bead = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), kit.clearGlass({ opacity: 0.38, envMapIntensity: 2.2 }));
+        const seed = new THREE.Mesh(new THREE.SphereGeometry(r * 0.32, 32, 24), gold({ roughness: 0.06 }));
+        bead.position.copy(p);
+        seed.position.copy(p);
+        root.add(bead, seed);
+        cast(seed);
+      });
+      const peak = path.getPointAt(1);
+      const summit = new THREE.Mesh(new THREE.SphereGeometry(0.34, 64, 48), gold({ roughness: 0.04 }));
+      summit.position.copy(peak);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.022, 20, kit.seg(160)), silver({ roughness: 0.05 }));
+      ring.position.copy(peak);
+      ring.rotation.set(1.2, 0.2, 0.3);
+      root.add(summit, ring);
+      cast(summit, ring);
+      floorAt = at(0.1, 1.0);
+    }
+
+    const floor = shadowCatcher(8, 4, 0.26);
+    floor.position.copy(floorAt).add(new THREE.Vector3(0, 0, -1));
+    root.add(floor);
+    const dust = new DustField(kit, { count: 50, spread: 6, size: 0.03, opacity: 0.55 });
+    scene.add(dust.points);
+
+    if (keyLight(kit, scene, 5, [3, 8, 6])) for (const m of casters) m.castShadow = true;
+    const sweep = new THREE.SpotLight(0xffe2ad, 14, 18, 0.7, 0.8, 1.4);
+    sweep.position.set(-6, 4, 2);
+    const front = new THREE.PointLight(0xfff6e8, 7, 16, 2);
+    front.position.set(1.5, 0.8, 6);
+    scene.add(sweep, sweep.target, front);
+
+    return {
+      update(s, dt) {
+        dust.update(s.time, dt, null);
+        camera.position.set(s.pointer.x * 0.2, 0, distance);
+        camera.lookAt(0, 0, 0);
       },
     };
   },

@@ -50,6 +50,8 @@ class CompanyContent {
       art: PillarArt.business,
       image: 'assets/images/pillars/business_solutions',
       imageAlt: 'A presenter leading a business meeting with laptops around the table.',
+      artwork: 'assets/images/renders/overlay_business',
+      artworkAlt: 'A floating glass website with gold product tiles beside a platinum phone.',
       route: AppRoutes.businessSolutions,
       actionLabel: 'Explore More',
     ),
@@ -63,6 +65,8 @@ class CompanyContent {
       art: PillarArt.innovation,
       image: 'assets/images/pillars/technology_innovation',
       imageAlt: 'Software engineers writing code on large monitors.',
+      artwork: 'assets/images/renders/overlay_innovation',
+      artworkAlt: 'A platinum processor with a gold AI chip and gold circuit traces.',
       route: AppRoutes.technologyInnovation,
       actionLabel: 'Explore More',
     ),
@@ -76,12 +80,19 @@ class CompanyContent {
       art: PillarArt.careers,
       image: 'assets/images/pillars/internship_careers',
       imageAlt: 'A mentor explaining work to a young intern at a laptop.',
+      artwork: 'assets/images/renders/overlay_careers',
+      artworkAlt: 'A gold path rising through glass beads to a gold sphere ringed in platinum.',
+      artworkOnLeft: true,
       route: AppRoutes.internship,
       actionLabel: 'Explore More',
     ),
   ];
 
   // --------------------------------------------------------------- About
+  /// Illustrative stock photograph (Unsplash) beside the homepage "Who We
+  /// Are" copy; not YODYNIX staff, so its description stays generic.
+  static const whoWeArePhoto = 'assets/images/about/who_we_are';
+  static const whoWeArePhotoAlt = 'Developers working on laptops around a shared table.';
   static const aboutHeading = 'A Studio Built Around Practical Technology.';
   static const aboutStory = [
     'YODYNIX is a digital technology and innovation studio. We bring creativity, modern '

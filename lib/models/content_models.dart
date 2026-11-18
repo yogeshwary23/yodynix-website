@@ -30,6 +30,9 @@ class CorePillar {
     required this.art,
     required this.image,
     required this.imageAlt,
+    required this.artwork,
+    required this.artworkAlt,
+    this.artworkOnLeft = false,
     required this.route,
     required this.actionLabel,
   });
@@ -39,8 +42,17 @@ class CorePillar {
   final String description;
   final IconData icon;
   final PillarArt art;
+
+  /// Photograph, on the homepage pillar card and the pillar detail page.
   final String image;
   final String imageAlt;
+
+  /// Extension-less transparent 3D still that the homepage pillar card lays
+  /// over [image], where the photo fades to ivory: on its right, or its left
+  /// when [artworkOnLeft] (chosen so the fade never covers a face).
+  final String artwork;
+  final String artworkAlt;
+  final bool artworkOnLeft;
   final String route;
   final String actionLabel;
 }

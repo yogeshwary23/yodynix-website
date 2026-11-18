@@ -12,9 +12,9 @@ Unsplash+ (paid) images were deliberately excluded.
 
 | File | Unsplash photo ID |
 |---|---|
-| `pillars/business_solutions.jpg` | 1542744173-8e7e53415bb0 |
-| `pillars/technology_innovation.jpg` | 1629904853893-c2c8981a1dc5 |
-| `pillars/internship_careers.jpg` | 1522881193457-37ae97c905bf |
+| `pillars/business_solutions.webp` | 1542744173-8e7e53415bb0 |
+| `pillars/technology_innovation.webp` | 1629904853893-c2c8981a1dc5 |
+| `pillars/internship_careers.webp` | 1522881193457-37ae97c905bf |
 | `business/hero.jpg` | 1758518731706-be5d5230e5a5 |
 | `business/website_development.jpg` | 1547658719-da2b51169166 |
 | `business/ecommerce_development.jpg` | 1563013544-824ae1b704d3 |
@@ -44,6 +44,9 @@ Unsplash+ (paid) images were deliberately excluded.
 | `internship_careers/application.jpg` | 1758873269013-d914addd5d3b |
 | `internship/internship_banner.jpg` | 1531482615713-2afd69097998 |
 
+The homepage pillar cards show `pillars/*` with a 3D overlay rendered
+by `tool/render_scenes` (`renders/overlay_*.webp`) laid over them.
+
 To replace a photo, save a new file with the same base name (`.webp`, `.jpg`,
 `.jpeg` or `.png`) in the same folder — no code change is needed. Keep 3:2 for
 offering images and ~16:10 for heroes; never reuse a photo in two places.
@@ -53,6 +56,7 @@ offering images and ~16:10 for heroes; never reuse a photo in two places.
 | File | Unsplash photo ID |
 |---|---|
 | `about/about_visual.jpg` | 1629904853716-f0bc54eea481 |
+| `about/who_we_are.webp` (homepage "Who We Are") | 1521737604893-d14cc237f11d |
 | `about/philosophy_innovation.jpg` | 1549692520-acc6669e2f0c |
 | `about/philosophy_quality.jpg` | 1528901166007-3784c7dd3653 |
 | `about/philosophy_communication.jpg` | 1758518730151-cf64fddb4f0a |
