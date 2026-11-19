@@ -124,13 +124,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
                         )
                       : ResponsiveGrid(
                           key: ValueKey('$_filter-$_status'),
-                          minItemWidth: 300,
-                          maxColumns: 3,
-                          spacing: 24,
+                          minItemWidth: 440,
+                          maxColumns: 2,
+                          spacing: 28,
                           children: [
                             for (final (i, e) in visible.indexed)
                               Reveal(
-                                delay: Duration(milliseconds: 70 * (i % 3)),
+                                delay: Duration(milliseconds: 90 * (i % 2)),
                                 child: ProjectCard(project: e.project),
                               ),
                           ],

@@ -70,8 +70,10 @@ flutter:
     # Still renders of the 3D scenes, used on phones and without WebGL.
     - assets/images/renders/
     - assets/images/service_projects/
-    # Each portfolio project on its 3D device (rendered by tool/render_scenes).
+    # Each working demo on its 3D device (rendered by tool/render_scenes).
     - assets/images/project_devices/
+    # Full-colour settings for the working demos and portfolio cover photos.
+    - assets/images/portfolio/
     - assets/images/team/
     - assets/images/internship/
     # Core pillar cards and detail pages (Unsplash License; see assets/images/PHOTO_CREDITS.md).

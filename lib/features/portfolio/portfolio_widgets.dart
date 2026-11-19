@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 
 import '../../core/constants/asset_paths.dart';
@@ -13,7 +15,6 @@ import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/motion_effects.dart';
 import '../../shared/widgets/premium.dart';
 import '../../shared/widgets/smart_image.dart';
-import '../../shared/widgets/tinted_photo.dart';
 import '../../shared/widgets/viewport_trigger.dart';
 
 /// Shared pieces of the Portfolio page and the project pages.
@@ -22,121 +23,140 @@ extension ProjectPresentation on SampleProject {
 
   String get route => AppRoutes.project(slug);
 
-  /// The project's 3D device still (`assets/images/project_devices/`).
-  String get deviceStill => AssetPaths.projectDevice(id);
+  /// The working demo's 3D device still (`assets/images/project_devices/`),
+  /// resolved; null for concepts.
+  String? get deviceStill => study?.device == null ? null : AssetRegistry.instance.resolve(AssetPaths.projectDevice(id));
+
+  /// The full-colour photograph shown with the project, resolved: a working
+  /// demo's setting, or a concept's cover (its own image unless the
+  /// portfolio gives it another).
+  String? get coverPhoto => AssetRegistry.instance.resolve(study?.photo ?? image);
+
+  /// The device scene variant for a working demo, e.g. `phone-left-plain`.
+  String? get deviceVariant {
+    final s = study;
+    if (s?.device == null) return null;
+    return '${s!.device!.name}${s.faceLeft ? '-left' : ''}-plain';
+  }
 
   /// The image spec for its screen in the live device scene: the bundled
-  /// image's URL with the crop, alignment and grade the stills use (see
-  /// `screenImage` in web/three/yodynix3d.js). Null if the image is missing.
+  /// screenshot's URL with its crop (see `screenImage` in
+  /// web/three/yodynix3d.js). Null if the image is missing.
   String? get screenSpec {
     final asset = AssetRegistry.instance.resolve(image);
     if (asset == null) return null;
-    final fragment = [
-      ?study?.screenCrop,
-      // Screenshots keep their top and are never graded; concept
-      // photographs stay centred and are toned towards the palette.
-      if (!hasDemo) 'align=center&grade=warm',
-    ].join('&');
     final url = Uri.base.resolve('assets/$asset').toString();
-    return fragment.isEmpty ? url : '$url#$fragment';
+    final crop = study?.screenCrop;
+    return crop == null ? url : '$url#$crop';
   }
+
+  String get coverLabel => study?.device != null
+      ? '$name working demo: a real screenshot shown on a ${study!.device!.name}.'
+      : 'Concept visual for $name: an illustrative photograph, not a product screenshot. $imageAlt';
 }
 
-/// A warm studio backdrop for a device still: a pool of light falling on a
-/// pearl-to-beige sweep, with a fine gold rim.
-class DeviceStage extends StatelessWidget {
-  const DeviceStage({super.key, required this.child, this.radius = AppRadius.md});
+/// A project's 16:9 visual. A working demo's real screenshot sits on its 3D
+/// device, floating gently in front of a full-colour photograph of its
+/// setting, softened like a shallow depth of field; a concept is shown as its
+/// photograph, edge to edge and ungraded. On hover the photograph eases in
+/// and the device lifts towards the viewer.
+class ProjectCover extends StatefulWidget {
+  const ProjectCover({super.key, required this.project, this.active = false, this.radius = AppRadius.lg, this.device});
 
-  final Widget child;
+  final SampleProject project;
+  final bool active;
   final double radius;
+
+  /// Shown in place of a working demo's device still, e.g. the live 3D
+  /// device scene on the project's page.
+  final Widget? device;
+
+  @override
+  State<ProjectCover> createState() => _ProjectCoverState();
+}
+
+class _ProjectCoverState extends State<ProjectCover> with SingleTickerProviderStateMixin {
+  late final AnimationController _float = AnimationController(vsync: this, duration: const Duration(milliseconds: 3600));
+  bool _reduced = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduced = prefersReducedMotion(context);
+    if (_reduced || widget.project.deviceStill == null || widget.device != null) {
+      _float.stop();
+    } else if (!_float.isAnimating) {
+      // Start each card at a different point of the drift.
+      _float
+        ..value = (widget.project.id.hashCode % 100) / 100
+        ..repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _float.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFFBF8F2), Color(0xFFF1E8D9), Color(0xFFE6D8C1)],
-            stops: [0, 0.62, 1],
-          ),
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            const IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment(0, -0.55),
-                    radius: 0.85,
-                    colors: [Color(0xB3FFFFFF), Color(0x00FFFFFF)],
+    final p = widget.project;
+    final photo = p.coverPhoto;
+    final still = p.deviceStill;
+    final zoom = widget.active && !_reduced;
+    Widget picture = photo == null
+        ? const ColoredBox(color: AppColors.charcoal)
+        : AnimatedScale(
+            duration: const Duration(milliseconds: 700),
+            curve: AppMotion.ease,
+            scale: zoom ? 1.06 : 1,
+            child: LazyAssetImage(path: photo, semanticLabel: '', fit: BoxFit.cover),
+          );
+    if (still != null) {
+      // Shallow depth of field: the setting softens behind the device.
+      picture = ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 3.5, sigmaY: 3.5, tileMode: TileMode.clamp), child: picture);
+    }
+    return Semantics(
+      image: true,
+      label: p.coverLabel,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(widget.radius),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              ExcludeSemantics(child: picture),
+              if (still != null && widget.device != null)
+                widget.device!
+              else if (still != null)
+                RepaintBoundary(
+                  child: AnimatedBuilder(
+                    animation: _float,
+                    builder: (context, child) => Transform.translate(
+                      offset: Offset(0, (Curves.easeInOut.transform(_float.value) - 0.5) * 8),
+                      child: child,
+                    ),
+                    child: AnimatedScale(
+                      duration: AppMotion.lift,
+                      curve: AppMotion.ease,
+                      scale: zoom ? 1.04 : 1,
+                      child: ExcludeSemantics(child: LazyAssetImage(path: still, semanticLabel: '', fit: BoxFit.contain)),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            child,
-            IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(radius),
-                  border: Border.all(color: AppColors.goldLine.withValues(alpha: 0.7)),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// The project on its 3D device, on a studio stage. Falls back to the plain
-/// project image when no still is bundled.
-class ProjectDeviceImage extends StatelessWidget {
-  const ProjectDeviceImage({super.key, required this.project, this.active = false});
-
-  final SampleProject project;
-
-  /// Hover: the device lifts and comes slightly closer.
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    final still = AssetRegistry.instance.resolve(project.deviceStill);
-    final reduced = prefersReducedMotion(context);
-    return DeviceStage(
-      child: still == null
-          ? TintedPhoto(basePath: project.image, semanticLabel: project.imageAlt, strength: 0.25, active: active)
-          : AnimatedSlide(
-              duration: AppMotion.lift,
-              curve: AppMotion.ease,
-              offset: Offset(0, active && !reduced ? -0.025 : 0),
-              child: AnimatedScale(
-                duration: AppMotion.lift,
-                curve: AppMotion.ease,
-                scale: active && !reduced ? 1.045 : 1,
-                child: LazyAssetImage(path: still, semanticLabel: project.deviceLabel, fit: BoxFit.contain),
-              ),
-            ),
-    );
-  }
-}
-
-extension on SampleProject {
-  String get deviceLabel {
-    final device = study?.device.name ?? 'device';
-    return hasDemo
-        ? 'A screenshot of the $name working demo shown on a $device.'
-        : 'Concept visual for $name: an illustrative photograph shown on a $device, not a product screenshot.';
-  }
-}
-
-/// A project tile: its device still on a studio stage, status, category and
-/// a one-line objective. Lifts, tilts towards the cursor and brings the
-/// device forward on hover; opens the project's page.
+/// A project tile: its full-colour 16:9 visual, status, category and a
+/// one-line objective. Lifts, eases the image in and tilts towards the cursor
+/// on hover; opens the project's page.
 class ProjectCard extends StatefulWidget {
   const ProjectCard({super.key, required this.project});
 
@@ -175,16 +195,12 @@ class _ProjectCardState extends State<ProjectCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AspectRatio(
-                      aspectRatio: 3 / 2,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ProjectDeviceImage(project: p, active: _hover),
-                          Positioned(left: 12, top: 12, child: ProjectStatusBadge(demo: p.hasDemo, compact: true)),
-                          if (!p.hasDemo) const Positioned(right: 12, bottom: 10, child: ConceptVisualNote()),
-                        ],
-                      ),
+                    Stack(
+                      children: [
+                        ProjectCover(project: p, active: _hover),
+                        Positioned(left: 12, top: 12, child: ProjectStatusBadge(demo: p.hasDemo, compact: true)),
+                        if (!p.hasDemo) const Positioned(right: 12, bottom: 12, child: ConceptVisualNote()),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 18, 10, 4),
@@ -198,11 +214,11 @@ class _ProjectCardState extends State<ProjectCard> {
                             style: AppTypography.body(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.1, color: AppColors.accent),
                           ),
                           const SizedBox(height: 6),
-                          Text(p.name, style: AppTypography.display(fontSize: 21, fontWeight: FontWeight.w700, color: AppColors.ink)),
+                          Text(p.name, style: AppTypography.display(fontSize: 23, fontWeight: FontWeight.w700, color: AppColors.ink)),
                           const SizedBox(height: 8),
                           Text(
                             study?.objective ?? p.summary,
-                            maxLines: 3,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: AppTypography.body(fontSize: 14, color: AppColors.body),
                           ),

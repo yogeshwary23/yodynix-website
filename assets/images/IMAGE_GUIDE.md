@@ -56,3 +56,14 @@ Each sector section on `/industries` uses `industries/<id>` (ids in
 sector's 3D panel set into a lower corner, so keep the subject away from that
 corner. Never reuse a photo for two sectors. The hero's 3D still is
 `renders/industries_network.jpg` (re-render with `node render.js industries_network`).
+
+## Portfolio page (photographs supplied)
+
+- `portfolio/<id>_scene` — the full-colour setting behind each working demo's
+  device (set by `ProjectCaseStudy.photo`). Any landscape photo, ≥1600px wide.
+- `portfolio/<id>_cover` — optional cover replacing a concept's service-page
+  image on the Portfolio only.
+- `project_devices/<id>.webp` — each working demo's real screenshot on its 3D
+  device, rendered by `dart run tool/render_scenes/export_devices.dart` then
+  `node render.js devices` in `tool/render_scenes`. Never edit by hand.
+- Project images are shown ungraded: no tints, filters or overlays.

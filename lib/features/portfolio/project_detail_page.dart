@@ -68,24 +68,23 @@ class ProjectDetailPage extends StatelessWidget {
               ],
             ),
           ),
-          SectionShell(
-            background: AppColors.pearlWhite,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SectionHeader(
-                  eyebrow: project.hasDemo ? 'Previews' : 'Concept Visual',
-                  title: project.hasDemo ? 'See It on Screen' : 'The Idea in Context',
-                  lead: project.hasDemo
-                      ? 'Screens captured from the working demo running on this site.'
-                      : 'This project is a concept. The photograph below illustrates its setting; it is not a product screenshot.',
-                  centered: true,
-                ),
-                const SizedBox(height: 36),
-                Reveal(child: _Previews(project: project)),
-              ],
+          if (project.hasDemo)
+            SectionShell(
+              background: AppColors.pearlWhite,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SectionHeader(
+                    eyebrow: 'Previews',
+                    title: 'See It on Screen',
+                    lead: 'Screens captured from the working demo running on this site.',
+                    centered: true,
+                  ),
+                  const SizedBox(height: 36),
+                  Reveal(child: _Previews(project: project)),
+                ],
+              ),
             ),
-          ),
           SectionShell(
             background: AppColors.surface,
             child: Column(
@@ -197,23 +196,27 @@ class _Hero extends StatelessWidget {
         ],
       ],
     );
+    final still = project.deviceStill;
     final visual = Reveal(
       delay: const Duration(milliseconds: 120),
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: DeviceStage(
-          radius: AppRadius.xl,
-          child: Interactive3DObject(
-            scene: Scene3D.device,
-            variant: (study?.device ?? ProjectDevice.laptop).name,
-            image: project.screenSpec,
-            background: null,
-            semanticLabel: project.hasDemo
-                ? '${project.imageAlt} Shown on a ${study?.device.name ?? 'laptop'}.'
-                : 'Concept visual for ${project.name}: an illustrative photograph, not a product screenshot.',
-            fallback: ProjectDeviceImage(project: project),
+      child: Stack(
+        children: [
+          ProjectCover(
+            project: project,
+            radius: AppRadius.xl,
+            device: still == null
+                ? null
+                : Interactive3DObject(
+                    scene: Scene3D.device,
+                    variant: project.deviceVariant,
+                    image: project.screenSpec,
+                    background: null,
+                    semanticLabel: project.coverLabel,
+                    fallback: LazyAssetImage(path: still, semanticLabel: project.coverLabel, fit: BoxFit.contain),
+                  ),
           ),
-        ),
+          if (!project.hasDemo) const Positioned(right: 14, bottom: 12, child: ConceptVisualNote()),
+        ],
       ),
     );
     return DecoratedBox(
@@ -340,9 +343,8 @@ class _Features extends StatelessWidget {
   }
 }
 
-/// Large visuals: for a working demo, its screenshot as a desktop browser
-/// window beside the project on its device (phone demos show the phone);
-/// for a concept, the illustrative photograph, clearly labelled.
+/// Large visuals of a working demo: its screenshot as a desktop browser
+/// window beside the project on its device (phone demos show the phone).
 class _Previews extends StatelessWidget {
   const _Previews({required this.project});
 
@@ -351,34 +353,7 @@ class _Previews extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final device = project.study?.device ?? ProjectDevice.laptop;
-    final onDevice = AspectRatio(aspectRatio: 3 / 2, child: ProjectDeviceImage(project: project));
-    if (!project.hasDemo) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-            child: AspectRatio(
-              aspectRatio: 16 / 8,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (AssetRegistry.instance.resolve(project.image) case final photo?)
-                    LazyAssetImage(path: photo, semanticLabel: project.imageAlt),
-                  const Positioned(right: 14, bottom: 12, child: ConceptVisualNote()),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Concept visual: photograph for illustration, not a product screenshot.',
-            textAlign: TextAlign.center,
-            style: AppTypography.body(fontSize: 13, color: AppColors.muted),
-          ),
-        ],
-      );
-    }
+    final onDevice = ProjectCover(project: project, radius: AppRadius.xl);
     final phone = device == ProjectDevice.phone;
     final screenshot = AssetRegistry.instance.resolve(project.image);
     final desktopPreview = screenshot == null || phone

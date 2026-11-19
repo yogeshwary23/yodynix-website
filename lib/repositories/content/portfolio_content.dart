@@ -7,7 +7,9 @@ class ProjectCaseStudy {
   const ProjectCaseStudy({
     required this.industry,
     required this.objective,
-    required this.device,
+    this.device,
+    this.faceLeft = false,
+    this.photo,
     this.screenCrop,
     required this.problem,
     required this.solution,
@@ -20,8 +22,17 @@ class ProjectCaseStudy {
   /// What the demonstration sets out to show.
   final String objective;
 
-  /// The device its 3D mock-up uses (see `Scene3D.device`).
-  final ProjectDevice device;
+  /// The device a working demo's screenshot is shown on (see
+  /// `Scene3D.device`); null for concepts, which have no screens to show.
+  final ProjectDevice? device;
+
+  /// Turns the device the other way, so neighbouring demos differ.
+  final bool faceLeft;
+
+  /// A full-colour photograph (asset base path) for the project's portfolio
+  /// image: the setting behind a working demo's device, or a concept's cover
+  /// in place of its service-page image.
+  final String? photo;
 
   /// Region of the project image shown on the device screen, as
   /// `crop=x,y,w,h` fractions; null uses the whole image. Used where a
@@ -85,6 +96,7 @@ class PortfolioContent {
       industry: 'Healthcare & Clinics',
       objective: 'Show how a small clinic can answer everyday questions online and turn visits into appointment requests.',
       device: ProjectDevice.laptop,
+      photo: 'assets/images/portfolio/lumen_dental_scene',
       problem:
           'Small clinics often rely on phone calls for every question, so staff spend the day '
           'repeating opening hours and treatment details while appointment requests get lost.',
@@ -96,7 +108,7 @@ class PortfolioContent {
     'northfield_architects': ProjectCaseStudy(
       industry: 'Real Estate & Construction',
       objective: 'Present an architecture practice through its projects first, with a clear path to enquire.',
-      device: ProjectDevice.laptop,
+      photo: 'assets/images/portfolio/northfield_architects_cover',
       problem:
           'Architecture practices are judged on their work, yet many sites bury projects under '
           'text and make it hard to find relevant examples.',
@@ -107,7 +119,6 @@ class PortfolioContent {
     'saffron_table': ProjectCaseStudy(
       industry: 'Hospitality & Food',
       objective: 'Give a restaurant a menu and reservation experience that works on any screen and stays current.',
-      device: ProjectDevice.tablet,
       problem:
           'Restaurant menus are often shared as PDFs that are hard to read on phones and '
           'quickly go out of date, and reservations depend on someone answering the phone.',
@@ -118,7 +129,6 @@ class PortfolioContent {
     'peak_realty': ProjectCaseStudy(
       industry: 'Real Estate & Construction',
       objective: 'Help buyers find suitable properties quickly and send agents well-qualified viewing requests.',
-      device: ProjectDevice.laptop,
       problem:
           'Buyers want to narrow listings quickly, while agents want serious viewing requests '
           'rather than vague enquiries.',
@@ -132,6 +142,8 @@ class PortfolioContent {
       industry: 'E-commerce',
       objective: 'Demonstrate a complete, trustworthy buying journey for an independent online store.',
       device: ProjectDevice.laptop,
+      faceLeft: true,
+      photo: 'assets/images/portfolio/weave_and_co_scene',
       problem:
           'Independent makers need an online store that feels trustworthy and makes buying '
           'easy, without the complexity of a large marketplace.',
@@ -143,7 +155,6 @@ class PortfolioContent {
     'freshcart': ProjectCaseStudy(
       industry: 'E-commerce',
       objective: 'Make weekly grocery orders fast to repeat and predictable to deliver.',
-      device: ProjectDevice.phone,
       problem:
           'Grocery customers buy the same items every week, and out-of-stock products cause '
           'frustrating substitutions at delivery.',
@@ -154,7 +165,6 @@ class PortfolioContent {
     'studio_sole': ProjectCaseStudy(
       industry: 'E-commerce',
       objective: 'Show only what shoppers can actually buy in their size, and bring them back for new releases.',
-      device: ProjectDevice.tablet,
       problem:
           'Footwear shoppers abandon stores when their size turns out to be unavailable after '
           'they have already chosen a product.',
@@ -165,7 +175,6 @@ class PortfolioContent {
     'bloom_box': ProjectCaseStudy(
       industry: 'E-commerce',
       objective: 'Capture date-specific gift orders accurately and organise the florist’s daily preparation.',
-      device: ProjectDevice.laptop,
       problem:
           'Florists receive orders for specific dates and occasions, and missed details turn a '
           'gift into a disappointment.',
@@ -179,6 +188,7 @@ class PortfolioContent {
       industry: 'Health & Fitness',
       objective: 'Demonstrate the core booking loop of a mobile app: choose, confirm and manage a class.',
       device: ProjectDevice.phone,
+      photo: 'assets/images/portfolio/fitslot_scene',
       screenCrop: 'crop=0.3725,0.088,0.255,0.848',
       problem:
           'Studios that take class bookings by message struggle with overbooked sessions and '
@@ -191,7 +201,6 @@ class PortfolioContent {
     'careconnect': ProjectCaseStudy(
       industry: 'Healthcare & Clinics',
       objective: 'Give patients one place to book, be reminded and review their care.',
-      device: ProjectDevice.phone,
       problem:
           'Patients of multi-doctor clinics juggle calls, paper slips and missed reminders, and '
           'rarely have their visit history to hand.',
@@ -202,7 +211,6 @@ class PortfolioContent {
     'quickserve': ProjectCaseStudy(
       industry: 'Hospitality & Food',
       objective: 'Let customers order ahead and follow their order without calling the restaurant.',
-      device: ProjectDevice.phone,
       problem:
           'Busy restaurants lose time taking phone orders, and customers are left guessing when '
           'their food will be ready.',
@@ -213,7 +221,6 @@ class PortfolioContent {
     'droprun': ProjectCaseStudy(
       industry: 'Retail & Logistics',
       objective: 'Give delivery riders a clear daily route and a reliable record of every drop.',
-      device: ProjectDevice.phone,
       problem:
           'Local delivery teams coordinate routes over calls and chat, with no reliable proof '
           'that each drop was completed.',
@@ -225,6 +232,7 @@ class PortfolioContent {
       industry: 'Business Operations',
       objective: 'Show one Flutter codebase adapting naturally to phone, tablet and desktop screens.',
       device: ProjectDevice.tablet,
+      photo: 'assets/images/portfolio/taskflow_scene',
       problem:
           'Teams switch between phones, tablets and desktops through the day, and tools that '
           'only work well on one screen slow them down.',
@@ -239,6 +247,7 @@ class PortfolioContent {
       industry: 'Business Operations',
       objective: 'Demonstrate how a lightweight CRM keeps every lead and its stage visible in one place.',
       device: ProjectDevice.desktop,
+      photo: 'assets/images/portfolio/leaddesk_crm_scene',
       problem:
           'Growing businesses track leads in spreadsheets and inboxes, so follow-ups slip and '
           'nobody can see the pipeline at a glance.',
@@ -250,7 +259,6 @@ class PortfolioContent {
     'stockwise': ProjectCaseStudy(
       industry: 'Retail & Logistics',
       objective: 'Keep stock levels accurate in real time and warn staff before items run out.',
-      device: ProjectDevice.tablet,
       problem:
           'Distributors discover stock shortages only when shelves are empty, because counts '
           'live on paper or in out-of-date sheets.',
@@ -261,7 +269,6 @@ class PortfolioContent {
     'clinicdesk': ProjectCaseStudy(
       industry: 'Healthcare & Clinics',
       objective: 'Bring a clinic’s appointments, patient records and billing into a single front-desk tool.',
-      device: ProjectDevice.desktop,
       problem:
           'Clinic front desks move between appointment books, patient files and billing tools, '
           'which slows every visit.',
@@ -272,7 +279,6 @@ class PortfolioContent {
     'fleetboard': ProjectCaseStudy(
       industry: 'Retail & Logistics',
       objective: 'Help a logistics operator plan vehicles, maintenance and drivers without conflicts.',
-      device: ProjectDevice.desktop,
       problem:
           'Fleet operators plan vehicles, maintenance and drivers in separate places, so '
           'conflicts are found too late.',
@@ -286,6 +292,8 @@ class PortfolioContent {
       industry: 'Business Operations',
       objective: 'Show how a support assistant handles routine questions and hands complex ones to a person.',
       device: ProjectDevice.desktop,
+      faceLeft: true,
+      photo: 'assets/images/portfolio/helpdesk_assistant_scene',
       problem:
           'Support teams answer the same pricing, hours and refund questions all day, leaving '
           'less time for customers who need a person.',
@@ -297,7 +305,6 @@ class PortfolioContent {
     'order_assistant': ProjectCaseStudy(
       industry: 'E-commerce',
       objective: 'Turn chat conversations into confirmed orders without manual copying.',
-      device: ProjectDevice.phone,
       problem:
           'Retailers selling over chat spend hours answering stock and price questions and '
           'piecing orders together from messages.',
@@ -308,7 +315,6 @@ class PortfolioContent {
     'docsearch': ProjectCaseStudy(
       industry: 'Business Operations',
       objective: 'Let staff find reliable answers in their own documents, with the source always visible.',
-      device: ProjectDevice.laptop,
       problem:
           'Staff waste time searching long policies and manuals, and answers given from memory '
           'are not always right.',
@@ -319,7 +325,6 @@ class PortfolioContent {
     'review_insights': ProjectCaseStudy(
       industry: 'Hospitality & Food',
       objective: 'Turn a steady flow of guest reviews into clear themes and timely replies.',
-      device: ProjectDevice.tablet,
       problem:
           'Hotels receive more guest reviews than anyone can read closely, so recurring issues '
           'are noticed late.',
@@ -332,7 +337,8 @@ class PortfolioContent {
     'flowrunner': ProjectCaseStudy(
       industry: 'Business Operations',
       objective: 'Make an automated enquiry workflow visible, step by step, from form to follow-up.',
-      device: ProjectDevice.desktop,
+      device: ProjectDevice.laptop,
+      photo: 'assets/images/portfolio/flowrunner_scene',
       problem:
           'Website enquiries are copied by hand into a CRM, emails and team chats, and the '
           'follow-up depends on someone remembering.',
@@ -344,7 +350,6 @@ class PortfolioContent {
     'invoice_reminders': ProjectCaseStudy(
       industry: 'Financial Services',
       objective: 'Follow up unpaid invoices consistently and politely without manual chasing.',
-      device: ProjectDevice.laptop,
       problem:
           'Service businesses chase unpaid invoices manually, which is awkward, inconsistent '
           'and easy to postpone.',
@@ -355,7 +360,6 @@ class PortfolioContent {
     'salon_reminders': ProjectCaseStudy(
       industry: 'Beauty & Wellness',
       objective: 'Reduce missed appointments and encourage clients to rebook at the right time.',
-      device: ProjectDevice.phone,
       problem:
           'Salons lose revenue to no-shows and to clients who simply forget to rebook.',
       solution:
@@ -365,7 +369,6 @@ class PortfolioContent {
     'daily_sales_report': ProjectCaseStudy(
       industry: 'Retail & Logistics',
       objective: 'Give a shop owner a clear picture of each day’s trading without manual reporting.',
-      device: ProjectDevice.tablet,
       problem:
           'Shop owners piece together the day’s performance from the till and receipts, often '
           'late at night.',
@@ -379,6 +382,8 @@ class PortfolioContent {
       industry: 'Business Operations',
       objective: 'Help businesses plan advertising budgets around realistic, illustrative outcomes.',
       device: ProjectDevice.laptop,
+      faceLeft: true,
+      photo: 'assets/images/portfolio/campaign_planner_scene',
       problem:
           'Businesses set advertising budgets without a clear view of how many leads or sales '
           'the spend would need to produce.',
@@ -390,7 +395,6 @@ class PortfolioContent {
     'cafe_social': ProjectCaseStudy(
       industry: 'Hospitality & Food',
       objective: 'Build local awareness for a new café and connect online activity to in-store visits.',
-      device: ProjectDevice.phone,
       problem:
           'A new café needs local awareness before opening day, but posting without a plan '
           'rarely builds momentum.',
@@ -401,7 +405,6 @@ class PortfolioContent {
     'fitness_launch': ProjectCaseStudy(
       industry: 'Health & Fitness',
       objective: 'Turn advertising interest into trial classes, and trial classes into memberships.',
-      device: ProjectDevice.laptop,
       problem:
           'Fitness studios attract trial sign-ups that never turn up, and cannot see which ads '
           'bring members who stay.',
@@ -412,7 +415,6 @@ class PortfolioContent {
     'interior_leads': ProjectCaseStudy(
       industry: 'Real Estate & Construction',
       objective: 'Help an interior studio appear for the local searches its customers actually make.',
-      device: ProjectDevice.desktop,
       problem:
           'Interior studios depend on local searches, yet their service pages rarely match what '
           'people actually search for.',
@@ -426,6 +428,8 @@ class PortfolioContent {
       industry: 'Education & Training',
       objective: 'Show how a design moves from structure to polished interface before development begins.',
       device: ProjectDevice.phone,
+      faceLeft: true,
+      photo: 'assets/images/portfolio/bookly_prototype_scene',
       screenCrop: 'crop=0.381,0.176,0.238,0.771',
       problem:
           'Teams often jump from an idea to polished screens without testing the structure, and '
@@ -438,7 +442,6 @@ class PortfolioContent {
     'banking_redesign': ProjectCaseStudy(
       industry: 'Financial Services',
       objective: 'Make everyday money tasks simpler and more reassuring for app users.',
-      device: ProjectDevice.phone,
       problem:
           'Everyday banking tasks such as sending money can feel complicated and uncertain, '
           'which erodes confidence.',
@@ -449,7 +452,6 @@ class PortfolioContent {
     'travel_journey': ProjectCaseStudy(
       industry: 'Travel & Tourism',
       objective: 'Bring every step of a multi-city trip into one clear, connected plan.',
-      device: ProjectDevice.tablet,
       problem:
           'Planning a multi-city trip means juggling many tabs, and travellers lose track of '
           'how the pieces fit together.',
@@ -460,7 +462,6 @@ class PortfolioContent {
     'saas_design_system': ProjectCaseStudy(
       industry: 'Business Operations',
       objective: 'Give a growing software product a consistent, documented interface language.',
-      device: ProjectDevice.desktop,
       problem:
           'As software products grow, screens drift apart in style and behaviour, slowing both '
           'designers and developers.',
@@ -474,6 +475,7 @@ class PortfolioContent {
       industry: 'Business Operations',
       objective: 'Let businesses see a brand direction applied before committing to it.',
       device: ProjectDevice.desktop,
+      photo: 'assets/images/portfolio/brand_kit_builder_scene',
       problem:
           'Choosing colours and typefaces in the abstract is hard; businesses need to see a '
           'direction applied before committing.',
@@ -485,7 +487,6 @@ class PortfolioContent {
     'tea_identity': ProjectCaseStudy(
       industry: 'E-commerce',
       objective: 'Give a specialty tea brand a packaging system that stands out on the shelf and online.',
-      device: ProjectDevice.tablet,
       problem:
           'Specialty products disappear on crowded shelves and product pages when the '
           'packaging lacks a clear system.',
@@ -496,7 +497,6 @@ class PortfolioContent {
     'bakery_rebrand': ProjectCaseStudy(
       industry: 'Hospitality & Food',
       objective: 'Refresh a neighbourhood bakery’s identity while keeping its warmth.',
-      device: ProjectDevice.phone,
       problem:
           'Long-standing neighbourhood businesses can look dated next to newer competitors, '
           'even when their product is excellent.',
@@ -507,7 +507,6 @@ class PortfolioContent {
     'cowork_identity': ProjectCaseStudy(
       industry: 'Real Estate & Construction',
       objective: 'Give a coworking space an identity that guides members and works across every touchpoint.',
-      device: ProjectDevice.laptop,
       problem:
           'Shared workspaces need an identity that works on signs, cards and screens, and '
           'helps members find their way around.',

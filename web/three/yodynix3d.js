@@ -1216,21 +1216,7 @@ function screenImage(kit, spec, aspect, material) {
   const params = new URLSearchParams(fragment);
   const crop = (params.get('crop') || '0,0,1,1').split(',').map(Number);
   const align = params.get('align') || 'top';
-  // grade=warm: concept photographs are toned towards the palette so stray
-  // blues don't break it; real screenshots are never graded.
-  const warm = params.get('grade') === 'warm';
-  new THREE.TextureLoader().load(url, (loaded) => {
-    let tex = loaded;
-    if (warm) {
-      const c = document.createElement('canvas');
-      c.width = loaded.image.width;
-      c.height = loaded.image.height;
-      const g = c.getContext('2d');
-      g.filter = 'sepia(0.62) saturate(0.82) brightness(1.04)';
-      g.drawImage(loaded.image, 0, 0);
-      loaded.dispose();
-      tex = new THREE.CanvasTexture(c);
-    }
+  new THREE.TextureLoader().load(url, (tex) => {
     if (!kit.view.scene) {
       tex.dispose();
       return;
@@ -3513,14 +3499,19 @@ const SCENES = {
    */
   /**
    * Portfolio device mock-ups: a real project image on a laptop, desktop
-   * monitor, tablet or phone (options.variant), or all three of laptop,
-   * tablet and phone floating together ('hero'), lit like a studio product
-   * shot with a few small gold and platinum accents. options.image holds one
-   * image spec per screen, separated by '|' (see [screenImage]).
+   * monitor, tablet or phone, or all three of laptop, tablet and phone
+   * floating together ('hero'), lit like a studio product shot with a few
+   * small gold and platinum accents. options.variant is the device with
+   * optional '-left' (turned the other way) and '-plain' (no accents,
+   * framed tightly, for setting over a photograph), e.g. 'phone-left-plain'.
+   * options.image holds one image spec per screen, separated by '|' (see
+   * [screenImage]).
    */
   device(kit, options) {
     const { scene, camera } = kit;
-    const kind = options.variant || 'laptop';
+    const [kind, ...flags] = (options.variant || 'laptop').split('-');
+    const left = flags.includes('left');
+    const plain = flags.includes('plain');
     const specs = (options.image || '').split('|').filter(Boolean);
     const root = new THREE.Group();
     scene.add(root);
@@ -3547,16 +3538,17 @@ const SCENES = {
       radius = 2.1;
       height = 0.6;
     } else {
-      const rotation = { laptop: [0, 0.42, 0], desktop: [0, 0.36, 0], tablet: [-0.08, 0.42, 0.02], phone: [0.04, 0.42, -0.05] }[kind];
-      const y = { laptop: -0.45, desktop: -0.95, tablet: 0, phone: 0 }[kind];
-      place(kind, specs[0], [0, y, 0], rotation);
-      radius = { laptop: 1.45, desktop: 1.5, tablet: 1.2, phone: 1.05 }[kind];
+      const [rx, ry, rz] = { laptop: [0, 0.42, 0], desktop: [0, 0.36, 0], tablet: [-0.08, 0.42, 0.02], phone: [0.04, 0.42, -0.05] }[kind];
+      const y = { laptop: -0.45, desktop: plain ? -1.18 : -0.95, tablet: 0, phone: 0 }[kind];
+      place(kind, specs[0], [0, y, 0], left ? [rx, -ry, -rz] : [rx, ry, rz]);
+      radius = (plain ? { laptop: 1.3, desktop: 1.42, tablet: 1.0, phone: 0.95 } : { laptop: 1.45, desktop: 1.5, tablet: 1.2, phone: 1.05 })[kind];
       height = { laptop: 0.95, desktop: 0.45, tablet: 0.35, phone: 0.3 }[kind];
     }
 
-    const accents = floaters(kit, kind === 'hero'
-      ? [['goldSphere', 1.2, 1.15, -0.8, 0.08], ['ring', -2.35, 0.95, -0.6, 0.12], ['cube', 2.45, -0.85, -0.3, 0.13], ['sphere', 0.15, -1.05, 0.9, 0.06]]
-      : [['goldSphere', radius * 0.92, radius * 0.62, -0.5, 0.07], ['ring', -radius * 0.95, radius * 0.5, -0.6, 0.1], ['cube', radius * 0.95, -radius * 0.45, 0.2, 0.1]]);
+    const accents = floaters(kit, plain ? []
+      : kind === 'hero'
+        ? [['goldSphere', 1.2, 1.15, -0.8, 0.08], ['ring', -2.35, 0.95, -0.6, 0.12], ['cube', 2.45, -0.85, -0.3, 0.13], ['sphere', 0.15, -1.05, 0.9, 0.06]]
+        : [['goldSphere', radius * 0.92, radius * 0.62, -0.5, 0.07], ['ring', -radius * 0.95, radius * 0.5, -0.6, 0.1], ['cube', radius * 0.95, -radius * 0.45, 0.2, 0.1]]);
     root.add(accents.group);
 
     const shadow = kit.contactShadow(radius * 1.15, 0.2);

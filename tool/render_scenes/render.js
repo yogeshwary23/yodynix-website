@@ -55,28 +55,26 @@ const jobs = [
   ['industries', 'hospitality', 1100, 900, 'f8f6f1', 0.5],
 ];
 
-// Portfolio device stills: each project's image on its device, transparent
-// so the card's stage shows through (assets/images/project_devices/<id>.webp).
-// devices.json comes from `dart run tool/render_scenes/export_devices.dart`.
+// Portfolio device stills: each working demo's real screenshot on its
+// device, framed tightly and transparent so the card's photograph shows
+// through (assets/images/project_devices/<id>.webp). devices.json comes from
+// `dart run tool/render_scenes/export_devices.dart`.
 const projectDir = path.join(root, 'assets/images/service_projects');
 const projectImage = (id) => {
   const file = fs.readdirSync(projectDir).find((f) => f.replace(/\.[^.]+$/, '') === id);
   return `/assets/images/service_projects/${file}`;
 };
 const devices = JSON.parse(fs.readFileSync(path.join(__dirname, 'devices.json'), 'utf8'));
-const demos = new Set(['lumen_dental', 'weave_and_co', 'fitslot', 'taskflow', 'leaddesk_crm', 'helpdesk_assistant', 'flowrunner', 'campaign_planner', 'bookly_prototype', 'brand_kit_builder']);
-const screenSpec = (id) => {
-  const { crop } = devices[id];
-  // Screenshots keep their top, untouched; concept photographs stay centred
-  // and are toned towards the palette.
-  const fragment = [crop, demos.has(id) ? null : 'align=center&grade=warm'].filter(Boolean).join('&');
-  return fragment ? `${projectImage(id)}#${fragment}` : projectImage(id);
-};
-for (const [id, { device }] of Object.entries(devices)) {
-  jobs.push(['device', device, 1200, 800, 'none', 0.5, screenSpec(id), `project_devices/${id}`]);
+const screenSpec = (id) => (devices[id].crop ? `${projectImage(id)}#${devices[id].crop}` : projectImage(id));
+for (const [id, { device, left }] of Object.entries(devices)) {
+  jobs.push(['device', `${device}${left ? '-left' : ''}-plain`, 1600, 900, 'none', 0.5, screenSpec(id), `project_devices/${id}`]);
 }
 // The Portfolio hero: real demo screenshots on a laptop, phone and tablet.
 jobs.push(['device', 'hero', 1400, 1000, 'none', 0.5, ['lumen_dental', 'fitslot', 'weave_and_co'].map(screenSpec).join('|'), 'renders/device_hero']);
+// Settings for the AI and automation demos: the gold and platinum AI and
+// automation sculptures, composed differently from the service pages.
+jobs.push(['ai', null, 1600, 900, '1f1d1b', 0.15, null, 'portfolio/helpdesk_assistant_scene']);
+jobs.push(['automation', null, 1600, 900, '1f1d1b', 0.85, null, 'portfolio/flowrunner_scene']);
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
 
@@ -124,7 +122,7 @@ function serve() {
       continue;
     }
     const clip = { x: 0, y: 0, width: w, height: h };
-    const file = out ? `${out}.webp` : bg === 'none' ? `${name}.webp` : `${name}.jpg`;
+    const file = `${out ?? name}.${bg === 'none' ? 'webp' : 'jpg'}`;
     const target = out ? path.join(root, 'assets/images', file) : path.join(outDir, file);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     await page.screenshot(

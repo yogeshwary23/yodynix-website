@@ -6,6 +6,7 @@ import 'package:yodynix_website/core/routing/app_routes.dart';
 import 'package:yodynix_website/features/expertise/expertise_page.dart';
 import 'package:yodynix_website/features/industries/industries_page.dart';
 import 'package:yodynix_website/features/portfolio/portfolio_page.dart';
+import 'package:yodynix_website/features/portfolio/portfolio_widgets.dart';
 import 'package:yodynix_website/features/portfolio/project_detail_page.dart';
 import 'package:yodynix_website/repositories/content/expertise_content.dart';
 import 'package:yodynix_website/repositories/content/industries_content.dart';
@@ -128,6 +129,25 @@ void main() {
     expect(find.text('Open Working Demo'), findsOneWidget);
     expectNoPlaceholders();
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('every portfolio project has its own full-colour visual', (tester) async {
+    await tester.runAsync(AssetRegistry.instance.init);
+    final images = <String>[];
+    for (final p in ServicePagesContent.allProjects) {
+      final study = PortfolioContent.of(p.id)!;
+      expect(p.coverPhoto, isNotNull, reason: p.id);
+      images.add(p.coverPhoto!);
+      // Working demos show their real screenshot on a device; concepts never
+      // claim a screen.
+      expect(study.device != null, p.hasDemo, reason: p.id);
+      if (p.hasDemo) {
+        expect(p.deviceStill, isNotNull, reason: p.id);
+        expect(study.photo, isNotNull, reason: p.id);
+        images.add(AssetRegistry.instance.resolve(p.image)!);
+      }
+    }
+    expect(images.toSet(), hasLength(images.length), reason: 'no image is used twice');
   });
 
   test('industry categories: the four required sectors are separate, with no duplicates', () {

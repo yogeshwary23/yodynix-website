@@ -144,3 +144,24 @@ images excluded). Downloaded as WebP at 1200–1400px wide for web performance.
 | `industries/education.webp` | 1524178232363-1fb2b075b655 |
 | `industries/realestate.webp` | 1527335988388-b40ee248d80c |
 | `industries/hospitality.webp` | 1766832255363-c9f060ade8b0 |
+
+## Portfolio page
+
+Same source and licence as above (Unsplash License, free tier only; Unsplash+
+images excluded). Downloaded as WebP at 1600px wide. The `*_scene` photos
+sit, softly blurred, behind each working demo's real screenshot on its 3D
+device; `northfield_architects_cover` is that concept's portfolio cover.
+`helpdesk_assistant_scene.jpg` and `flowrunner_scene.jpg` are renders of the
+site's own 3D scenes (tool/render_scenes), not photographs.
+
+| File | Unsplash photo ID | Photographer |
+|---|---|---|
+| `portfolio/lumen_dental_scene.webp` | 1629909613654-28e377c37b09 | Benyamin Bohlouli |
+| `portfolio/northfield_architects_cover.webp` | 1748063578185-3d68121b11ff | Arthur Baudry |
+| `portfolio/weave_and_co_scene.webp` | 1569909115134-a0426936c879 | Sergio Gonzalez |
+| `portfolio/fitslot_scene.webp` | 1761971975973-cbb3e59263de | eran design |
+| `portfolio/leaddesk_crm_scene.webp` | 1497366811353-6870744d04b2 | Nastuh Abootalebi |
+| `portfolio/bookly_prototype_scene.webp` | 1600948836101-f9ffda59d250 | Greg Trowman |
+| `portfolio/brand_kit_builder_scene.webp` | 1581079289196-67865ea83118 | Mika Baumeister |
+| `portfolio/taskflow_scene.webp` | 1775513999069-318837c9b21b | Andrii Solok |
+| `portfolio/campaign_planner_scene.webp` | 1542744173-8e7e53415bb0 | Campaign Creators |
