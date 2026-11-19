@@ -5,10 +5,17 @@ import '../../core/theme/surface_tone.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import 'cards.dart';
+import 'gold_flow.dart';
 
 /// Opens a centred, scrollable dialog with the site's styling and a fade/scale
-/// transition.
-Future<T?> showSiteDialog<T>(BuildContext context, {required WidgetBuilder builder, double maxWidth = 860}) {
+/// transition. [ambient] adds flowing gold lines behind the body, for
+/// dialogs that stand in for a page (such as the client portal).
+Future<T?> showSiteDialog<T>(
+  BuildContext context, {
+  required WidgetBuilder builder,
+  double maxWidth = 860,
+  bool ambient = false,
+}) {
   return showGeneralDialog<T>(
     context: context,
     barrierDismissible: true,
@@ -32,6 +39,11 @@ Future<T?> showSiteDialog<T>(BuildContext context, {required WidgetBuilder build
                 clipBehavior: Clip.antiAlias,
                 child: Stack(
                   children: [
+                    if (ambient)
+                      // Arcs in the free lower-right corner, clear of the text and actions.
+                      const Positioned.fill(
+                        child: GoldFlowLayer(pattern: GoldFlowPattern.arcs, intensity: 0.8, band: 90, bottom: true, right: true),
+                      ),
                     SingleChildScrollView(child: builder(dialogContext)),
                     Positioned(
                       top: 12,

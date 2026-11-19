@@ -245,6 +245,7 @@ class _PrincipleCardState extends State<_PrincipleCard> {
       child: Tilt3D(
         radius: AppRadius.xl,
         maxAngle: 5,
+        lift: 8,
         child: AnimatedContainer(
           duration: AppMotion.lift,
           curve: AppMotion.ease,
@@ -416,6 +417,7 @@ class _PillarCardState extends State<_PillarCard> {
       child: Tilt3D(
         radius: AppRadius.xl,
         maxAngle: 3,
+        lift: 8,
         child: AnimatedContainer(
           duration: AppMotion.lift,
           curve: AppMotion.ease,

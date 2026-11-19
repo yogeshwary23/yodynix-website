@@ -12,6 +12,7 @@ import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/three/scene_widgets.dart';
 import '../../shared/widgets/buttons.dart';
 import '../../shared/widgets/cards.dart';
+import '../../shared/widgets/gold_flow.dart';
 import '../../shared/widgets/particle_network.dart';
 import '../../shared/widgets/reveal.dart';
 import '../../shared/widgets/section_widgets.dart';
@@ -84,6 +85,13 @@ class _HeroSectionState extends State<HeroSection> {
             child: Stack(
               children: [
                 Positioned(left: 0, right: 0, top: 0, bottom: overlap, child: HeroBackdrop(pointer: _pointer)),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: overlap,
+                  child: const GoldFlowLayer(pattern: GoldFlowPattern.ribbon, intensity: 0.8, bottom: true, band: 200),
+                ),
                 const Positioned.fill(child: ParticleNetworkLayer()),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

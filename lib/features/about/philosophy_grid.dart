@@ -85,6 +85,7 @@ class _PhilosophyCardState extends State<_PhilosophyCard> {
         child: Tilt3D(
           radius: AppRadius.xl,
           maxAngle: 4,
+          lift: 6,
           child: AnimatedContainer(
             duration: AppMotion.lift,
             curve: AppMotion.ease,

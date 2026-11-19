@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
+import 'gold_flow.dart';
 import 'particle_network.dart';
 import 'reveal.dart';
 
@@ -43,6 +46,8 @@ class SectionShell extends StatelessWidget {
     this.glowAt,
     this.glowStrength = 1,
     this.particles = true,
+    this.flow = true,
+    this.flowPattern,
   });
 
   final Widget child;
@@ -64,6 +69,11 @@ class SectionShell extends StatelessWidget {
   /// content (see [ParticleNetworkLayer]).
   final bool particles;
 
+  /// Paints flowing gold lines behind the content (see [GoldFlowLayer]);
+  /// [flowPattern] picks their shape, or null for the next in turn.
+  final bool flow;
+  final GoldFlowPattern? flowPattern;
+
   @override
   Widget build(BuildContext context) {
     final pad = context.sectionPadding;
@@ -77,6 +87,11 @@ class SectionShell extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      if (flow)
+        Positioned.fill(
+          // The curves keep to the padding, whichever edge they gather at.
+          child: GoldFlowLayer(pattern: flowPattern, band: math.min(topPadding ?? pad, bottomPadding ?? pad)),
         ),
       if (particles) const Positioned.fill(child: ParticleNetworkLayer()),
       if (decoration != null) Positioned.fill(child: decoration!),

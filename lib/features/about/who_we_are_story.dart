@@ -180,6 +180,7 @@ class _StatementCardState extends State<_StatementCard> {
       child: Tilt3D(
         radius: AppRadius.xl,
         maxAngle: 4,
+        lift: 6,
         child: AnimatedContainer(
           duration: AppMotion.lift,
           curve: AppMotion.ease,

@@ -12,6 +12,7 @@ import '../../repositories/content/services_content.dart';
 import '../../services/link_service.dart';
 import '../widgets/brand_logo.dart';
 import '../widgets/gold_dust.dart';
+import '../widgets/gold_flow.dart';
 import '../widgets/section_widgets.dart';
 import '../widgets/social_icon.dart';
 import 'navigation_actions.dart';
@@ -66,6 +67,7 @@ class SiteFooter extends StatelessWidget {
             border: Border(top: BorderSide(color: AppColors.champagneGold.withValues(alpha: 0.45))),
           ),
           child: GoldDust(
+            flow: GoldFlowPattern.waves,
             child: MaxWidth(
               child: Padding(
                 padding: EdgeInsets.only(top: context.responsive(mobile: 56.0, desktop: 80.0), bottom: 28),

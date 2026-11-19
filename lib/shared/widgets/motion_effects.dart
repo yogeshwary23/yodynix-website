@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart' show PointerHoverEvent;
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_tokens.dart';
 
 /// Whether the visitor asked the system for reduced motion.
 bool prefersReducedMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
@@ -56,7 +57,7 @@ class _MagneticState extends State<Magnetic> {
 /// soft champagne sheen that follows it like light across glass. Touch
 /// input and reduced motion leave the child flat.
 class Tilt3D extends StatefulWidget {
-  const Tilt3D({super.key, required this.child, this.maxAngle = 5, this.radius = 0, this.sheen = true});
+  const Tilt3D({super.key, required this.child, this.maxAngle = 5, this.radius = 0, this.sheen = true, this.lift = 0});
 
   final Widget child;
 
@@ -66,6 +67,10 @@ class Tilt3D extends StatefulWidget {
   /// Corner radius of the sheen, matching the child's shape.
   final double radius;
   final bool sheen;
+
+  /// How far the child rises while hovered, so the sheen and the gold edge
+  /// trace stay on it.
+  final double lift;
 
   @override
   State<Tilt3D> createState() => _Tilt3DState();
@@ -116,21 +121,34 @@ class _Tilt3DState extends State<Tilt3D> {
                       child!,
                       Positioned.fill(
                         child: IgnorePointer(
-                          child: Opacity(
-                            opacity: _inside ? 1 : strength,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(widget.radius),
-                                gradient: RadialGradient(
-                                  center: Alignment(p.dx, p.dy),
-                                  radius: 0.9,
-                                  colors: [
-                                    AppColors.white.withValues(alpha: 0.32),
-                                    AppColors.softChampagne.withValues(alpha: 0.08),
-                                    AppColors.softChampagne.withValues(alpha: 0),
-                                  ],
-                                  stops: const [0, 0.45, 1],
-                                ),
+                          // The child may rise on hover; the light rises with it.
+                          child: TweenAnimationBuilder<double>(
+                            tween: Tween(end: _inside ? widget.lift : 0),
+                            duration: AppMotion.lift,
+                            curve: AppMotion.ease,
+                            builder: (_, lift, overlay) => Transform.translate(offset: Offset(0, -lift), child: overlay),
+                            child: Opacity(
+                              opacity: _inside ? 1 : strength,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  if (widget.radius > 0 && (_inside || strength > 0.05)) GoldEdgeTrace(radius: widget.radius),
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(widget.radius),
+                                      gradient: RadialGradient(
+                                        center: Alignment(p.dx, p.dy),
+                                        radius: 0.9,
+                                        colors: [
+                                          AppColors.white.withValues(alpha: 0.32),
+                                          AppColors.softChampagne.withValues(alpha: 0.08),
+                                          AppColors.softChampagne.withValues(alpha: 0),
+                                        ],
+                                        stops: const [0, 0.45, 1],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -144,4 +162,72 @@ class _Tilt3DState extends State<Tilt3D> {
       ),
     );
   }
+}
+
+/// A band of champagne light travelling around a rounded rectangle's edge,
+/// for cards under the pointer. Only mounted while hovered, so its
+/// animation runs only then.
+class GoldEdgeTrace extends StatefulWidget {
+  const GoldEdgeTrace({super.key, required this.radius});
+
+  final double radius;
+
+  @override
+  State<GoldEdgeTrace> createState() => _GoldEdgeTraceState();
+}
+
+class _GoldEdgeTraceState extends State<GoldEdgeTrace> with SingleTickerProviderStateMixin {
+  late final AnimationController _turn = AnimationController(vsync: this, duration: const Duration(milliseconds: 3200))
+    ..repeat();
+
+  @override
+  void dispose() {
+    _turn.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOut,
+      builder: (_, fade, _) => CustomPaint(painter: _EdgeTracePainter(_turn, widget.radius, fade)),
+    );
+  }
+}
+
+class _EdgeTracePainter extends CustomPainter {
+  _EdgeTracePainter(this.turn, this.radius, this.fade) : super(repaint: turn);
+
+  final Animation<double> turn;
+  final double radius;
+  final double fade;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rrect = RRect.fromRectAndRadius((Offset.zero & size).deflate(0.75), Radius.circular(radius));
+    final angle = turn.value * math.pi * 2;
+    final shader = SweepGradient(
+      transform: GradientRotation(angle),
+      colors: [
+        AppColors.softChampagne.withValues(alpha: 0),
+        AppColors.champagneGold.withValues(alpha: 0.9 * fade),
+        AppColors.white.withValues(alpha: 0.95 * fade),
+        AppColors.champagneGold.withValues(alpha: 0.9 * fade),
+        AppColors.softChampagne.withValues(alpha: 0),
+        AppColors.softChampagne.withValues(alpha: 0),
+      ],
+      stops: const [0, 0.08, 0.12, 0.16, 0.26, 1],
+    ).createShader(Offset.zero & size);
+    final stroke = Paint()
+      ..shader = shader
+      ..style = PaintingStyle.stroke;
+    // A faint wide stroke for the glow, then the bright edge.
+    canvas.drawRRect(rrect, stroke..strokeWidth = 5..color = const Color(0x40000000));
+    canvas.drawRRect(rrect, stroke..strokeWidth = 1.5..color = const Color(0xFF000000));
+  }
+
+  @override
+  bool shouldRepaint(_EdgeTracePainter old) => old.turn != turn || old.radius != radius || old.fade != fade;
 }

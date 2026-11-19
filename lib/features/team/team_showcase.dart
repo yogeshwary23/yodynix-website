@@ -246,6 +246,7 @@ class _CardShellState extends State<_CardShell> {
       child: Tilt3D(
         radius: AppRadius.xl,
         maxAngle: 3,
+        lift: 6,
         child: AnimatedContainer(
           duration: AppMotion.lift,
           curve: AppMotion.ease,

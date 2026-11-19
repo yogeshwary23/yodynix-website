@@ -4,17 +4,22 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/responsive.dart';
 import '../three/scroll_animation_controller.dart';
+import 'gold_flow.dart';
 
 /// Slowly rising champagne-gold motes behind [child] — the footer's ambient
 /// detail. Drawn in Flutter (no WebGL), it only ticks while on screen and
 /// holds a still scatter when the visitor prefers reduced motion.
 class GoldDust extends StatefulWidget {
-  const GoldDust({super.key, required this.child, this.count = 46, this.opacity = 1});
+  const GoldDust({super.key, required this.child, this.count = 46, this.opacity = 1, this.flow});
 
   final Widget child;
   final int count;
   final double opacity;
+
+  /// Also draws flowing gold lines in this pattern behind the motes.
+  final GoldFlowPattern? flow;
 
   @override
   State<GoldDust> createState() => _GoldDustState();
@@ -64,6 +69,11 @@ class _GoldDustState extends State<GoldDust> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        if (widget.flow case final flow?)
+          Positioned.fill(
+            // Along the top, in the space above the footer's columns.
+            child: GoldFlowLayer(pattern: flow, intensity: 0.7, bottom: false, band: context.responsive(mobile: 50.0, desktop: 74.0)),
+          ),
         Positioned.fill(
           child: IgnorePointer(
             child: RepaintBoundary(child: CustomPaint(painter: _DustPainter(_motes, _time, widget.opacity))),

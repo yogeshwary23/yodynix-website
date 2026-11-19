@@ -127,7 +127,18 @@ motion and for touch): magnetic primary/secondary buttons, 3D tilt with a champa
 on every `HoverCard`, a light sweep, gold halo and press on primary buttons, a liquid-gold
 active indicator and hover lift in the navbar, staggered count-up statistics, cinematic page
 transitions (`AppRouter`), and rising gold dust in the footer (`GoldDust`, Flutter-drawn,
-only ticks while on screen).
+only ticks while on screen). Cards that tilt also trace a band of champagne light around
+their edge while hovered (`GoldEdgeTrace`).
+
+**Gold lines** (`lib/shared/widgets/gold_flow.dart`): every `SectionShell`, the homepage
+hero, the footer and the Client Login dialog paint a `GoldFlowLayer` — thin champagne-gold
+curves with a soft glow and a point of light travelling along each. Four patterns (waves,
+corner arcs, side contours, a twisting ribbon) are handed out in page order, so neighbouring
+sections differ. Waves, arcs and ribbon keep to the section's top or bottom padding and the
+contours to the side margin, so they pass between content, never behind text. They shift
+with the scroll and pointer for parallax, step on the same ~30 fps frames as the particle
+network (`AmbientClock`), stop off screen, hold still under reduced motion, and ignore
+pointer input. `SectionShell(flow: false)` turns them off for a section.
 
 **Performance.** The engine module (~750 KB uncompressed) is imported only when a scene
 nears the viewport; pages without 3D never load it. Off-screen scenes stop rendering;

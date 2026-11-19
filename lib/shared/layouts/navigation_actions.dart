@@ -146,6 +146,7 @@ void showClientLoginDialog(BuildContext context) {
   showSiteDialog(
     context,
     maxWidth: 480,
+    ambient: true,
     builder: (dialogContext) => SiteDialogBody(
       icon: Icons.lock_outline_rounded,
       title: 'Client Portal: Coming Soon',

@@ -103,6 +103,7 @@ class _HoverCardState extends State<HoverCard> {
       child: Tilt3D(
         radius: widget.radius,
         maxAngle: 4,
+        lift: 4,
         child: AnimatedContainer(
           duration: AppMotion.lift,
           curve: AppMotion.ease,

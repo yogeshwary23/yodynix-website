@@ -185,6 +185,7 @@ class _ProjectCardState extends State<ProjectCard> {
           child: Tilt3D(
             maxAngle: 3,
             radius: AppRadius.xl,
+            lift: 6,
             child: AnimatedContainer(
               duration: AppMotion.lift,
               curve: AppMotion.ease,

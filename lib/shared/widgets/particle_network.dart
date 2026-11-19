@@ -104,6 +104,23 @@ class _Particle {
   int links = 0;
 }
 
+/// Decides which frames an ambient background layer advances on: about 30
+/// a second, on a grid shared by every layer, so the page repaints once per
+/// step however many layers are running.
+class AmbientClock {
+  static const stepsPerSecond = 30;
+
+  int _slot = -1;
+
+  /// Whether this frame starts a new step.
+  bool due() {
+    final slot = SchedulerBinding.instance.currentFrameTimeStamp.inMicroseconds * stepsPerSecond ~/ 1000000;
+    if (slot == _slot) return false;
+    _slot = slot;
+    return true;
+  }
+}
+
 /// The shared particle simulation behind every [ParticleNetworkLayer].
 class ParticleField {
   ParticleField._();
@@ -122,6 +139,7 @@ class ParticleField {
   Ticker? _ticker;
   Duration _last = Duration.zero;
   double _sinceStep = 0;
+  final AmbientClock _clock = AmbientClock();
   double _time = 0;
   Size _viewport = Size.zero;
   Offset _pointerTarget = Offset.zero;
@@ -131,6 +149,10 @@ class ParticleField {
   ui.Image? _atlas;
   bool _loading = false;
   bool get _ready => _atlas != null && _particles.isNotEmpty;
+
+  /// The eased mouse position over the window, each axis -1 to 1, for other
+  /// ambient layers to share the particles' parallax.
+  Offset get pointer => _pointer;
 
   // Drawing buffers, reused every frame.
   Float32List _transforms = Float32List(0);
@@ -196,7 +218,7 @@ class ParticleField {
     _last = elapsed;
     _sinceStep += dt;
     // About 30 steps a second: drift this slow looks the same, at half the work.
-    if (_sinceStep < 1 / 32) return;
+    if (!_clock.due()) return;
     _resize();
     _step(_sinceStep);
     _sinceStep = 0;
