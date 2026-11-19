@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
 
   /// Browser tab title; restored by the app's navigator observer whenever
   /// navigation returns to the homepage.
-  static const String documentTitle = '${SiteConfig.brandName} | ${SiteConfig.brandCategory}';
+  static const String documentTitle = '${SiteConfig.brandName} | ${SiteConfig.tagline}';
 
   static const Map<SiteSection, Widget> _sections = {
     SiteSection.home: HeroSection(),

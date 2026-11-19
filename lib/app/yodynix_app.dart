@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../core/constants/site_config.dart';
 import '../core/routing/app_navigation.dart';
 import '../core/routing/app_router.dart';
 import '../core/theme/app_colors.dart';
@@ -36,7 +35,7 @@ class _YodynixAppState extends State<YodynixApp> {
     return SectionNavigatorScope(
       navigator: _sections,
       child: MaterialApp.router(
-        title: '${SiteConfig.brandName} | ${SiteConfig.brandCategory}',
+        title: HomePage.documentTitle,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
         themeMode: ThemeMode.light,

@@ -13,7 +13,9 @@ class SiteConfig {
 
   static const String brandName = 'YODYNIX';
   static const String brandCategory = 'Digital Technology & Innovation Studio';
-  static const String tagline = 'Turning Ideas Into Powerful Digital Experiences.';
+  /// The official brand tagline: the homepage title (as Google shows it),
+  /// the sharing titles and the structured-data slogan.
+  static const String tagline = 'Technology. Intelligence. Innovation.';
   static const String shortDescription =
       'A digital technology and innovation studio helping businesses, startups, '
       'entrepreneurs and students turn ideas into practical digital solutions.';
@@ -77,13 +79,12 @@ class ContactConfig {
 class SocialConfig {
   SocialConfig._();
 
-  // Only configured links are shown.
+  // Only configured links are shown. The same URLs are the `sameAs` profiles
+  // in web/index.html's structured data (test/seo_test.dart keeps them equal).
   static const List<SocialLink> links = [
-    SocialLink(
-      platform: SocialPlatform.instagram,
-      url: 'https://www.instagram.com/yodynix?mdxt=MWNpdGgxOWt1NG1weg%3D%3D&utm_source=qr',
-      handle: '@yodynix',
-    ),
+    SocialLink(platform: SocialPlatform.instagram, url: 'https://www.instagram.com/yodynix/', handle: '@yodynix'),
+    SocialLink(platform: SocialPlatform.facebook, url: 'https://www.facebook.com/people/Yodynix/61592544453906/'),
+    SocialLink(platform: SocialPlatform.linkedin, url: 'https://www.linkedin.com/company/yodynix/'),
   ];
 }
 

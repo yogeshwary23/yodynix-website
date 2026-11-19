@@ -104,6 +104,17 @@ class _ContactChannels extends StatelessWidget {
       ),
       if (social.isEmpty)
         const _Channel(icon: Icons.public_rounded, label: 'Social Media', lines: [], color: AppColors.accent)
+      else if (social.length > 1)
+        // One card, one tappable line per profile (like several phone
+        // numbers), so the channel grid keeps its layout.
+        _Channel(
+          icon: Icons.public_rounded,
+          label: 'Social Media',
+          lines: [
+            for (final link in social) _ChannelLine(link.platform.label, () => LinkService.open(link.url)),
+          ],
+          color: AppColors.accent,
+        )
       else
         _Channel(
           icon: social.first.platform.icon,

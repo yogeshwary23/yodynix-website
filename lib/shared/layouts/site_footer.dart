@@ -13,6 +13,7 @@ import '../../services/link_service.dart';
 import '../widgets/brand_logo.dart';
 import '../widgets/gold_dust.dart';
 import '../widgets/section_widgets.dart';
+import '../widgets/social_icon.dart';
 import 'navigation_actions.dart';
 
 class SiteFooter extends StatelessWidget {
@@ -199,7 +200,7 @@ class _BrandBlock extends StatelessWidget {
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: () => LinkService.open(link.url),
-                      child: SizedBox(width: 40, height: 40, child: Icon(link.platform.icon, size: 16, color: AppColors.onDark)),
+                      child: SizedBox(width: 40, height: 40, child: SocialIcon(link.platform, size: 16, color: AppColors.onDark)),
                     ),
                   ),
                 ),

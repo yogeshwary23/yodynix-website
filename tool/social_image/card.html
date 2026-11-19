@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- Source of web/og-image.png (1200 x 630); rendered by render.js. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Sora; font-weight: 800; src: url('../../assets/fonts/Sora-ExtraBold.ttf'); }
+  @font-face { font-family: Sora; font-weight: 600; src: url('../../assets/fonts/Sora-SemiBold.ttf'); }
+  @font-face { font-family: Inter; font-weight: 500; src: url('../../assets/fonts/Inter-Medium.ttf'); }
+  @font-face { font-family: Inter; font-weight: 600; src: url('../../assets/fonts/Inter-SemiBold.ttf'); }
+
+  :root {
+    --pearl: #F8F6F1;
+    --beige: #EFE6D6;
+    --platinum: #D9D7D2;
+    --silver: #A9A6A0;
+    --gold: #C6A46A;
+    --gold-deep: #A98245;
+    --gold-light: #E3CFA3;
+    --charcoal: #2A2826;
+    --muted: #6B665E;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative;
+    background:
+      radial-gradient(ellipse 620px 520px at 82% 18%, rgba(227, 207, 163, 0.45), transparent 70%),
+      radial-gradient(ellipse 700px 560px at 8% 100%, rgba(217, 215, 210, 0.75), transparent 70%),
+      linear-gradient(135deg, #FBFAF6 0%, var(--pearl) 45%, var(--beige) 100%);
+    font-family: Inter, sans-serif;
+    color: var(--charcoal);
+  }
+  /* Champagne-to-platinum frame, like the site's metallic hairlines. */
+  .frame {
+    position: absolute; inset: 28px; border-radius: 28px;
+    border: 1.5px solid transparent;
+    background: linear-gradient(var(--pearl), var(--pearl)) padding-box,
+                linear-gradient(120deg, var(--gold-light), var(--platinum) 45%, var(--gold) 100%) border-box;
+    opacity: 0.9;
+  }
+  .content {
+    position: absolute; inset: 28px; display: flex; align-items: center; gap: 64px; padding: 0 84px;
+  }
+  .mark {
+    flex: none; width: 330px; height: 330px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, #F3EEE4 60%, #E9E1D2 100%);
+    box-shadow: 0 30px 60px rgba(169, 130, 69, 0.22), inset 0 0 0 1.5px rgba(198, 164, 106, 0.45);
+  }
+  .mark img { width: 268px; height: 268px; filter: drop-shadow(0 10px 14px rgba(42, 40, 38, 0.18)); }
+  .text { flex: 1; min-width: 0; }
+  .wordmark {
+    font-family: Sora, sans-serif; font-weight: 800; font-size: 92px; letter-spacing: 12px; line-height: 1;
+    background: linear-gradient(180deg, #3A3733 0%, var(--charcoal) 55%, #141312 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .rule {
+    width: 132px; height: 4px; border-radius: 4px; margin: 30px 0 28px;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold-light), var(--platinum));
+  }
+  .category { font-family: Sora, sans-serif; font-weight: 600; font-size: 30px; line-height: 1.32; color: var(--charcoal); }
+  .category span { color: var(--gold-deep); }
+  .meta {
+    margin-top: 34px; display: flex; align-items: center; gap: 14px;
+    font-weight: 600; font-size: 21px; letter-spacing: 0.4px; color: var(--muted);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="content">
+    <div class="mark"><img src="../../assets/images/brand/yodynix_logo_charcoal.png" alt=""></div>
+    <div class="text">
+      <div class="wordmark">YODYNIX</div>
+      <div class="rule"></div>
+      <div class="category">Software Development,<br>Web &amp; Mobile Apps <span>and AI Solutions</span></div>
+      <div class="meta">yodynix.it.com <span class="dot"></span> Moshi, Pune, India</div>
+    </div>
+  </div>
+</body>
+</html>
