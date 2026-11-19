@@ -7,6 +7,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/content_models.dart';
 import '../../repositories/content/company_content.dart';
+import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/three/photo_scene.dart';
 import '../../shared/three/scene3d.dart';
 import '../../shared/widgets/cards.dart';
@@ -400,7 +401,7 @@ class _PillarCardState extends State<_PillarCard> {
 
   bool get _active => _hover || _focus;
 
-  void _open() => Navigator.of(context).pushNamed(widget.pillar.route);
+  void _open() => openRoute(context, widget.pillar.route);
 
   @override
   Widget build(BuildContext context) {

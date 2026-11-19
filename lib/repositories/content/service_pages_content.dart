@@ -25,6 +25,18 @@ class ServicePagesContent {
   /// Every sample project across all services, in page order.
   static List<SampleProject> get allProjects => [for (final p in _pages.values) ...p.projects];
 
+  /// The project whose page is at `/portfolio/<slug>`, if any.
+  static SampleProject? projectBySlug(String slug) {
+    for (final p in allProjects) {
+      if (p.slug == slug) return p;
+    }
+    return null;
+  }
+
+  /// The service a project belongs to.
+  static ServiceOffering serviceOf(SampleProject project) =>
+      ServicesContent.services.firstWhere((s) => _pages[s.id]!.projects.contains(project));
+
   static const _pages = <String, ServicePageContent>{
     // ------------------------------------------------------------ Website
     'website_development': ServicePageContent(

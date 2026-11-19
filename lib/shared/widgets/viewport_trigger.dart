@@ -37,7 +37,13 @@ mixin ViewportTrigger<T extends StatefulWidget> on State<T> {
     final box = context.findRenderObject();
     final ancestor = _scrollableBox ??= Scrollable.maybeOf(context)?.context.findRenderObject();
     final position = _position;
-    if (box is! RenderBox || !box.attached || !box.hasSize || ancestor == null || position == null) return;
+    if (ancestor == null || position == null) return;
+    if (box is! RenderBox || !box.attached || !box.hasSize) {
+      // Not laid out yet, e.g. a page built beneath another route on a deep
+      // link: look again after a later frame, once it is shown.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _check());
+      return;
+    }
     final top = box.localToGlobal(Offset.zero, ancestor: ancestor).dy;
     if (top < position.viewportDimension * lookahead) _trigger();
   }

@@ -101,10 +101,10 @@ class SiteFooter extends StatelessWidget {
                         spacing: 20,
                         runSpacing: 8,
                         children: [
-                          _FooterLink('Privacy Policy', () => Navigator.of(context).pushNamed(AppRoutes.privacy), compact: true),
+                          _FooterLink('Privacy Policy', () => openRoute(context, AppRoutes.privacy), compact: true),
                           _FooterLink(
                             'Terms & Conditions',
-                            () => Navigator.of(context).pushNamed(AppRoutes.terms),
+                            () => openRoute(context, AppRoutes.terms),
                             compact: true,
                           ),
                         ],

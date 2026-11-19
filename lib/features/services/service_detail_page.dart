@@ -284,7 +284,7 @@ class ServiceBreadcrumb extends StatelessWidget {
             link('Services', Icons.grid_view_rounded, () => goToSection(context, SiteSection.services)),
             separator,
             if (service case final s?) ...[
-              link(s.title, s.icon, () => Navigator.of(context).pushReplacementNamed(s.route)),
+              link(s.title, s.icon, () => openRoute(context, s.route)),
               separator,
             ],
             Padding(

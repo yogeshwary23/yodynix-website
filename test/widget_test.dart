@@ -52,7 +52,7 @@ void main() {
     await tester.tap(find.text('View all services'));
     await settle();
     expect(find.byType(ServicesPage), findsOneWidget);
-    expect(find.byType(ExpertisePage), findsNothing, reason: 'the Services page replaces the Expertise page');
+    expect(find.byType(ExpertisePage), findsNothing, reason: 'the Services page opens on top of the Expertise page');
     expect(tester.takeException(), isNull);
   });
 

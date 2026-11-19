@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/routing/app_navigation.dart';
+import '../../core/routing/app_router.dart';
+import '../../core/routing/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
@@ -24,7 +27,12 @@ class DemoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final service = demo.service;
     final project = demo.project;
-    void backToService() => Navigator.of(context).pushReplacementNamed(service.route);
+    // Back to wherever the demo was opened from: a project, the portfolio
+    // or the service page; a direct visit goes to the service page.
+    final previous = AppNavigation.current?.previousPage(context);
+    final hasOrigin = previous != null && previous.settings.name != AppRoutes.home;
+    final backLabel = hasOrigin ? 'Back to ${AppRouter.titleFor(previous.settings.name!)}' : 'Back to ${service.title}';
+    void back() => hasOrigin ? AppNavigation.back(context) : openRoute(context, service.route);
     void startProject() => goToSection(context, SiteSection.contact, enquiryService: service.title);
 
     return SubpageScaffold(
@@ -71,7 +79,7 @@ class DemoPage extends StatelessWidget {
                   spacing: 12,
                   runSpacing: 12,
                   children: [
-                    SecondaryButton(label: 'Back to ${service.title}', icon: Icons.arrow_back_rounded, onPressed: backToService),
+                    SecondaryButton(label: backLabel, icon: Icons.arrow_back_rounded, onPressed: back),
                     PrimaryButton(label: 'Start Your Project', onPressed: startProject),
                   ],
                 ),

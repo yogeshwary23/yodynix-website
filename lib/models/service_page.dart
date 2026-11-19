@@ -42,6 +42,9 @@ class SampleProject {
   final String? demoRoute;
 
   bool get hasDemo => demoRoute != null;
+
+  /// URL segment of the project's own page, e.g. `lumen-dental`.
+  String get slug => id.replaceAll('_', '-');
   String get image => AssetPaths.serviceProject(id);
 }
 

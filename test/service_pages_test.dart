@@ -9,6 +9,9 @@ import 'package:yodynix_website/features/demos/demo_catalog.dart';
 import 'package:yodynix_website/features/demos/demo_page.dart';
 import 'package:yodynix_website/features/contact/contact_form.dart';
 import 'package:yodynix_website/features/home/home_page.dart';
+import 'package:yodynix_website/features/home/not_found_page.dart';
+import 'package:yodynix_website/features/portfolio/portfolio_page.dart';
+import 'package:yodynix_website/features/portfolio/project_detail_page.dart';
 import 'package:yodynix_website/features/services/service_detail_page.dart';
 import 'package:yodynix_website/models/site_section.dart';
 import 'package:yodynix_website/repositories/content/service_pages_content.dart';
@@ -127,7 +130,7 @@ void main() {
     }
   });
 
-  test('service and demo URLs build their own pages; unknown URLs fall back home', () {
+  test('service and demo URLs build their own pages; unknown URLs show the not-found page', () {
     Widget build(String name) {
       final route = AppRouter.onGenerateRoute(RouteSettings(name: name)) as PageRouteBuilder;
       return route.pageBuilder(_FakeContext(), kAlwaysCompleteAnimation, kAlwaysCompleteAnimation);
@@ -140,14 +143,21 @@ void main() {
     for (final d in DemoCatalog.demos) {
       expect(build(d.route), isA<DemoPage>());
     }
-    expect(build('/services/not-a-service'), isA<HomePage>());
-    expect(build('/demos/nope'), isA<HomePage>());
+    for (final p in ServicePagesContent.allProjects) {
+      expect((build(AppRoutes.project(p.slug)) as ProjectDetailPage).project.id, p.id);
+    }
+    expect(build('/portfolio?filter=x'), isA<PortfolioPage>());
+    expect(build('/services/not-a-service'), isA<NotFoundPage>());
+    expect(build('/demos/nope'), isA<NotFoundPage>());
+    expect(build('/no-such-page'), isA<NotFoundPage>());
     expect(build('/students'), isA<HomePage>());
 
     final deep = AppRouter.onGenerateInitialRoutes('/services/website-development', onSectionLink: (_) {});
     expect(deep.map((r) => r.settings.name), ['/', '/services/website-development']);
     final demo = AppRouter.onGenerateInitialRoutes('/demos/mini-crm', onSectionLink: (_) {});
     expect(demo.map((r) => r.settings.name), ['/', '/demos/mini-crm']);
+    final project = AppRouter.onGenerateInitialRoutes('/portfolio/lumen-dental', onSectionLink: (_) {});
+    expect(project.map((r) => r.settings.name), ['/', '/portfolio', '/portfolio/lumen-dental']);
   });
 
   testWidgets('Services dropdown lists all services and opens their pages', (tester) async {
@@ -169,12 +179,22 @@ void main() {
     await settle(tester);
     expect((topPage(tester) as ServiceDetailPage).service.id, target.id);
 
-    // Picking another service replaces the page, so "back" returns home.
+    // Picking another service opens it on top, so Back returns to the
+    // service it was opened from; re-opening that one returns to it instead
+    // of stacking a duplicate.
     await tester.tap(navServices.last);
     await settle(tester);
     await tester.tap(find.descendant(of: servicesMenu, matching: find.text(ServicesContent.services.first.title)));
     await settle(tester);
     expect((topPage(tester) as ServiceDetailPage).service.id, ServicesContent.services.first.id);
+    expect(find.text('Back to ${target.title}'), findsOneWidget);
+    await tester.tap(find.text('Back to ${target.title}'));
+    await settle(tester);
+    expect((topPage(tester) as ServiceDetailPage).service.id, target.id);
+    await tester.tap(navServices.last);
+    await settle(tester);
+    await tester.tap(find.descendant(of: servicesMenu, matching: find.text(target.title)));
+    await settle(tester);
     navigator(tester).pop();
     await settle(tester);
     expect(topPage(tester), isNull);

@@ -1,5 +1,6 @@
 import '../../models/about_page.dart';
 import '../../models/site_section.dart';
+import '../../repositories/content/service_pages_content.dart';
 
 /// Route arguments understood by the Careers page.
 enum CareersPageArgs {
@@ -38,6 +39,10 @@ class AppRoutes {
   static String service(String slug) => '$servicePrefix$slug';
   static String demo(String slug) => '$demoPrefix$slug';
 
+  /// A demonstration project's own page, e.g. `/portfolio/lumen-dental`.
+  static const String projectPrefix = '/portfolio/';
+  static String project(String slug) => '$projectPrefix$slug';
+
   /// Shareable homepage section links, e.g. `/#/services` or `/#/why-choose`.
   static String section(SiteSection section) =>
       '/${section.name.replaceAllMapped(RegExp('[A-Z]'), (m) => '-${m[0]!.toLowerCase()}')}';
@@ -69,11 +74,19 @@ class AppRoutes {
       '/projects' || '/work' => portfolio,
       // Flutter is now part of Mobile Application Development.
       '/services/flutter-development' => service('mobile-app-development'),
-      _ when normalised.startsWith('/portfolio/') => portfolio,
+      // Project pages; unknown project links open the portfolio.
+      _ when normalised.startsWith(projectPrefix) =>
+        ServicePagesContent.projectBySlug(normalised.substring(projectPrefix.length)) == null ? portfolio : normalised,
       _ => normalised,
     };
   }
 
-  /// Strips a trailing slash so `/business-solutions/` resolves too.
-  static String normalise(String route) => route.endsWith('/') && route.length > 1 ? route.substring(0, route.length - 1) : route;
+  /// Drops any query or fragment and a trailing slash, so
+  /// `/business-solutions/?ref=x` resolves like `/business-solutions`.
+  static String normalise(String route) {
+    final cut = route.indexOf(RegExp('[?#]'));
+    final path = cut < 0 ? route : route.substring(0, cut);
+    if (path.isEmpty) return home;
+    return path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1) : path;
+  }
 }

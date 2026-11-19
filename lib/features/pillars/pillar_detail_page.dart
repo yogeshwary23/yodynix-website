@@ -915,8 +915,7 @@ class _RelatedCard extends StatefulWidget {
 class _RelatedCardState extends State<_RelatedCard> {
   bool _hover = false;
 
-  // Replace rather than push so "back" always returns to the homepage.
-  void _open() => Navigator.of(context).pushReplacementNamed(widget.pillar.route);
+  void _open() => openRoute(context, widget.pillar.route);
 
   @override
   Widget build(BuildContext context) {

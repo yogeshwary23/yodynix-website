@@ -1,0 +1,115 @@
+{
+  "lumen_dental": {
+    "device": "laptop"
+  },
+  "northfield_architects": {
+    "device": "laptop"
+  },
+  "saffron_table": {
+    "device": "tablet"
+  },
+  "peak_realty": {
+    "device": "laptop"
+  },
+  "weave_and_co": {
+    "device": "laptop"
+  },
+  "freshcart": {
+    "device": "phone"
+  },
+  "studio_sole": {
+    "device": "tablet"
+  },
+  "bloom_box": {
+    "device": "laptop"
+  },
+  "fitslot": {
+    "device": "phone",
+    "crop": "crop=0.3725,0.088,0.255,0.848"
+  },
+  "careconnect": {
+    "device": "phone"
+  },
+  "quickserve": {
+    "device": "phone"
+  },
+  "droprun": {
+    "device": "phone"
+  },
+  "taskflow": {
+    "device": "tablet"
+  },
+  "leaddesk_crm": {
+    "device": "desktop"
+  },
+  "stockwise": {
+    "device": "tablet"
+  },
+  "clinicdesk": {
+    "device": "desktop"
+  },
+  "fleetboard": {
+    "device": "desktop"
+  },
+  "helpdesk_assistant": {
+    "device": "desktop"
+  },
+  "order_assistant": {
+    "device": "phone"
+  },
+  "docsearch": {
+    "device": "laptop"
+  },
+  "review_insights": {
+    "device": "tablet"
+  },
+  "flowrunner": {
+    "device": "desktop"
+  },
+  "invoice_reminders": {
+    "device": "laptop"
+  },
+  "salon_reminders": {
+    "device": "phone"
+  },
+  "daily_sales_report": {
+    "device": "tablet"
+  },
+  "campaign_planner": {
+    "device": "laptop"
+  },
+  "cafe_social": {
+    "device": "phone"
+  },
+  "fitness_launch": {
+    "device": "laptop"
+  },
+  "interior_leads": {
+    "device": "desktop"
+  },
+  "bookly_prototype": {
+    "device": "phone",
+    "crop": "crop=0.381,0.176,0.238,0.771"
+  },
+  "banking_redesign": {
+    "device": "phone"
+  },
+  "travel_journey": {
+    "device": "tablet"
+  },
+  "saas_design_system": {
+    "device": "desktop"
+  },
+  "brand_kit_builder": {
+    "device": "desktop"
+  },
+  "tea_identity": {
+    "device": "tablet"
+  },
+  "bakery_rebrand": {
+    "device": "phone"
+  },
+  "cowork_identity": {
+    "device": "laptop"
+  }
+}

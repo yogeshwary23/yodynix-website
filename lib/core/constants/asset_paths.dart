@@ -24,6 +24,9 @@ class AssetPaths {
   /// Sample-project visuals on the service pages.
   static String serviceProject(String id) => 'assets/images/service_projects/$id';
 
+  /// A sample project shown on its 3D device (transparent still).
+  static String projectDevice(String id) => 'assets/images/project_devices/$id';
+
   /// Core pillar card photographs.
   static String pillar(String id) => 'assets/images/pillars/$id';
 
@@ -31,4 +34,7 @@ class AssetPaths {
   static String business(String id) => 'assets/images/business/$id';
   static String technology(String id) => 'assets/images/technology/$id';
   static String internshipCareers(String id) => 'assets/images/internship_careers/$id';
+
+  /// Industries page photographs, named after `IndustryProfile.id`.
+  static String industry(String id) => 'assets/images/industries/$id';
 }

@@ -35,6 +35,10 @@ enum Scene3D {
   /// Laptop whose screen shows a real project image.
   preview,
 
+  /// Portfolio device mock-ups: a project image on a laptop, desktop,
+  /// tablet or phone (the variant), or all three floating together (`hero`).
+  device,
+
   /// Rotating metallic ecosystem of interconnected components (technology).
   ecosystem,
 

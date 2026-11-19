@@ -1203,6 +1203,286 @@ function floaters(kit, specs) {
   };
 }
 
+/**
+ * Loads an image onto a device screen, cover-fitted to the screen's
+ * [aspect]. A spec is a URL with an optional fragment:
+ *   url#crop=x,y,w,h&align=top
+ * where crop selects a region of the image (fractions, from the top left)
+ * and align keeps its 'top' (default, for interface screenshots) or
+ * 'center' (photographs) when it is taller than the screen.
+ */
+function screenImage(kit, spec, aspect, material) {
+  const [url, fragment = ''] = spec.split('#');
+  const params = new URLSearchParams(fragment);
+  const crop = (params.get('crop') || '0,0,1,1').split(',').map(Number);
+  const align = params.get('align') || 'top';
+  // grade=warm: concept photographs are toned towards the palette so stray
+  // blues don't break it; real screenshots are never graded.
+  const warm = params.get('grade') === 'warm';
+  new THREE.TextureLoader().load(url, (loaded) => {
+    let tex = loaded;
+    if (warm) {
+      const c = document.createElement('canvas');
+      c.width = loaded.image.width;
+      c.height = loaded.image.height;
+      const g = c.getContext('2d');
+      g.filter = 'sepia(0.62) saturate(0.82) brightness(1.04)';
+      g.drawImage(loaded.image, 0, 0);
+      loaded.dispose();
+      tex = new THREE.CanvasTexture(c);
+    }
+    if (!kit.view.scene) {
+      tex.dispose();
+      return;
+    }
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    kit.track(tex);
+    let [x, y, w, h] = crop;
+    const imageAspect = (tex.image.width * w) / (tex.image.height * h);
+    if (imageAspect > aspect) {
+      const nw = (w * aspect) / imageAspect;
+      x += (w - nw) / 2;
+      w = nw;
+    } else {
+      const nh = (h * imageAspect) / aspect;
+      if (align === 'center') y += (h - nh) / 2;
+      h = nh;
+    }
+    tex.repeat.set(w, h);
+    tex.offset.set(x, 1 - y - h);
+    material.map = material.emissiveMap = tex;
+    material.needsUpdate = true;
+    kit.view.invalidate();
+  });
+}
+
+/** A dark screen until its image arrives. */
+function blankScreen(kit) {
+  return kit.screen(kit.canvasTexture(8, 8, (g, w, h) => {
+    g.fillStyle = '#1e1c1a';
+    g.fillRect(0, 0, w, h);
+  }), 0.9);
+}
+
+/** Black glass over a device's front face. */
+function deviceGlass(kit) {
+  return new THREE.MeshPhysicalMaterial({ color: 0x0a0908, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.02 });
+}
+
+/** Platinum laptop, lid tilted back, its base at y = 0. */
+function deviceLaptop(kit) {
+  const group = new THREE.Group();
+  const alu = kit.aluminium({ color: 0xe6e3dd, roughness: 0.28 });
+  group.add(kit.roundedBox(2.4, 0.07, 1.62, 0.035, alu, 5));
+  const deck = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.3, 1.52),
+    kit.aluminium({
+      roughness: 0.42,
+      map: kit.canvasTexture(1024, 680, (g, w, h) => {
+        g.fillStyle = '#dcd8d0';
+        g.fillRect(0, 0, w, h);
+        g.fillStyle = '#2a2826';
+        rr(g, 70, 40, w - 140, h * 0.5, 18);
+        g.fill();
+        g.fillStyle = '#36332f';
+        const cols = 14;
+        const kw = (w - 160) / cols;
+        for (let r = 0; r < 5; r++) {
+          for (let c = 0; c < cols; c++) rr(g, 80 + c * kw, 50 + r * (h * 0.48 / 5), kw - 6, h * 0.48 / 5 - 6, 6), g.fill();
+        }
+        g.fillStyle = '#cdc8bf';
+        rr(g, w * 0.34, h * 0.6, w * 0.32, h * 0.33, 16);
+        g.fill();
+      }),
+    }),
+  );
+  deck.rotation.x = -Math.PI / 2;
+  deck.position.y = 0.0355;
+  group.add(deck);
+  const hinge = new THREE.Group();
+  hinge.position.set(0, 0.035, -0.8);
+  hinge.rotation.x = -0.22;
+  group.add(hinge);
+  const lid = kit.roundedBox(2.4, 1.56, 0.045, 0.035, alu, 5);
+  lid.position.set(0, 0.78, -0.02);
+  const bezel = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.46), deviceGlass(kit));
+  bezel.position.set(0, 0.78, 0.0035);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(2.18, 1.36), blankScreen(kit));
+  screen.position.set(0, 0.79, 0.005);
+  hinge.add(lid, bezel, screen);
+  return { group, screen, aspect: 2.18 / 1.36 };
+}
+
+/** Platinum display on a slim stand, its foot at y = 0. */
+function deviceDesktop(kit) {
+  const group = new THREE.Group();
+  const alu = kit.aluminium({ color: 0xe6e3dd, roughness: 0.26 });
+  const foot = kit.roundedBox(0.95, 0.04, 0.62, 0.02, alu, 4);
+  foot.position.y = 0.02;
+  const neck = kit.roundedBox(0.34, 0.95, 0.06, 0.03, alu, 4);
+  neck.position.set(0, 0.5, -0.16);
+  neck.rotation.x = -0.12;
+  const body = kit.roundedBox(2.7, 1.74, 0.07, 0.05, alu, 5);
+  body.position.set(0, 1.42, -0.05);
+  const glass = kit.roundedBox(2.66, 1.7, 0.004, 0.045, deviceGlass(kit), 5);
+  glass.position.set(0, 1.42, -0.013);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(2.56, 1.6), blankScreen(kit));
+  screen.position.set(0, 1.44, -0.0105);
+  // A champagne edge along the chin.
+  const trim = kit.roundedBox(2.7, 0.012, 0.072, 0.005, kit.lacqueredGold(), 2);
+  trim.position.set(0, 0.555, -0.05);
+  group.add(foot, neck, body, glass, screen, trim);
+  return { group, screen, aspect: 2.56 / 1.6 };
+}
+
+/** Champagne-gold tablet in landscape, centred on its origin. */
+function deviceTablet(kit) {
+  const group = new THREE.Group();
+  const body = kit.roundedBox(2.0, 1.42, 0.06, 0.1, kit.aluminium({ color: 0xd8c6a2, roughness: 0.24 }), 6);
+  const glass = kit.roundedBox(1.98, 1.4, 0.004, 0.09, deviceGlass(kit), 6);
+  glass.position.z = 0.03;
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.86, 1.28), blankScreen(kit));
+  screen.position.z = 0.0325;
+  group.add(body, glass, screen);
+  return { group, screen, aspect: 1.86 / 1.28 };
+}
+
+/** Champagne-gold phone, centred on its origin. */
+function devicePhone(kit) {
+  const group = new THREE.Group();
+  const frame = kit.roundedBox(0.8, 1.64, 0.085, 0.11, kit.aluminium({ color: 0xdcc9a6, roughness: 0.22 }), 6);
+  const glass = kit.roundedBox(0.78, 1.62, 0.004, 0.1, deviceGlass(kit), 6);
+  glass.position.z = 0.043;
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 1.53), blankScreen(kit));
+  screen.position.z = 0.0458;
+  group.add(frame, glass, screen);
+  return { group, screen, aspect: 0.72 / 1.53 };
+}
+
+/**
+ * Industries hero: eight sectors as small sculpted nodes on a tilted orbit
+ * around a liquid-gold hub inside a platinum ring. Gold links join each node
+ * to the hub and to its neighbours, and points of light travel along them.
+ * The orbit turns slowly; the pointer tilts it and scrolling turns it on.
+ */
+function industriesNetwork(kit) {
+  const { scene, camera } = kit;
+  const group = new THREE.Group();
+  group.rotation.x = 0.42;
+  scene.add(group);
+  const orbit = new THREE.Group();
+  group.add(orbit);
+
+  const hub = new THREE.Mesh(new THREE.SphereGeometry(0.3, 64, 32), kit.liquidGold());
+  orbit.add(hub);
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.022, 24, 128), kit.chrome({ roughness: 0.08 }));
+  halo.rotation.x = Math.PI / 2;
+  orbit.add(halo);
+
+  // One emblem per sector, in IndustriesContent order.
+  const emblem = (i) => {
+    const g = new THREE.Group();
+    if (i === 0) {
+      for (let k = 0; k < 4; k++) g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.03, 48), kit.gold({ roughness: 0.16 })).translateY(k * 0.034));
+    } else if (i === 1) {
+      g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.075, 0.34, 32), kit.chrome({ roughness: 0.14 })).translateY(0.1));
+      g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.12, 32), kit.porcelain()).translateX(0.13));
+    } else if (i === 2) {
+      g.add(kit.roundedBox(0.16, 0.16, 0.16, 0.02, kit.gold({ roughness: 0.3 }), 3));
+      g.add(kit.roundedBox(0.13, 0.13, 0.13, 0.02, kit.glass({ thickness: 0.15 }), 3).translateY(0.15).translateX(0.03));
+    } else if (i === 3) {
+      g.add(kit.roundedBox(0.22, 0.24, 0.1, 0.02, kit.gold({ roughness: 0.32, clearcoat: 0.6 }), 3));
+      g.add(new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 12, 32, Math.PI), kit.chrome()).translateY(0.12));
+    } else if (i === 4) {
+      g.add(kit.roundedBox(0.07, 0.24, 0.07, 0.02, kit.chrome({ roughness: 0.12 }), 3));
+      g.add(kit.roundedBox(0.24, 0.07, 0.07, 0.02, kit.chrome({ roughness: 0.12 }), 3));
+    } else if (i === 5) {
+      ['porcelain', 'gold', 'charcoal'].forEach((m, k) => {
+        const mat = m === 'gold' ? kit.gold({ roughness: 0.3 }) : m === 'charcoal' ? kit.charcoalMetal() : kit.porcelain();
+        const book = kit.roundedBox(0.24 - k * 0.02, 0.05, 0.17, 0.01, mat, 2);
+        book.position.y = k * 0.052;
+        book.rotation.y = (k % 2 ? 1 : -1) * 0.15;
+        g.add(book);
+      });
+    } else if (i === 6) {
+      [[-0.07, 0.3, kit.chrome({ roughness: 0.2 })], [0.06, 0.42, kit.glass({ thickness: 0.15 })]].forEach(([x, h, mat]) => {
+        g.add(kit.roundedBox(0.11, h, 0.11, 0.015, mat, 3).translateX(x).translateY(h / 2 - 0.1));
+      });
+    } else {
+      g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.13, 0.02, 48), kit.gold({ roughness: 0.18 })));
+      g.add(new THREE.Mesh(new THREE.SphereGeometry(0.11, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), kit.chrome({ roughness: 0.06 })));
+    }
+    return g;
+  };
+
+  const radius = 1.3;
+  const nodes = [];
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    const node = emblem(i);
+    node.position.set(Math.cos(a) * radius, 0, Math.sin(a) * radius);
+    node.userData = { a, phase: i * 0.9 };
+    orbit.add(node);
+    nodes.push(node);
+  }
+
+  // Links: hub to every node, and each node to the next around the ring.
+  const links = [];
+  nodes.forEach((n, i) => {
+    links.push([new THREE.Vector3(), n.position]);
+    links.push([n.position, nodes[(i + 1) % 8].position]);
+  });
+  const linkGeo = new THREE.BufferGeometry();
+  const linkPos = new Float32Array(links.length * 6);
+  linkGeo.setAttribute('position', new THREE.BufferAttribute(linkPos, 3));
+  orbit.add(new THREE.LineSegments(linkGeo, new THREE.LineBasicMaterial({ color: BRAND.goldDeep, transparent: true, opacity: 0.35 })));
+
+  const pulseGeo = new THREE.SphereGeometry(0.028, 16, 12);
+  const pulses = links.map((_, i) => {
+    const p = new THREE.Mesh(pulseGeo, kit.liquidGold());
+    p.userData.offset = (i * 0.37) % 1;
+    orbit.add(p);
+    return p;
+  });
+
+  const dust = new DustField(kit, { count: 120, spread: 4.2, size: 0.018, opacity: 0.5 });
+  group.add(dust.points);
+  const shadow = kit.contactShadow(2.4, 0.16);
+  shadow.position.y = -0.95;
+  scene.add(shadow);
+
+  let distance = 6;
+  return {
+    frame(cam, aspect) {
+      distance = fitDistance(cam, 1.45, aspect);
+    },
+    update(s, dt) {
+      const t = s.time;
+      const reveal = s.reduced ? 1 : introCurve(t, 2.2);
+      orbit.rotation.y = t * 0.08 + (s.progress - 0.5) * 0.6;
+      orbit.scale.setScalar(0.85 + reveal * 0.15);
+      hub.scale.setScalar(1 + Math.sin(t * 1.2) * 0.03 + s.focus * 0.06);
+      nodes.forEach((n) => {
+        const { a, phase } = n.userData;
+        n.position.set(Math.cos(a) * radius * reveal, Math.sin(t * 0.8 + phase) * 0.06, Math.sin(a) * radius * reveal);
+        n.rotation.y = -orbit.rotation.y + Math.sin(t * 0.4 + phase) * 0.4;
+      });
+      links.forEach(([from, to], i) => {
+        linkPos.set([from.x, from.y, from.z, to.x, to.y, to.z], i * 6);
+        const u = (t * 0.12 + pulses[i].userData.offset) % 1;
+        pulses[i].position.lerpVectors(from, to, u);
+        pulses[i].visible = reveal > 0.95;
+      });
+      linkGeo.attributes.position.needsUpdate = true;
+      dust.update(t, dt, null);
+      group.rotation.z = s.pointer.x * -0.08;
+      group.rotation.x = 0.42 + s.pointer.y * 0.1;
+      camOrbit(camera, s, { distance, height: 0.4, look: new THREE.Vector3(0, -0.05, 0), swing: 0.15 });
+    },
+  };
+}
+
 /** Cinematic intro: eases from [from] to 1 over [seconds] after mounting. */
 function introCurve(time, seconds = 2.4) {
   const t = Math.min(1, time / seconds);
@@ -2556,10 +2836,11 @@ const SCENES = {
 
   /** Industries: one iconic arrangement per sector (options.variant). */
   industries(kit, options) {
+    const variant = options.variant || 'finance';
+    if (variant === 'network') return industriesNetwork(kit);
     const { scene, camera } = kit;
     const group = new THREE.Group();
     scene.add(group);
-    const variant = options.variant || 'finance';
     const parts = [];
     const add = (mesh, x, y, z) => {
       mesh.position.set(x, y, z);
@@ -3230,6 +3511,79 @@ const SCENES = {
    * Portfolio preview: a laptop whose screen shows a real project image
    * (`options.image`, a URL). Used for demonstration-project previews.
    */
+  /**
+   * Portfolio device mock-ups: a real project image on a laptop, desktop
+   * monitor, tablet or phone (options.variant), or all three of laptop,
+   * tablet and phone floating together ('hero'), lit like a studio product
+   * shot with a few small gold and platinum accents. options.image holds one
+   * image spec per screen, separated by '|' (see [screenImage]).
+   */
+  device(kit, options) {
+    const { scene, camera } = kit;
+    const kind = options.variant || 'laptop';
+    const specs = (options.image || '').split('|').filter(Boolean);
+    const root = new THREE.Group();
+    scene.add(root);
+
+    const build = { laptop: deviceLaptop, desktop: deviceDesktop, tablet: deviceTablet, phone: devicePhone };
+    const items = [];
+    const place = (type, spec, position, rotation, scale = 1) => {
+      const d = build[type](kit);
+      if (spec) screenImage(kit, spec, d.aspect, d.screen.material);
+      d.group.position.set(...position);
+      d.group.rotation.set(...rotation);
+      d.group.scale.setScalar(scale);
+      d.group.userData = { base: d.group.position.clone(), rot: d.group.rotation.clone(), phase: items.length * 1.9 };
+      root.add(d.group);
+      items.push(d.group);
+    };
+
+    let radius;
+    let height;
+    if (kind === 'hero') {
+      place('laptop', specs[0], [-0.1, -0.5, -0.35], [0, 0.32, 0], 1);
+      place('tablet', specs[2], [1.75, 0.05, 0.35], [-0.04, -0.42, 0.03], 0.78);
+      place('phone', specs[1], [-1.75, -0.05, 0.6], [0.04, 0.48, -0.04], 0.8);
+      radius = 2.1;
+      height = 0.6;
+    } else {
+      const rotation = { laptop: [0, 0.42, 0], desktop: [0, 0.36, 0], tablet: [-0.08, 0.42, 0.02], phone: [0.04, 0.42, -0.05] }[kind];
+      const y = { laptop: -0.45, desktop: -0.95, tablet: 0, phone: 0 }[kind];
+      place(kind, specs[0], [0, y, 0], rotation);
+      radius = { laptop: 1.45, desktop: 1.5, tablet: 1.2, phone: 1.05 }[kind];
+      height = { laptop: 0.95, desktop: 0.45, tablet: 0.35, phone: 0.3 }[kind];
+    }
+
+    const accents = floaters(kit, kind === 'hero'
+      ? [['goldSphere', 1.2, 1.15, -0.8, 0.08], ['ring', -2.35, 0.95, -0.6, 0.12], ['cube', 2.45, -0.85, -0.3, 0.13], ['sphere', 0.15, -1.05, 0.9, 0.06]]
+      : [['goldSphere', radius * 0.92, radius * 0.62, -0.5, 0.07], ['ring', -radius * 0.95, radius * 0.5, -0.6, 0.1], ['cube', radius * 0.95, -radius * 0.45, 0.2, 0.1]]);
+    root.add(accents.group);
+
+    const shadow = kit.contactShadow(radius * 1.15, 0.2);
+    shadow.position.y = kind === 'hero' ? -1.05 : { laptop: -0.48, desktop: -0.98, tablet: -0.95, phone: -1.05 }[kind];
+    scene.add(shadow);
+
+    let distance = 6;
+    return {
+      frame(cam, aspect) {
+        distance = fitDistance(cam, radius, aspect);
+      },
+      update(s, dt) {
+        const t = s.time;
+        const intro = s.reduced ? 1 : introCurve(t, 1.8);
+        items.forEach((g) => {
+          const { base, rot, phase } = g.userData;
+          g.position.y = base.y + Math.sin(t * 0.8 + phase) * 0.035 + (1 - intro) * -0.25;
+          g.rotation.y = rot.y + Math.sin(t * 0.35 + phase) * 0.05 - s.focus * 0.08;
+        });
+        accents.update(t, dt, s.focus * 0.12);
+        root.rotation.y = s.pointer.x * 0.18 + (s.progress - 0.5) * 0.2;
+        root.rotation.x = s.pointer.y * 0.05;
+        camOrbit(camera, s, { distance, height, look: new THREE.Vector3(0, 0, 0), swing: 0.12 });
+      },
+    };
+  },
+
   preview(kit, options) {
     const def = SCENES.web(kit, options);
     // Keep the real project screenshot unobstructed.

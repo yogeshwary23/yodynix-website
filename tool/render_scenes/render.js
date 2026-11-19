@@ -44,6 +44,7 @@ const jobs = [
   ['ecosystem', null, 1200, 900, 'f8f6f1', 0.5],
   ['workflow', null, 1600, 640, 'f8f6f1', 0.5],
   // Industries rows alternate surface / pearl in IndustriesContent order.
+  ['industries', 'network', 1300, 1000, 'f8f6f1', 0.5],
   ['industries', 'finance', 1100, 900, 'f2eee6', 0.5],
   ['industries', 'oilgas', 1100, 900, 'f8f6f1', 0.5],
   ['industries', 'logistics', 1100, 900, 'f2eee6', 0.5],
@@ -54,13 +55,39 @@ const jobs = [
   ['industries', 'hospitality', 1100, 900, 'f8f6f1', 0.5],
 ];
 
-const types = { '.html': 'text/html', '.js': 'text/javascript' };
+// Portfolio device stills: each project's image on its device, transparent
+// so the card's stage shows through (assets/images/project_devices/<id>.webp).
+// devices.json comes from `dart run tool/render_scenes/export_devices.dart`.
+const projectDir = path.join(root, 'assets/images/service_projects');
+const projectImage = (id) => {
+  const file = fs.readdirSync(projectDir).find((f) => f.replace(/\.[^.]+$/, '') === id);
+  return `/assets/images/service_projects/${file}`;
+};
+const devices = JSON.parse(fs.readFileSync(path.join(__dirname, 'devices.json'), 'utf8'));
+const demos = new Set(['lumen_dental', 'weave_and_co', 'fitslot', 'taskflow', 'leaddesk_crm', 'helpdesk_assistant', 'flowrunner', 'campaign_planner', 'bookly_prototype', 'brand_kit_builder']);
+const screenSpec = (id) => {
+  const { crop } = devices[id];
+  // Screenshots keep their top, untouched; concept photographs stay centred
+  // and are toned towards the palette.
+  const fragment = [crop, demos.has(id) ? null : 'align=center&grade=warm'].filter(Boolean).join('&');
+  return fragment ? `${projectImage(id)}#${fragment}` : projectImage(id);
+};
+for (const [id, { device }] of Object.entries(devices)) {
+  jobs.push(['device', device, 1200, 800, 'none', 0.5, screenSpec(id), `project_devices/${id}`]);
+}
+// The Portfolio hero: real demo screenshots on a laptop, phone and tablet.
+jobs.push(['device', 'hero', 1400, 1000, 'none', 0.5, ['lumen_dental', 'fitslot', 'weave_and_co'].map(screenSpec).join('|'), 'renders/device_hero']);
+
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
 
 function serve() {
   const server = http.createServer((req, res) => {
     const url = decodeURIComponent(req.url.split('?')[0]);
-    const file = url === '/stage.html' ? path.join(__dirname, 'stage.html') : path.join(webDir, url);
-    if (!file.startsWith(webDir) && !file.startsWith(__dirname)) return res.writeHead(403).end();
+    const assetsDir = path.join(root, 'assets');
+    const file = url === '/stage.html'
+      ? path.join(__dirname, 'stage.html')
+      : url.startsWith('/assets/') ? path.join(root, url) : path.join(webDir, url);
+    if (!file.startsWith(webDir) && !file.startsWith(__dirname) && !file.startsWith(assetsDir)) return res.writeHead(403).end();
     fs.readFile(file, (err, data) => {
       if (err) return res.writeHead(404).end();
       res.writeHead(200, { 'Content-Type': types[path.extname(file)] || 'application/octet-stream' }).end(data);
@@ -81,26 +108,29 @@ function serve() {
   let failed = false;
   // `node render.js workflow industries_ecommerce` renders only those stills.
   const only = process.argv.slice(2);
-  for (const [scene, variant, w, h, bg, p] of jobs) {
-    if (only.length && !only.includes(variant ? `${scene}_${variant}` : scene)) continue;
+  for (const [scene, variant, w, h, bg, p, img, out] of jobs) {
+    const id = out ? path.basename(out) : null;
+    if (only.length && !only.includes(variant ? `${scene}_${variant}` : scene) && !(id && only.includes(id)) && !(out && only.includes('devices'))) continue;
     await page.setViewport({ width: w, height: h, deviceScaleFactor: 1 });
-    const query = `s=${scene}&w=${w}&h=${h}&bg=${bg}&p=${p}${variant ? `&variant=${variant}` : ''}`;
+    const query = `s=${scene}&w=${w}&h=${h}&bg=${bg}&p=${p}${variant ? `&variant=${variant}` : ''}${img ? `&img=${encodeURIComponent(img)}` : ''}`;
     await page.goto(`http://localhost:${port}/stage.html?${query}`, { waitUntil: 'load' });
     // Let the scene settle into a natural pose.
     await new Promise((r) => setTimeout(r, 3500));
     const errors = await page.evaluate(() => window.errors);
-    const name = variant ? `${scene}_${variant}` : scene;
+    const name = out ? id : variant ? `${scene}_${variant}` : scene;
     if (errors.length) {
       failed = true;
       console.error(`${name}: ${errors.join('; ')}`);
       continue;
     }
     const clip = { x: 0, y: 0, width: w, height: h };
-    const file = bg === 'none' ? `${name}.webp` : `${name}.jpg`;
+    const file = out ? `${out}.webp` : bg === 'none' ? `${name}.webp` : `${name}.jpg`;
+    const target = out ? path.join(root, 'assets/images', file) : path.join(outDir, file);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
     await page.screenshot(
       bg === 'none'
-        ? { path: path.join(outDir, file), type: 'webp', quality: 86, omitBackground: true, clip }
-        : { path: path.join(outDir, file), type: 'jpeg', quality: 84, clip },
+        ? { path: target, type: 'webp', quality: out ? 80 : 86, omitBackground: true, clip }
+        : { path: target, type: 'jpeg', quality: 84, clip },
     );
     console.log(`rendered ${file}`);
   }

@@ -7,9 +7,11 @@ import '../../features/demos/demo_page.dart';
 import '../../features/expertise/expertise_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/home/legal_page.dart';
+import '../../features/home/not_found_page.dart';
 import '../../features/industries/industries_page.dart';
 import '../../features/pillars/pillar_detail_page.dart';
 import '../../features/portfolio/portfolio_page.dart';
+import '../../features/portfolio/project_detail_page.dart';
 import '../../features/services/service_detail_page.dart';
 import '../../features/services/services_page.dart';
 import '../../models/about_page.dart';
@@ -23,7 +25,11 @@ class AppRouter {
   AppRouter._();
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    final requested = Uri.parse(settings.name ?? AppRoutes.home);
     final name = AppRoutes.resolve(settings.name ?? AppRoutes.home);
+    final project = name.startsWith(AppRoutes.projectPrefix)
+        ? ServicePagesContent.projectBySlug(name.substring(AppRoutes.projectPrefix.length))
+        : null;
     final aboutPage = AboutPage.byRoute(name);
     final pillarPage = PillarPagesContent.byRoute(name);
     final service = name.startsWith(AppRoutes.servicePrefix)
@@ -39,6 +45,8 @@ class AppRouter {
       page = ServiceDetailPage(service: service);
     } else if (demo != null) {
       page = DemoPage(demo: demo);
+    } else if (project != null) {
+      page = ProjectDetailPage(project: project);
     } else if (name == AppRoutes.careers) {
       page = CareersPage(scrollToApply: settings.arguments == CareersPageArgs.apply);
     } else if (name == AppRoutes.services) {
@@ -53,17 +61,49 @@ class AppRouter {
       page = const LegalPage(title: 'Privacy Policy');
     } else if (name == AppRoutes.terms) {
       page = const LegalPage(title: 'Terms & Conditions');
-    } else {
+    } else if (name == AppRoutes.home || AppRoutes.sectionFor(name) != null) {
       page = const HomePage();
+    } else {
+      page = NotFoundPage(path: name);
     }
     return PageRouteBuilder<void>(
-      // Canonical name, so redirected links (e.g. `/team`) show the page's own URL.
-      settings: RouteSettings(name: name, arguments: settings.arguments),
+      // Canonical name, so redirected links (e.g. `/team`) show the page's
+      // own URL; any query string is kept.
+      settings: RouteSettings(name: requested.hasQuery ? '$name?${requested.query}' : name, arguments: settings.arguments),
       transitionDuration: AppMotion.pageEnter,
       reverseTransitionDuration: AppMotion.page,
       pageBuilder: (_, _, _) => page,
       transitionsBuilder: _cinematic,
     );
+  }
+
+  /// A short name for the page at [route], for "Back to …" links.
+  static String titleFor(String route) => pageTitle(route) ?? 'Previous Page';
+
+  /// The title [route]'s page shows (before " | YODYNIX"); null when no page
+  /// matches it, which shows the not-found page.
+  static String? pageTitle(String route) {
+    final name = AppRoutes.resolve(route);
+    if (AboutPage.byRoute(name) case final about?) return about.title;
+    if (PillarPagesContent.byRoute(name) case final pillar?) return pillar.title;
+    if (name.startsWith(AppRoutes.servicePrefix)) {
+      if (ServicePagesContent.bySlug(name.substring(AppRoutes.servicePrefix.length)) case final service?) return service.title;
+    }
+    if (DemoCatalog.byRoute(name) case final demo?) return '${demo.project.name} Demo';
+    if (name.startsWith(AppRoutes.projectPrefix)) {
+      if (ServicePagesContent.projectBySlug(name.substring(AppRoutes.projectPrefix.length)) case final project?) return project.name;
+    }
+    return switch (name) {
+      AppRoutes.home => 'Home',
+      AppRoutes.careers => 'Careers',
+      AppRoutes.services => 'Services',
+      AppRoutes.expertise => 'Expertise',
+      AppRoutes.portfolio => 'Portfolio',
+      AppRoutes.industries => 'Industries',
+      AppRoutes.privacy => 'Privacy Policy',
+      AppRoutes.terms => 'Terms & Conditions',
+      _ => AppRoutes.sectionFor(name) != null ? 'Home' : null,
+    };
   }
 
   /// The incoming page rises a little and settles from a slight zoom as it
@@ -99,6 +139,12 @@ class AppRouter {
       onSectionLink(section);
       return [home];
     }
-    return [home, onGenerateRoute(RouteSettings(name: initialRoute))];
+    // A project opened directly sits above the Portfolio, so Back leads there.
+    final parent = AppRoutes.resolve(initialRoute).startsWith(AppRoutes.projectPrefix) ? AppRoutes.portfolio : null;
+    return [
+      home,
+      if (parent != null) onGenerateRoute(RouteSettings(name: parent)),
+      onGenerateRoute(RouteSettings(name: initialRoute)),
+    ];
   }
 }

@@ -70,6 +70,8 @@ flutter:
     # Still renders of the 3D scenes, used on phones and without WebGL.
     - assets/images/renders/
     - assets/images/service_projects/
+    # Each portfolio project on its 3D device (rendered by tool/render_scenes).
+    - assets/images/project_devices/
     - assets/images/team/
     - assets/images/internship/
     # Core pillar cards and detail pages (Unsplash License; see assets/images/PHOTO_CREDITS.md).
@@ -77,6 +79,8 @@ flutter:
     - assets/images/business/
     - assets/images/technology/
     - assets/images/internship_careers/
+    # Industries page photographs (Unsplash License; see assets/images/PHOTO_CREDITS.md).
+    - assets/images/industries/
     # Why Choose YODYNIX cards (Unsplash License; see assets/images/PHOTO_CREDITS.md).
     - assets/images/why_choose/
     # Inter + Sora (SIL Open Font License), bundled so google_fonts never fetches at runtime.

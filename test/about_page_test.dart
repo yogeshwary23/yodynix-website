@@ -250,7 +250,10 @@ void main() {
     await settle(tester);
     expect(shownPage(tester), AboutPage.defaultPage);
 
-    // Sibling pages replace each other, so "back" always returns home.
+    // Back returns to the About page it was opened from, then home.
+    tester.state<NavigatorState>(find.byType(Navigator).first).pop();
+    await settle(tester);
+    expect(shownPage(tester), AboutPage.philosophy);
     tester.state<NavigatorState>(find.byType(Navigator).first).pop();
     await settle(tester);
     expect(shownPage(tester), isNull);

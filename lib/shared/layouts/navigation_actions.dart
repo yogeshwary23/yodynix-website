@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/routing/app_navigation.dart';
 import '../../core/routing/app_routes.dart';
 import '../../models/about_page.dart';
 import '../../models/content_models.dart';
@@ -45,17 +46,10 @@ AboutPage? currentAboutPage(BuildContext context) {
   return name == null ? null : AboutPage.byRoute(AppRoutes.resolve(name));
 }
 
-/// Opens one of the About pages. From the homepage the page is pushed; from
-/// any other page it replaces that page, so "back" always returns home.
+/// Opens one of the About pages (see [openRoute]).
 void openAboutPage(BuildContext context, AboutPage page) {
   if (currentAboutPage(context) == page) return;
-  final route = ModalRoute.of(context);
-  final navigator = Navigator.of(context);
-  if (route == null || route.isFirst) {
-    navigator.pushNamed(page.route);
-  } else {
-    navigator.pushReplacementNamed(page.route);
-  }
+  openRoute(context, page.route);
 }
 
 /// The service whose detail page (or demo) owns [context], if any.
@@ -69,17 +63,10 @@ ServiceOffering? currentService(BuildContext context) {
   return null;
 }
 
-/// Opens a service's own page. Like [openAboutPage], it is pushed from the
-/// homepage and replaces any other sub-page, so "back" returns home.
+/// Opens a service's own page (see [openRoute]).
 void openServicePage(BuildContext context, ServiceOffering service) {
   if (currentService(context)?.id == service.id) return;
-  final route = ModalRoute.of(context);
-  final navigator = Navigator.of(context);
-  if (route == null || route.isFirst) {
-    navigator.pushNamed(service.route);
-  } else {
-    navigator.pushReplacementNamed(service.route);
-  }
+  openRoute(context, service.route);
 }
 
 /// Whether [context] belongs to the Careers page.
@@ -89,21 +76,10 @@ bool isCareersRoute(BuildContext context) {
   return AppRoutes.resolve(name) == AppRoutes.careers;
 }
 
-/// Opens the Careers page. Pushed from the homepage and replacing any other
-/// sub-page, like [openServicePage]. [apply] scrolls the page to its form.
-void openCareersPage(BuildContext context, {bool apply = false}) {
-  const target = AppRoutes.careers;
-  final current = ModalRoute.of(context);
-  final name = current?.settings.name;
-  if (!apply && name != null && AppRoutes.resolve(name) == target) return;
-  final navigator = Navigator.of(context);
-  final arguments = apply ? CareersPageArgs.apply : null;
-  if (current == null || current.isFirst) {
-    navigator.pushNamed(target, arguments: arguments);
-  } else {
-    navigator.pushReplacementNamed(target, arguments: arguments);
-  }
-}
+/// Opens the Careers page (see [openRoute]). [apply] scrolls the page to
+/// its form, re-opening Careers in place when it is already showing.
+void openCareersPage(BuildContext context, {bool apply = false}) =>
+    openRoute(context, AppRoutes.careers, arguments: apply ? CareersPageArgs.apply : null);
 
 /// Top-level pages listed in the navigation beside the homepage sections.
 enum SitePage {
@@ -121,14 +97,14 @@ SitePage? currentSitePage(BuildContext context) {
   final name = ModalRoute.of(context)?.settings.name;
   if (name == null) return null;
   final route = AppRoutes.resolve(name);
+  if (route.startsWith(AppRoutes.projectPrefix)) return SitePage.portfolio;
   for (final p in SitePage.values) {
     if (p.route == route) return p;
   }
   return null;
 }
 
-/// Opens a [SitePage], pushed from the homepage and replacing any other
-/// sub-page, like [openServicePage].
+/// Opens a [SitePage] (see [openRoute]).
 void openSitePage(BuildContext context, SitePage page) => _openPage(context, page.route);
 
 /// The navigation entry whose own page (Services or Expertise) owns
@@ -142,18 +118,28 @@ SiteSection? currentSectionPage(BuildContext context) {
   };
 }
 
-/// Opens [route] unless it is already showing: pushed from the homepage and
-/// replacing any other sub-page, so "back" always returns home.
-void _openPage(BuildContext context, String route) {
-  final current = ModalRoute.of(context);
-  final name = current?.settings.name;
-  if (name != null && AppRoutes.resolve(name) == route) return;
+void _openPage(BuildContext context, String route) => openRoute(context, route);
+
+/// Opens the page at [route] (a resolved path) on top of the current one, so
+/// Back returns to where the visitor came from. Nothing happens if it is
+/// already showing; if it is open further back, the stack returns to it
+/// (keeping its state) instead of gaining a second copy. [arguments] always
+/// open a fresh instance, replacing the page when it is the one showing.
+void openRoute(BuildContext context, String route, {Object? arguments}) {
   final navigator = Navigator.of(context);
-  if (current == null || current.isFirst) {
-    navigator.pushNamed(route);
-  } else {
-    navigator.pushReplacementNamed(route);
+  final name = ModalRoute.of(context)?.settings.name;
+  final showing = name != null && AppRoutes.resolve(name) == route;
+  if (showing) {
+    if (arguments != null) navigator.pushReplacementNamed(route, arguments: arguments);
+    return;
   }
+  final existing = AppNavigation.current?.pageFor(route);
+  if (existing != null) {
+    navigator.popUntil((r) => r == existing);
+    if (arguments != null) navigator.pushReplacementNamed(route, arguments: arguments);
+    return;
+  }
+  navigator.pushNamed(route, arguments: arguments);
 }
 
 void showClientLoginDialog(BuildContext context) {

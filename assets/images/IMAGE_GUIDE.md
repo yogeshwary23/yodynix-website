@@ -48,3 +48,11 @@ and one photo per programme, named after its slug with `_` for `-`
 photo at 16:9 and programme heroes at 4:3, so keep the subject centred. Never
 reuse a photo for two programmes. Programme content and terms are edited in
 `lib/repositories/content/internship_content.dart` and `InternshipConfig`.
+
+## Industries page (photographs supplied)
+
+Each sector section on `/industries` uses `industries/<id>` (ids in
+`lib/repositories/content/industries_content.dart`), shown at about 4:3 with the
+sector's 3D panel set into a lower corner, so keep the subject away from that
+corner. Never reuse a photo for two sectors. The hero's 3D still is
+`renders/industries_network.jpg` (re-render with `node render.js industries_network`).

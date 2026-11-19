@@ -128,3 +128,19 @@ demos (`service_projects/<project>.png`), rendered from the site itself.
 |---|---|
 | `team/founder_office.jpg` | Founder-supplied office portrait, re-encoded PNG→JPEG at original size; no retouching or alteration. Used on the Meet Our Team card in the About pages. |
 | `team/founder.png`, `partner.png`, `akash.jpeg`, `yogiraj.jpeg`, `ankita.jpeg` | Team members' own photographs, used unchanged on the Meet Our Team page. |
+
+## Industries page
+
+Same source and licence as above (Unsplash License, free tier only; Unsplash+
+images excluded). Downloaded as WebP at 1200–1400px wide for web performance.
+
+| File | Unsplash photo ID |
+|---|---|
+| `industries/finance.webp` | 1768270181430-3e3672a32283 |
+| `industries/oilgas.webp` | 1786532852011-443cba5dc9fe |
+| `industries/logistics.webp` | 1782948603191-065fb15e2e8e |
+| `industries/ecommerce.webp` | 1449247666642-264389f5f5b1 |
+| `industries/healthcare.webp` | 1758691461888-b74515208d7a |
+| `industries/education.webp` | 1524178232363-1fb2b075b655 |
+| `industries/realestate.webp` | 1527335988388-b40ee248d80c |
+| `industries/hospitality.webp` | 1766832255363-c9f060ade8b0 |
