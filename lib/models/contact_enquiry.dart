@@ -42,8 +42,12 @@ class ContactEnquiry {
 enum SubmissionStatus { success, backendNotConnected, failure }
 
 class SubmissionResult {
-  const SubmissionResult(this.status, [this.message]);
+  const SubmissionResult(this.status, [this.message, this.confirmationSent = false]);
 
   final SubmissionStatus status;
   final String? message;
+
+  /// Whether the server confirms that a confirmation email was accepted
+  /// for delivery to the submitter. False when unknown.
+  final bool confirmationSent;
 }

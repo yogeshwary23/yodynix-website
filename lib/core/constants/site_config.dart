@@ -39,6 +39,14 @@ class ContactConfig {
     defaultValue: 'https://yodynix-contact.yogeshwary231203.workers.dev/api/contact',
   );
 
+  /// Careers API: the same Worker's `/api/careers` endpoint, which emails
+  /// job and internship applications to HR with the résumé attached.
+  /// Override per build with `--dart-define=CAREERS_API_URL=...`.
+  static const String careersApiUrl = String.fromEnvironment(
+    'CAREERS_API_URL',
+    defaultValue: 'https://yodynix-contact.yogeshwary231203.workers.dev/api/careers',
+  );
+
   /// Official phone numbers in display format; `tel:` links strip the spaces.
   static const List<String> phones = ['+91 97661 82320'];
 

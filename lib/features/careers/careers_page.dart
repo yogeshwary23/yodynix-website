@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/site_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/surface_tone.dart';
 import '../../core/utils/responsive.dart';
 import '../../models/pillar_page.dart' show PillarStep;
 import '../../models/site_section.dart';
-import '../../repositories/contact_repository.dart';
+import '../../repositories/careers_repository.dart';
 import '../../repositories/content/careers_content.dart';
 import '../../shared/layouts/navigation_actions.dart';
 import '../../shared/layouts/subpage_scaffold.dart';
@@ -20,14 +21,14 @@ import '../../shared/widgets/site_dialog.dart';
 import '../../shared/widgets/tinted_photo.dart';
 import 'careers_application_form.dart';
 
-/// `/careers`: hero, the four open positions, why join, the hiring process
-/// and the application form.
+/// `/careers`: hero, job openings and internship opportunities (one tab
+/// each), why join, the hiring process and the application form.
 class CareersPage extends StatefulWidget {
-  const CareersPage({super.key, this.scrollToApply = false, this.repository = const ApiContactRepository()});
+  const CareersPage({super.key, this.scrollToApply = false, this.repository = const ApiCareersRepository()});
 
   /// Opens with the application form in view (e.g. footer "Apply Now").
   final bool scrollToApply;
-  final ContactRepository repository;
+  final CareersRepository repository;
 
   @override
   State<CareersPage> createState() => _CareersPageState();
@@ -59,16 +60,31 @@ class _CareersPageState extends State<CareersPage> {
     Scrollable.ensureVisible(target, duration: const Duration(milliseconds: 750), curve: Curves.easeInOutCubic);
   }
 
-  /// Pre-selects [opening] in the form and brings the form into view.
+  /// Opens the application form for [opening] in a dialog, with the
+  /// position already filled in.
   void _apply(JobOpening opening) {
-    _selection.value = opening.id;
-    _scrollTo(_applyKey);
+    showSiteDialog<void>(
+      context,
+      maxWidth: 760,
+      builder: (dialogContext) => Theme(
+        data: AppTheme.onCard(Theme.of(dialogContext)),
+        child: SurfaceTone(
+          colors: SurfaceColors.inCard,
+          child: Padding(
+            padding: context.responsive(
+              mobile: const EdgeInsets.fromLTRB(20, 56, 20, 24),
+              desktop: const EdgeInsets.fromLTRB(40, 44, 40, 36),
+            ),
+            child: _ApplyDialogForm(opening: opening, repository: widget.repository, onSubmitted: () => Navigator.of(dialogContext).pop()),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final gap = context.responsive(mobile: 40.0, desktop: 56.0);
-    const openings = CareersContent.openings;
 
     return SubpageScaffold(
       title: 'Careers',
@@ -90,24 +106,13 @@ class _CareersPageState extends State<CareersPage> {
                 children: [
                   const SectionHeader(
                     eyebrow: 'Open Positions',
-                    title: 'Current Job Openings',
+                    title: 'Jobs & Internships',
                     lead: CareersContent.openingsLead,
                     centered: true,
                     eyebrowColor: AppColors.accent,
                   ),
                   SizedBox(height: gap),
-                  ResponsiveGrid(
-                    minItemWidth: 320,
-                    maxColumns: 2,
-                    spacing: 24,
-                    children: [
-                      for (final (i, o) in openings.indexed)
-                        Reveal(
-                          delay: Duration(milliseconds: 80 * (i % 2)),
-                          child: JobOpeningCard(opening: o, index: i, onApply: () => _apply(o)),
-                        ),
-                    ],
-                  ),
+                  OpeningsTabs(onApply: _apply),
                 ],
               ),
             ),
@@ -201,10 +206,7 @@ class _Hero extends StatelessWidget {
           header: true,
           child: Text(
             CareersContent.heading,
-            style: AppTypography.display(
-              fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0),
-              color: tone.ink,
-            ),
+            style: AppTypography.display(fontSize: context.responsive(mobile: 32.0, tablet: 42.0, desktop: 50.0), color: tone.ink),
           ),
         ),
         const SizedBox(height: 18),
@@ -256,12 +258,7 @@ class _Hero extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.xl),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.35),
-              blurRadius: 70,
-              spreadRadius: -12,
-              offset: const Offset(0, 24),
-            ),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 70, spreadRadius: -12, offset: const Offset(0, 24)),
           ],
         ),
         child: MediaFrame(
@@ -362,6 +359,7 @@ class JobOpeningCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final o = opening;
+    final terms = o.employmentType ?? o.internshipDuration;
     return HoverCard(
       padding: const EdgeInsets.all(28),
       semanticLabel: o.title,
@@ -374,7 +372,7 @@ class JobOpeningCard extends StatelessWidget {
               const Spacer(),
               if (index != null)
                 Text(
-                  'POSITION ${(index! + 1).toString().padLeft(2, '0')}',
+                  '${o.isInternship ? 'INTERNSHIP' : 'POSITION'} ${(index! + 1).toString().padLeft(2, '0')}',
                   style: AppTypography.body(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -396,28 +394,239 @@ class JobOpeningCard extends StatelessWidget {
             runSpacing: 8,
             children: [
               TagChip(ContactConfig.city, icon: Icons.location_on_outlined, color: AppColors.cardAccent, filled: true),
+              if (terms != null)
+                TagChip(
+                  o.isInternship ? 'Duration: $terms' : terms,
+                  icon: o.isInternship ? Icons.schedule_rounded : Icons.badge_outlined,
+                  color: AppColors.cardAccent,
+                  filled: true,
+                ),
             ],
           ),
           const SizedBox(height: 14),
           Text(o.summary, style: AppTypography.body(fontSize: 14.8, height: 1.6, color: AppColors.cardBody)),
           const SizedBox(height: 18),
-          Text(
-            'REQUIRED SKILLS',
-            style: AppTypography.body(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: AppColors.cardMuted,
-              letterSpacing: 1.2,
-              height: 1.2,
-            ),
-          ),
+          const _CardLabel('REQUIRED SKILLS'),
           const SizedBox(height: 10),
           Wrap(spacing: 8, runSpacing: 8, children: [for (final s in o.skills) TagChip(s)]),
+          const SizedBox(height: 18),
+          const _CardLabel('ELIGIBILITY'),
+          const SizedBox(height: 8),
+          Text(o.eligibility, style: AppTypography.body(fontSize: 14, height: 1.55, color: AppColors.cardBody)),
           const Spacer(),
           const SizedBox(height: 24),
-          PrimaryButton(label: 'Apply Now', size: ButtonSize.small, onPressed: onApply),
+          PrimaryButton(label: o.isInternship ? 'Apply for Internship' : 'Apply Now', size: ButtonSize.small, onPressed: onApply),
         ],
       ),
+    );
+  }
+}
+
+class _CardLabel extends StatelessWidget {
+  const _CardLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: AppTypography.body(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.cardMuted, letterSpacing: 1.2, height: 1.2),
+    );
+  }
+}
+
+// ------------------------------------------------------------------- Tabs
+
+/// "Job Openings" and "Internship Opportunities": a sliding two-option
+/// switch above the matching grid of cards, which cross-fades on change.
+class OpeningsTabs extends StatefulWidget {
+  const OpeningsTabs({super.key, required this.onApply});
+
+  final ValueChanged<JobOpening> onApply;
+
+  @override
+  State<OpeningsTabs> createState() => _OpeningsTabsState();
+}
+
+class _OpeningsTabsState extends State<OpeningsTabs> {
+  static const _tabs = [
+    (OpeningKind.job, 'Job Openings', 'Jobs', Icons.work_outline_rounded, CareersContent.openings),
+    (OpeningKind.internship, 'Internship Opportunities', 'Internships', Icons.school_outlined, CareersContent.internships),
+  ];
+
+  int _index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final (kind, _, _, _, items) = _tabs[_index];
+    final compact = context.screenWidth < 560;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Center(
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: AppColors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              border: Border.all(color: AppColors.darkBorder),
+            ),
+            child: Semantics(
+              container: true,
+              label: 'Opening type',
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final (i, (_, label, short, icon, list)) in _tabs.indexed)
+                    _TabButton(
+                      label: compact ? short : label,
+                      icon: icon,
+                      count: list.length,
+                      selected: i == _index,
+                      onTap: () => setState(() => _index = i),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Text(
+          kind == OpeningKind.job ? CareersContent.jobsLead : CareersContent.internshipsLead,
+          textAlign: TextAlign.center,
+          style: AppTypography.body(fontSize: 14.5, height: 1.6, color: context.tone.muted),
+        ),
+        const SizedBox(height: 22),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 380),
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeInCubic,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween(begin: const Offset(0, 0.03), end: Offset.zero).animate(animation),
+              child: child,
+            ),
+          ),
+          layoutBuilder: (current, previous) => Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              ...previous.map((p) => Positioned(left: 0, right: 0, top: 0, child: p)),
+              ?current,
+            ],
+          ),
+          child: ResponsiveGrid(
+            key: ValueKey(kind),
+            minItemWidth: 320,
+            maxColumns: 2,
+            spacing: 24,
+            children: [
+              for (final (i, o) in items.indexed)
+                Reveal(
+                  delay: Duration(milliseconds: 80 * (i % 2)),
+                  child: JobOpeningCard(opening: o, index: i, onApply: () => widget.onApply(o)),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TabButton extends StatelessWidget {
+  const _TabButton({required this.label, required this.icon, required this.count, required this.selected, required this.onTap});
+
+  final String label;
+  final IconData icon;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = selected ? AppColors.charcoal : context.tone.ink;
+    return Semantics(
+      container: true,
+      button: true,
+      selected: selected,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 260),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+            decoration: BoxDecoration(
+              color: selected ? AppColors.champagneGold : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              boxShadow: selected
+                  ? [BoxShadow(color: AppColors.champagneGold.withValues(alpha: 0.28), blurRadius: 18, offset: const Offset(0, 6))]
+                  : const [],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 17, color: fg),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: AppTypography.body(fontSize: 14, fontWeight: FontWeight.w700, color: fg, height: 1.2),
+                ),
+                const SizedBox(width: 8),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 260),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: selected ? AppColors.charcoal.withValues(alpha: 0.12) : AppColors.white.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  child: Text(
+                    '$count',
+                    style: AppTypography.body(fontSize: 12, fontWeight: FontWeight.w700, color: fg, height: 1.2),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The application form inside the Apply dialog, owning the selection for
+/// its one, fixed position.
+class _ApplyDialogForm extends StatefulWidget {
+  const _ApplyDialogForm({required this.opening, required this.repository, required this.onSubmitted});
+
+  final JobOpening opening;
+  final CareersRepository repository;
+  final VoidCallback onSubmitted;
+
+  @override
+  State<_ApplyDialogForm> createState() => _ApplyDialogFormState();
+}
+
+class _ApplyDialogFormState extends State<_ApplyDialogForm> {
+  late final _selection = ValueNotifier<String?>(widget.opening.id);
+
+  @override
+  void dispose() {
+    _selection.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CareersApplicationForm(
+      selection: _selection,
+      repository: widget.repository,
+      fixedPosition: true,
+      onSubmitted: widget.onSubmitted,
     );
   }
 }
@@ -446,12 +655,7 @@ class _Benefits extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(
                     title,
-                    style: AppTypography.display(
-                      fontSize: 17.5,
-                      fontWeight: FontWeight.w700,
-                      height: 1.3,
-                      color: AppColors.cardHeading,
-                    ),
+                    style: AppTypography.display(fontSize: 17.5, fontWeight: FontWeight.w700, height: 1.3, color: AppColors.cardHeading),
                   ),
                   const SizedBox(height: 8),
                   Text(text, style: AppTypography.body(fontSize: 14.2, height: 1.6, color: AppColors.cardBody)),
@@ -511,7 +715,7 @@ class _ApplySection extends StatelessWidget {
   const _ApplySection({required this.selection, required this.repository});
 
   final ValueNotifier<String?> selection;
-  final ContactRepository repository;
+  final CareersRepository repository;
 
   @override
   Widget build(BuildContext context) {
@@ -533,8 +737,8 @@ class _ApplySection extends StatelessWidget {
         const SizedBox(height: 24),
         const CheckList(
           items: [
-            'Choose the position that matches your skills',
-            'Share a link to your résumé, portfolio or GitHub',
+            'Choose the job or internship that matches your skills',
+            'Upload your résumé as a PDF, DOC or DOCX file (up to 5 MB)',
             'Our hiring team replies by email with next steps',
           ],
           color: AppColors.accent,
@@ -544,11 +748,7 @@ class _ApplySection extends StatelessWidget {
           MediaFrame(
             radius: AppRadius.lg,
             aspectRatio: 4 / 3,
-            child: TintedPhoto(
-              basePath: CareersContent.applicationImage,
-              semanticLabel: CareersContent.applicationImageAlt,
-              strength: 0.4,
-            ),
+            child: TintedPhoto(basePath: CareersContent.applicationImage, semanticLabel: CareersContent.applicationImageAlt, strength: 0.4),
           ),
         ],
       ],

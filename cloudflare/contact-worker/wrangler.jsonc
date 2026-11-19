@@ -14,10 +14,29 @@
     "SMTP_PORT": "465",
     "SMTP_USERNAME": "hr@yodynix.it.com",
     "CONTACT_RECEIVER_EMAIL": "hr@yodynix.it.com",
+    // Job and internship applications (with the résumé attached).
+    "CAREERS_RECEIVER_EMAIL": "hr@yodynix.it.com",
     // Exact origins allowed to call the API (comma-separated, no trailing slash).
     // Add your *.pages.dev URL here if the site is also served from it.
     "ALLOWED_ORIGINS": "https://yodynix.it.com,https://www.yodynix.it.com,http://localhost:8080"
   },
+
+  // Careers applications (D1) and their résumé files (KV). Both private to
+  // this Worker. Create with `npx wrangler d1 create yodynix-careers` and
+  // `npx wrangler kv namespace create RESUMES`; apply the schema with
+  // `npx wrangler d1 migrations apply yodynix-careers --remote`.
+  "d1_databases": [
+    {
+      "binding": "APPLICATIONS_DB",
+      "database_name": "yodynix-careers",
+      "database_id": "3861e8b6-344d-452d-bf4e-4a8697919974",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "kv_namespaces": [{ "binding": "RESUMES", "id": "80e09467970d4f8ea416358f28f77425" }],
+
+  // Retries HR emails and applicant confirmations that failed.
+  "triggers": { "crons": ["*/15 * * * *"] },
 
   // 5 enquiries per minute per visitor IP.
   "ratelimits": [

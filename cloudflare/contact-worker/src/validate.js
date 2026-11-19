@@ -3,10 +3,10 @@
 
 export const CONTACT_METHODS = ['Email', 'Phone Call', 'WhatsApp'];
 
-const EMAIL_PATTERN = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
+export const EMAIL_PATTERN = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
 
 /** Single-line text: no control characters at all (blocks header injection). */
-function cleanLine(value) {
+export function cleanLine(value) {
   if (typeof value !== 'string') return '';
   return value
     .normalize('NFC')
@@ -16,7 +16,7 @@ function cleanLine(value) {
 }
 
 /** Multi-line text: keeps line breaks, drops every other control character. */
-function cleanBlock(value) {
+export function cleanBlock(value) {
   if (typeof value !== 'string') return '';
   return value
     .normalize('NFC')

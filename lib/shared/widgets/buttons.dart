@@ -82,9 +82,14 @@ class _PrimaryButtonState extends State<PrimaryButton> {
     // Drawn a few pixels towards the cursor on hover (not on touch).
     return Magnetic(
       child: Semantics(
+        // Its own node with its own tap action, so assistive technology can
+        // press it even inside cards and form tiles.
+        container: true,
         button: true,
         enabled: enabled,
         label: widget.label,
+        // The InkWell below is excluded, so the tap is exposed here.
+        onTap: enabled ? widget.onPressed : null,
         excludeSemantics: true,
         child: AnimatedScale(
           // A slight press on tap, for a tactile response.
@@ -248,14 +253,17 @@ class _SecondaryButtonState extends State<SecondaryButton> {
     // Drawn a few pixels towards the cursor on hover (not on touch).
     return Magnetic(
       child: Semantics(
+        // Its own node with its own tap action, so assistive technology can
+        // press it even inside cards and form tiles.
+        container: true,
         button: true,
+        enabled: widget.onPressed != null,
         label: widget.label,
+        onTap: widget.onPressed,
         excludeSemantics: true,
         child: Material(
           color: _hover ? tone.ghostHoverFill : tone.ghostFill,
-          shape: StadiumBorder(
-            side: BorderSide(color: _hover ? tone.accent.withValues(alpha: 0.7) : tone.ghostBorder, width: 1.5),
-          ),
+          shape: StadiumBorder(side: BorderSide(color: _hover ? tone.accent.withValues(alpha: 0.7) : tone.ghostBorder, width: 1.5)),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: widget.onPressed,
@@ -278,10 +286,7 @@ class _SecondaryButtonState extends State<SecondaryButton> {
                       ),
                     ),
                   ),
-                  if (widget.icon != null) ...[
-                    const SizedBox(width: 8),
-                    Icon(widget.icon, size: 18, color: _hover ? hoverText : tone.ink),
-                  ],
+                  if (widget.icon != null) ...[const SizedBox(width: 8), Icon(widget.icon, size: 18, color: _hover ? hoverText : tone.ink)],
                 ],
               ),
             ),
@@ -313,8 +318,12 @@ class _ArrowLinkState extends State<ArrowLink> {
   Widget build(BuildContext context) {
     final color = context.readable(widget.color ?? context.tone.accent);
     return Semantics(
+      // Its own node with its own tap action, so assistive technology can
+      // press it even inside cards and form tiles.
+      container: true,
       button: true,
       label: widget.label,
+      onTap: widget.onPressed,
       excludeSemantics: true,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
