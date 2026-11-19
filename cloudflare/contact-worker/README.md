@@ -9,8 +9,8 @@ implicit TLS, AUTH PLAIN/LOGIN). It uses its own small SMTP client over
 |---|---|
 | `GET /api/health` | `{ ok, service, configured }`; `configured` is false until all SMTP settings and the password secret exist |
 | `POST /api/contact` | Validates, then sends. `200 {ok:true}` **only** after the mail server accepts the message |
-| `POST /api/careers` | `multipart/form-data` application with a `resume` file (PDF/DOC/DOCX, ≤ 5 MB, content checked against the extension). **Saves** it (D1 + résumé in KV), then emails HR with the résumé attached and sends the applicant a confirmation. `200 {ok, id, notified, confirmationSent}` only after the save succeeds; each flag is true only once the mail server accepted that email |
-| cron `*/15 * * * *` | Re-sends HR emails and applicant confirmations that failed or never ran (up to 6 attempts each) |
+| `POST /api/careers` | `multipart/form-data` application with a `resume` file (PDF/DOC/DOCX, ≤ 5 MB, content checked against the extension). **Saves** it (D1 + résumé in KV), then emails HR with the résumé attached. `200 {ok, id, notified}` only after the save succeeds; `notified` is true only once the mail server accepted the HR email |
+| cron `*/15 * * * *` | Re-sends HR emails that failed or never ran (up to 6 attempts) |
 
 ### Careers flow
 
@@ -22,15 +22,12 @@ implicit TLS, AUTH PLAIN/LOGIN). It uses its own small SMTP client over
    If saving fails: `500 storage_failed`, nothing is reported as submitted.
 4. Email HR. If that fails the application stays saved with
    `notify_status = 'failed'` and the error; the cron retries it.
-5. Email the applicant a confirmation (reference, position, date; no
-   attachment, none of their free text). Tracked the same way in
-   `confirm_status` / `confirm_attempts` / `confirm_error`.
 
 Check stored applications and notification status:
 
 ```sh
 npx wrangler d1 execute yodynix-careers --remote --command \
-  "SELECT created_at, kind, position, full_name, email, notify_status, notify_error, confirm_status, confirm_error FROM applications ORDER BY created_at DESC LIMIT 20"
+  "SELECT created_at, kind, position, full_name, email, notify_status, notify_attempts, notify_error FROM applications ORDER BY created_at DESC LIMIT 20"
 ```
 
 Download a résumé: `npx wrangler kv key get --remote --binding RESUMES "resume/<id>" > resume.pdf`

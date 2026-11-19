@@ -81,40 +81,29 @@ export async function saveApplication(env, a, file, submissionId, now = new Date
   return { status: 'created', id };
 }
 
-/** The two emails sent per application and the columns tracking each:
- * `hr` is the notification to HR, `applicant` the confirmation to the
- * applicant. Fixed strings only, never user input. */
-const CHANNELS = {
-  hr: { status: 'notify_status', attempts: 'notify_attempts', error: 'notify_error', at: 'notified_at' },
-  applicant: { status: 'confirm_status', attempts: 'confirm_attempts', error: 'confirm_error', at: 'confirmed_at' },
-};
-
-/** Records the outcome of one email attempt on [channel]. */
-export async function recordNotification(env, id, error, now = new Date(), channel = 'hr') {
-  const c = CHANNELS[channel];
+/** Records the outcome of one HR email attempt. */
+export async function recordNotification(env, id, error, now = new Date()) {
   const db = env.APPLICATIONS_DB;
   if (error) {
     await db
-      .prepare(`UPDATE applications SET ${c.status} = 'failed', ${c.attempts} = ${c.attempts} + 1, ${c.error} = ? WHERE id = ?`)
+      .prepare("UPDATE applications SET notify_status = 'failed', notify_attempts = notify_attempts + 1, notify_error = ? WHERE id = ?")
       .bind(String(error).slice(0, 500), id)
       .run();
   } else {
     await db
-      .prepare(`UPDATE applications SET ${c.status} = 'sent', ${c.attempts} = ${c.attempts} + 1, ${c.error} = NULL, ${c.at} = ? WHERE id = ?`)
+      .prepare("UPDATE applications SET notify_status = 'sent', notify_attempts = notify_attempts + 1, notify_error = NULL, notified_at = ? WHERE id = ?")
       .bind(now.toISOString(), id)
       .run();
   }
 }
 
-/** Applications whose email on [channel] still needs sending, oldest
- * first. Skips very recent ones, which the request that saved them is
- * still handling. */
-export async function pendingNotifications(env, limit = 5, now = new Date(), channel = 'hr') {
-  const c = CHANNELS[channel];
+/** Applications whose HR email still needs sending, oldest first. Skips
+ * very recent ones, which the request that saved them is still handling. */
+export async function pendingNotifications(env, limit = 5, now = new Date()) {
   const before = new Date(now.getTime() - 2 * 60 * 1000).toISOString();
   const { results } = await env.APPLICATIONS_DB.prepare(
     `SELECT * FROM applications
-     WHERE ${c.status} != 'sent' AND ${c.attempts} < ? AND created_at < ?
+     WHERE notify_status != 'sent' AND notify_attempts < ? AND created_at < ?
      ORDER BY created_at LIMIT ?`,
   )
     .bind(MAX_NOTIFY_ATTEMPTS, before, limit)

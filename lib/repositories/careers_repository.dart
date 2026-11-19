@@ -42,7 +42,7 @@ class ApiCareersRepository implements CareersRepository {
         body = null;
       }
       if (response.statusCode == 200 && body is Map && body['ok'] == true) {
-        return SubmissionResult(SubmissionStatus.success, null, body['confirmationSent'] == true);
+        return const SubmissionResult(SubmissionStatus.success);
       }
       return SubmissionResult(SubmissionStatus.failure, failureMessage(response.statusCode, body));
     } catch (_) {

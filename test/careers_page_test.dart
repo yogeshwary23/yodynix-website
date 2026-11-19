@@ -296,8 +296,6 @@ void main() {
     expect(sent.submissionId, matches(RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')));
     expect(sent.toFields()['submissionId'], sent.submissionId);
     expect(find.text('Application Submitted'), findsOneWidget);
-    // Mentioned only because the server reported the confirmation as sent.
-    expect(find.textContaining('A confirmation has been sent to asha@example.com.'), findsOneWidget);
     // A confirmed send clears the form for the next applicant.
     expect(selection.value, isNull);
     expect(tester.takeException(), isNull);
@@ -310,7 +308,7 @@ class _RecordingRepository implements CareersRepository {
   @override
   Future<SubmissionResult> submit(JobApplication application) async {
     sent.add(application);
-    return const SubmissionResult(SubmissionStatus.success, null, true);
+    return const SubmissionResult(SubmissionStatus.success);
   }
 }
 

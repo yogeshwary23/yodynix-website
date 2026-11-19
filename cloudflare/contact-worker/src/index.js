@@ -4,18 +4,17 @@
 //   POST /api/contact  validate an enquiry and deliver it by SMTP
 //   POST /api/careers  validate a job or internship application (multipart
 //                      form with a résumé), save it (D1 + résumé in KV), then
-//                      email HR with the résumé attached and send the
-//                      applicant a confirmation
-//   cron               retries HR and applicant emails that failed or never ran
+//                      email HR with the résumé attached
+//   cron               retries HR emails that failed or never ran
 //
-// Careers: success means the application is saved. Both emails are sent
-// straight away; if one fails the application stays saved, the failure is
-// logged and recorded, and the cron retries it. The response says which
-// emails the SMTP server accepted (`notified`, `confirmationSent`).
+// Careers: success means the application is saved. The HR email is sent
+// straight away; if that fails the application stays saved, the failure is
+// logged and recorded, and the cron retries it. `notified` in the response
+// says whether the SMTP server accepted it.
 // A success response is returned only after the SMTP server has accepted
 // the message (250 reply to DATA).
 
-import { buildApplicationMessage, buildConfirmationMessage, MAX_RESUME_BYTES, validateApplication, validateResume } from './application.js';
+import { buildApplicationMessage, MAX_RESUME_BYTES, validateApplication, validateResume } from './application.js';
 import { buildMessage } from './email.js';
 import {
   loadApplication,
@@ -213,25 +212,20 @@ async function handleApplication(request, env, origin, allowed, cors) {
   }
   log('application_saved', { id: saved.id, kind: result.data.kind });
 
-  // 2. Email HR, then confirm to the applicant. A failure keeps the
-  // application and is retried by the cron.
-  const application = { ...result.data, reference: saved.id };
-  const submitted = new Date();
-  const notified = await sendApplicationEmail(env, 'hr', saved.id, application, resume.file, submitted);
-  const confirmationSent = await sendApplicationEmail(env, 'applicant', saved.id, application, resume.file, submitted);
-  return json({ ok: true, id: saved.id, notified, confirmationSent }, 200, cors);
+  // 2. Email HR. A failure keeps the application and is retried by the cron.
+  const notified = await notifyHr(env, saved.id, { ...result.data, reference: saved.id }, resume.file, new Date());
+  return json({ ok: true, id: saved.id, notified }, 200, cors);
 }
 
-/** Sends one email for a saved application — `hr`: the notification with
- * the résumé attached; `applicant`: the confirmation — and records the
- * outcome. Returns whether the SMTP server accepted it. */
-async function sendApplicationEmail(env, channel, id, application, file, submitted) {
+/** Sends the HR email for a saved application and records the outcome.
+ * Returns whether the SMTP server accepted it. */
+async function notifyHr(env, id, application, file, submitted) {
   let error = null;
   if (!isConfigured(env)) {
     error = 'SMTP is not configured';
   } else {
     const username = env.SMTP_USERNAME.trim();
-    const to = channel === 'hr' ? (env.CAREERS_RECEIVER_EMAIL || env.CONTACT_RECEIVER_EMAIL).trim() : application.email;
+    const receiver = (env.CAREERS_RECEIVER_EMAIL || env.CONTACT_RECEIVER_EMAIL).trim();
     try {
       await sendMail({
         host: env.SMTP_HOST.trim(),
@@ -239,43 +233,36 @@ async function sendApplicationEmail(env, channel, id, application, file, submitt
         username,
         password: env.SMTP_PASSWORD,
         from: username,
-        to,
-        message:
-          channel === 'hr'
-            ? buildApplicationMessage(application, file, { from: username, to, submitted })
-            : buildConfirmationMessage(application, { from: username, submitted }),
-        // A few megabytes of attachment take longer to upload than an enquiry;
-        // the confirmation has none. Together they stay within the site's 90 s.
-        timeoutMs: channel === 'hr' ? 60000 : 25000,
+        to: receiver,
+        message: buildApplicationMessage(application, file, { from: username, to: receiver, submitted }),
+        // A few megabytes of attachment take longer to upload than an enquiry.
+        timeoutMs: 60000,
       });
     } catch (err) {
       error = err instanceof SmtpError ? `${err.stage} ${err.code ?? ''} ${err.message}`.trim() : String(err?.message ?? err);
     }
   }
   try {
-    await recordNotification(env, id, error, new Date(), channel);
+    await recordNotification(env, id, error);
   } catch (err) {
-    log('notify_record_failure', { id, channel, detail: String(err?.message ?? err).slice(0, 200) });
+    log('notify_record_failure', { id, detail: String(err?.message ?? err).slice(0, 200) });
   }
-  // Only the id and SMTP stage/code are logged — never the applicant's details.
-  if (error) log('notify_failure', { id, channel, detail: error.slice(0, 200) });
-  else log(channel === 'hr' ? 'application_sent' : 'confirmation_sent', { id, kind: application.kind });
+  if (error) log('notify_failure', { id, detail: error.slice(0, 200) });
+  else log('application_sent', { id, kind: application.kind });
   return !error;
 }
 
-/** Cron: resend HR and applicant emails that failed or never ran. */
+/** Cron: resend HR emails that failed or never ran. */
 async function retryNotifications(env) {
   if (!storageConfigured(env)) return;
-  for (const channel of ['hr', 'applicant']) {
-    for (const row of await pendingNotifications(env, 5, new Date(), channel)) {
-      try {
-        const { application, file } = await loadApplication(env, row);
-        await sendApplicationEmail(env, channel, row.id, { ...application, reference: row.id }, file, new Date(row.created_at));
-      } catch (err) {
-        const detail = String(err?.message ?? err);
-        log('notify_retry_failure', { id: row.id, channel, detail: detail.slice(0, 200) });
-        await recordNotification(env, row.id, detail, new Date(), channel).catch(() => {});
-      }
+  for (const row of await pendingNotifications(env)) {
+    try {
+      const { application, file } = await loadApplication(env, row);
+      await notifyHr(env, row.id, { ...application, reference: row.id }, file, new Date(row.created_at));
+    } catch (err) {
+      const detail = String(err?.message ?? err);
+      log('notify_retry_failure', { id: row.id, detail: detail.slice(0, 200) });
+      await recordNotification(env, row.id, detail).catch(() => {});
     }
   }
 }

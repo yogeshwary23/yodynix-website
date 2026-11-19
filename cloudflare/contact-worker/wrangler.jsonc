@@ -35,7 +35,7 @@
   ],
   "kv_namespaces": [{ "binding": "RESUMES", "id": "80e09467970d4f8ea416358f28f77425" }],
 
-  // Retries HR emails and applicant confirmations that failed.
+  // Retries HR emails for applications whose notification failed.
   "triggers": { "crons": ["*/15 * * * *"] },
 
   // 5 enquiries per minute per visitor IP.

@@ -6,9 +6,6 @@ import {
   attachmentName,
   buildApplicationHtml,
   buildApplicationMessage,
-  buildConfirmationMessage,
-  buildConfirmationText,
-  confirmationSubject,
   MAX_RESUME_BYTES,
   validateApplication,
   validateResume,
@@ -106,23 +103,4 @@ test('builds a multipart/mixed message with the résumé attached', () => {
   const part = msg.split('Content-Disposition: attachment')[1];
   const b64 = part.split('\r\n\r\n')[1].split('\r\n--')[0].replace(/\r\n/g, '');
   assert.deepEqual(new Uint8Array(Buffer.from(b64, 'base64')), bytes);
-});
-
-test('the applicant confirmation goes to the applicant, without the résumé or their free text', () => {
-  const a = { ...validateApplication({ ...valid, kind: 'internship', position: 'UI/UX Design Intern' }).data, reference: 'ref-123' };
-  assert.equal(confirmationSubject(a), 'Internship Application Received – UI/UX Design Intern – YODYNIX');
-  assert.equal(confirmationSubject({ ...a, kind: 'job' }), 'Application Received – UI/UX Design Intern – YODYNIX');
-
-  const text = buildConfirmationText(a, '19 November 2026, 3:30 pm IST');
-  assert.match(text, /^Dear Asha,/);
-  assert.match(text, /Reference: ref-123/);
-  assert.ok(!text.includes(a.skills) && !text.includes(a.message), 'skills and message are not echoed');
-
-  const msg = buildConfirmationMessage(a, { from: 'hr@yodynix.it.com', now: new Date('2026-11-19T10:00:00Z') });
-  assert.match(msg, /^From: YODYNIX Careers <hr@yodynix\.it\.com>\r\n/);
-  assert.match(msg, /\r\nTo: "Asha Patil" <asha@example\.com>\r\n/);
-  assert.match(msg, /\r\nAuto-Submitted: auto-generated\r\n/);
-  assert.match(msg, /Content-Type: multipart\/alternative; boundary="yodynix-alt-/);
-  assert.ok(!msg.includes('Content-Disposition: attachment'), 'no attachment');
-  assert.ok(!/(?<!\r)\n/.test(msg), 'only CRLF line endings');
 });

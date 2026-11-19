@@ -1,5 +1,6 @@
--- Confirmation email to the applicant, tracked like the HR email: pending
--- until sent; failed sends are retried by the cron.
+-- Columns for an applicant confirmation email, which was later removed (HR
+-- notification only). Already applied in production, so kept for the
+-- migration history; nothing reads or writes these columns.
 ALTER TABLE applications ADD COLUMN confirm_status TEXT NOT NULL DEFAULT 'pending' CHECK (confirm_status IN ('pending', 'sent', 'failed'));
 ALTER TABLE applications ADD COLUMN confirm_attempts INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE applications ADD COLUMN confirm_error TEXT;

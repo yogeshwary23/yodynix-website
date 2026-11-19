@@ -513,8 +513,7 @@ void _showResult(BuildContext context, SubmissionResult result, JobApplication a
       AppColors.successOnCard,
       'Application Submitted',
       'Thank you, $firstName! Your $noun for $position has been received. Our hiring team will '
-          'review it and contact you by email.'
-          '${result.confirmationSent ? ' A confirmation has been sent to ${application.email}.' : ''}',
+          'review it and contact you by email.',
     ),
     SubmissionStatus.backendNotConnected => (
       Icons.mark_email_read_outlined,

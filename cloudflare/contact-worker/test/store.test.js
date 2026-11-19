@@ -136,29 +136,6 @@ test('failed HR emails are kept and offered for retry until they succeed', async
   assert.equal(row.notify_attempts, 2);
 });
 
-test('the applicant confirmation is tracked and retried separately from the HR email', async () => {
-  const e = env();
-  const created = new Date('2026-11-19T10:00:00Z');
-  const { id } = await saveApplication(e, application(), pdf(), 'sub-00000001', created);
-  const later = new Date(created.getTime() + 5 * 60 * 1000);
-
-  await recordNotification(e, id, null);
-  await recordNotification(e, id, 'rcpt 550 mailbox unavailable', later, 'applicant');
-  assert.equal((await pendingNotifications(e, 5, later)).length, 0);
-  const pending = await pendingNotifications(e, 5, later, 'applicant');
-  assert.equal(pending.length, 1);
-  assert.equal(pending[0].confirm_status, 'failed');
-  assert.equal(pending[0].confirm_error, 'rcpt 550 mailbox unavailable');
-
-  await recordNotification(e, id, null, later, 'applicant');
-  assert.equal((await pendingNotifications(e, 5, later, 'applicant')).length, 0);
-  const row = e.APPLICATIONS_DB.sqlite.prepare('SELECT * FROM applications WHERE id = ?').get(id);
-  assert.equal(row.notify_status, 'sent');
-  assert.equal(row.confirm_status, 'sent');
-  assert.equal(row.confirm_attempts, 2);
-  assert.equal(row.confirmed_at, later.toISOString());
-});
-
 test('retries stop after the maximum number of attempts', async () => {
   const e = env();
   const created = new Date('2026-11-19T10:00:00Z');
