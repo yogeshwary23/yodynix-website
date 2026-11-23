@@ -11,11 +11,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>YODYNIX | Technology. Intelligence. Innovation.</title>
-  <meta name="description" content="YODYNIX is a digital technology and innovation studio helping businesses, startups and students turn ideas into practical digital solutions — websites, mobile apps, custom software, AI automation, digital marketing, UI/UX design, branding and more.">
+  <meta name="description" content="YODYNIX, Moshi, Pune: website development, mobile apps, custom software, AI automation and digital marketing for businesses and startups.">
   <meta name="keywords" content="YODYNIX, website development, mobile app development, Flutter, e-commerce, custom software, AI automation, digital marketing, UI/UX design, branding, careers, Pune">
   <meta name="theme-color" content="#F8F6F1">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://yodynix.it.com/">
+  <script>
+    // Old hash links (/#/careers) open the same page at its clean URL.
+    (function () {
+      var h = window.location.hash;
+      if (h.indexOf('#/') === 0) {
+        window.history.replaceState(null, '', h.substring(1) || '/');
+      }
+    })();
+  </script>
 
   <!-- Open Graph / social sharing -->
   <meta property="og:type" content="website">
@@ -124,6 +133,18 @@
     @media (prefers-reduced-motion: reduce) { #splash img, #splash .bar::after { animation: none; } }
     .seo-content { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   </style>
+  <script>
+    // Each page is its own canonical URL (yodynix.it.com, no www, no
+    // trailing slash, no query), so Google indexes every page and does not
+    // fold them into the homepage.
+    (function () {
+      var path = window.location.pathname.replace(/\/+$/, '') || '/';
+      var url = 'https://yodynix.it.com' + path;
+      document.querySelector('link[rel="canonical"]').setAttribute('href', url);
+      var og = document.querySelector('meta[property="og:url"]');
+      if (og) og.setAttribute('content', url);
+    })();
+  </script>
 </head>
 <body>
   <div id="splash" aria-hidden="true">

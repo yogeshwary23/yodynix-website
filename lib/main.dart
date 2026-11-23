@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app/yodynix_app.dart';
 import 'services/asset_registry.dart';
 
 Future<void> main() async {
+  // Clean URLs (/careers) instead of hash URLs (/#/careers): each page gets
+  // a URL of its own that search engines can index. web/index.html moves
+  // old /#/ links onto the matching path before the app starts.
+  usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   // Fonts are bundled in assets/fonts; never fetch from Google at runtime.
   GoogleFonts.config.allowRuntimeFetching = false;
