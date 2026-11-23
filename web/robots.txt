@@ -1,7 +1,7 @@
-# YODYNIX — https://yodynix.it.com/
+# YODYNIX — https://www.yodynix.it.com/
 # Everything is public. Crawlers must be able to fetch the app's scripts,
 # wasm, fonts and assets to render the site, so nothing is disallowed.
 User-agent: *
 Allow: /
 
-Sitemap: https://yodynix.it.com/sitemap.xml
+Sitemap: https://www.yodynix.it.com/sitemap.xml
