@@ -24,7 +24,7 @@ class SiteConfig {
   /// The logo image itself is never altered.
   static const bool showWordmarkBesideLogo = true;
 
-  static const String website = 'https://yodynix.it.com';
+  static const String website = 'https://www.yodynix.it.com';
 }
 
 class ContactConfig {
