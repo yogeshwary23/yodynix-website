@@ -122,7 +122,7 @@ class _WorkCard extends StatelessWidget {
     final image = p.image;
     final meta = [p.industry, ?p.location].join('  ·  ').toUpperCase();
     final (String ctaLabel, IconData ctaIcon) = p.url != null
-        ? ('Visit Website', Icons.open_in_new_rounded)
+        ? (p.badge == WorkBadge.ourDemo ? 'Try Live Demo' : 'Visit Website', Icons.open_in_new_rounded)
         : p.route != null
         ? ('Try Live Demo', Icons.arrow_forward_rounded)
         : ('Private software · sign-in required', Icons.lock_outline_rounded);

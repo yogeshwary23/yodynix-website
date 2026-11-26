@@ -74,7 +74,8 @@ class OurWorkContent {
   static const String heading = 'Software That Runs Real Businesses';
   static const String lead =
       'Websites and business software we have designed and built for clients across Maharashtra, '
-      'from healthcare and jewellery retail to environmental consulting and fuel stations.';
+      'from healthcare and jewellery retail to environmental consulting and fuel stations, alongside '
+      'healthcare products of our own that you can try live.';
 
   static const List<String> areas = ['All', 'Healthcare', 'Retail', 'Consulting', 'Operations'];
 
@@ -153,6 +154,36 @@ class OurWorkContent {
       icon: Icons.medical_services_outlined,
       image: 'assets/images/our_work/clinicdesk_hms.webp',
       route: AppRoutes.demo('hospital-management'),
+    ),
+    const ClientWork(
+      id: 'womens_care',
+      name: "Women's Care ERP",
+      industry: 'Gynecology & Maternity',
+      area: 'Healthcare',
+      type: 'Hospital ERP',
+      summary:
+          'A complete hospital workspace for gynecology, pregnancy and maternity teams, from the first '
+          'OPD visit to newborn discharge. Sign in with any demo role to explore it.',
+      features: ['Pregnancy and ANC tracking', 'Maternity and newborn', 'Gynecology OPD', '8 staff roles'],
+      badge: WorkBadge.ourDemo,
+      icon: Icons.pregnant_woman_outlined,
+      image: 'assets/images/our_work/womens_care.webp',
+      url: 'https://fabulous-peony-04c87d.netlify.app',
+    ),
+    const ClientWork(
+      id: 'ivf_care',
+      name: 'IVF CARE',
+      industry: 'Fertility & Embryology',
+      area: 'Healthcare',
+      type: 'Clinic ERP',
+      summary:
+          'Fertility clinic management: couple files and consultations, the embryology lab from oocyte '
+          'to blastocyst, and a cryobank down to each straw. Sign in with any demo role to explore it.',
+      features: ['Couple files', 'Embryology lab', 'Cryobank', '9 staff roles'],
+      badge: WorkBadge.ourDemo,
+      icon: Icons.biotech_outlined,
+      image: 'assets/images/our_work/ivf_care.webp',
+      url: 'https://stunning-monstera-f24514.netlify.app/',
     ),
   ];
 }

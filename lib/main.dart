@@ -18,7 +18,10 @@ Future<void> main() async {
   // overflows cards whose height was already fixed by an equal-height row.
   await Future.wait([
     AssetRegistry.instance.init(),
-    GoogleFonts.pendingFonts([
+    GoogleFonts.pendingFonts([flutter analyze lib/features/our_work lib/repositories/content/our_work_content.dart
+      git add -A
+      git commit -m "Our Work: add Women's Care ERP and IVF CARE"
+      git push
       for (final weight in const [FontWeight.w600, FontWeight.w700, FontWeight.w800]) GoogleFonts.sora(fontWeight: weight),
       for (final weight in const [FontWeight.w400, FontWeight.w500, FontWeight.w600, FontWeight.w700])
         GoogleFonts.inter(fontWeight: weight),
