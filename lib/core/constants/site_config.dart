@@ -109,7 +109,7 @@ class TeamConfig {
           'her approach to building practical digital solutions, understanding business needs '
           'and creating meaningful technology experiences. She leads YODYNIX with a focus on '
           'innovation, quality and long-term growth.',
-      photoPath: 'assets/images/team/founder.png',
+      photoPath: 'assets/images/team/founder.jpg',
       // She sits right of centre in a near-square office photo.
       photoAlignment: Alignment(0.9, 0),
     ),
@@ -123,7 +123,7 @@ class TeamConfig {
           'practical understanding of business needs, industry challenges and client '
           'relationships. He contributes to YODYNIX through experience-driven thinking, '
           'strategic guidance and a long-term approach to sustainable growth.',
-      photoPath: 'assets/images/team/partner.png',
+      photoPath: 'assets/images/team/partner.jpg',
       photoAlignment: Alignment(0.65, 0),
     ),
   ];

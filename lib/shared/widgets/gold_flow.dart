@@ -77,7 +77,7 @@ class _GoldFlowLayerState extends State<GoldFlowLayer> with SingleTickerProvider
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    _reduced = ambientStill(context);
     _scroll.attach(context);
     _sync();
   }

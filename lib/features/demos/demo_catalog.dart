@@ -12,6 +12,7 @@ import 'class_booking_demo.dart';
 import 'clinic_website_demo.dart';
 import 'enquiry_automation_demo.dart';
 import 'handloom_store_demo.dart';
+import 'hospital_demo.dart';
 import 'mini_crm_demo.dart';
 import 'support_assistant_demo.dart';
 import 'task_board_demo.dart';
@@ -86,6 +87,12 @@ class DemoCatalog {
       serviceId: 'custom_software_development',
       windowTitle: 'leaddesk.demo/leads',
       builder: (_) => const MiniCrmDemo(),
+    ),
+    DemoEntry(
+      slug: 'hospital-management',
+      serviceId: 'custom_software_development',
+      windowTitle: 'clinicdesk.demo/front-office',
+      builder: (_) => const HospitalDemo(),
     ),
     DemoEntry(
       slug: 'support-assistant',

@@ -22,6 +22,7 @@ List<String> publicRoutes() => [
   for (final project in ServicePagesContent.allProjects) AppRoutes.project(project.slug),
   for (final demo in DemoCatalog.demos) demo.route,
   AppRoutes.industries,
+  AppRoutes.ourWork,
   AppRoutes.careers,
   AppRoutes.privacy,
   AppRoutes.terms,

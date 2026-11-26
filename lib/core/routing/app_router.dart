@@ -9,6 +9,7 @@ import '../../features/home/home_page.dart';
 import '../../features/home/legal_page.dart';
 import '../../features/home/not_found_page.dart';
 import '../../features/industries/industries_page.dart';
+import '../../features/our_work/our_work_page.dart';
 import '../../features/pillars/pillar_detail_page.dart';
 import '../../features/portfolio/portfolio_page.dart';
 import '../../features/portfolio/project_detail_page.dart';
@@ -57,6 +58,8 @@ class AppRouter {
       page = const PortfolioPage();
     } else if (name == AppRoutes.industries) {
       page = const IndustriesPage();
+    } else if (name == AppRoutes.ourWork) {
+      page = const OurWorkPage();
     } else if (name == AppRoutes.privacy) {
       page = const LegalPage(title: 'Privacy Policy');
     } else if (name == AppRoutes.terms) {
@@ -100,6 +103,7 @@ class AppRouter {
       AppRoutes.expertise => 'Expertise',
       AppRoutes.portfolio => 'Portfolio',
       AppRoutes.industries => 'Industries',
+      AppRoutes.ourWork => 'Our Work',
       AppRoutes.privacy => 'Privacy Policy',
       AppRoutes.terms => 'Terms & Conditions',
       _ => AppRoutes.sectionFor(name) != null ? 'Home' : null,

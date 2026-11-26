@@ -1,0 +1,26 @@
+# Cloudflare Pages response headers (copied into build/web by `flutter build web`).
+# Flutter file names are not hashed, so code and the page revalidate on every
+# visit (fast 304s), while fonts, images and the 3D engine are cached longer.
+
+/*
+  X-Content-Type-Options: nosniff
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/flutter_bootstrap.js
+  Cache-Control: public, max-age=0, must-revalidate
+/main.dart.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/assets/fonts/*
+  Cache-Control: public, max-age=2592000
+/assets/assets/images/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/vendor/*
+  Cache-Control: public, max-age=2592000
+/three/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/icons/*
+  Cache-Control: public, max-age=604800

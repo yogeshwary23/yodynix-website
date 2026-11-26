@@ -79,7 +79,8 @@ class PortfolioContent {
 
   static const String disclosure =
       'Projects displayed in this portfolio are YODYNIX demonstrations created to showcase '
-      'our capabilities. They are not representations of completed client engagements.';
+      'our capabilities. They are not representations of completed client engagements. '
+      'Websites and software built for our clients are on the Our Work page.';
 
   static const String closingHeading = 'Have a Project in Mind?';
   static const String closingBody =
@@ -267,14 +268,15 @@ class PortfolioContent {
           'alerts raised before an item runs out.',
     ),
     'clinicdesk': ProjectCaseStudy(
-      industry: 'Healthcare & Clinics',
-      objective: 'Bring a clinic’s appointments, patient records and billing into a single front-desk tool.',
+      industry: 'Healthcare & Hospitals',
+      objective: 'Show how one front-office system keeps OPD, beds and billing in step across a hospital.',
       problem:
-          'Clinic front desks move between appointment books, patient files and billing tools, '
-          'which slows every visit.',
+          'Hospital front desks juggle token slips, a bed register and separate billing, so '
+          'queues stall, free beds go unnoticed and charges are missed at discharge.',
       solution:
-          'One front-desk system with a day view of appointments, quick patient look-up, visit '
-          'notes and simple billing, with role-based access.',
+          'A single front-office tool with an OPD token queue, a ward bed board for admission and '
+          'discharge, and billing raised automatically from each consultation and stay.',
+      technologies: _flutterWeb,
     ),
     'fleetboard': ProjectCaseStudy(
       industry: 'Retail & Logistics',

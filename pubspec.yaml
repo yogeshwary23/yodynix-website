@@ -88,6 +88,8 @@ flutter:
     - assets/images/industries/
     # Why Choose YODYNIX cards (Unsplash License; see assets/images/PHOTO_CREDITS.md).
     - assets/images/why_choose/
+    # Client project screenshots for the Our Work page.
+    - assets/images/our_work/
     # Inter + Sora (SIL Open Font License), bundled so google_fonts never fetches at runtime.
     - assets/fonts/
 

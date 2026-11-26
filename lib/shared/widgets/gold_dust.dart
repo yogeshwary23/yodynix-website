@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/responsive.dart';
 import '../three/scroll_animation_controller.dart';
 import 'gold_flow.dart';
+import 'particle_network.dart';
 
 /// Slowly rising champagne-gold motes behind [child] — the footer's ambient
 /// detail. Drawn in Flutter (no WebGL), it only ticks while on screen and
@@ -36,7 +37,7 @@ class _GoldDustState extends State<GoldDust> with SingleTickerProviderStateMixin
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    _reduced = ambientStill(context);
     _scroll.attach(context);
     _sync();
   }

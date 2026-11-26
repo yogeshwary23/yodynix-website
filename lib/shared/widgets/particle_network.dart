@@ -7,6 +7,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
+/// Whether ambient layers (particles, gold lines, gold dust) hold a still
+/// frame: when the visitor prefers reduced motion, and on phones and tablets
+/// (narrower than 1024 px), where animating them every frame makes scrolling
+/// stutter on typical mobile GPUs.
+bool ambientStill(BuildContext context) =>
+    (MediaQuery.maybeDisableAnimationsOf(context) ?? false) ||
+    (MediaQuery.maybeSizeOf(context)?.width ?? 1024) < 1024;
+
 /// The site-wide ambient background: small champagne-gold, gold and silver
 /// spheres drifting at different depths, a few nearby ones joined by
 /// hairline gold lines, each fading in and out over its own lifetime.
@@ -24,11 +32,11 @@ class ParticleNetworkLayer extends LeafRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _RenderParticleLayer(MediaQuery.maybeDisableAnimationsOf(context) ?? false);
+      _RenderParticleLayer(ambientStill(context));
 
   @override
   void updateRenderObject(BuildContext context, RenderObject renderObject) {
-    (renderObject as _RenderParticleLayer).reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    (renderObject as _RenderParticleLayer).reduced = ambientStill(context);
   }
 }
 

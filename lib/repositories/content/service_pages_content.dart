@@ -462,15 +462,19 @@ class ServicePagesContent {
         ),
         SampleProject(
           id: 'clinicdesk',
-          name: 'ClinicDesk',
-          category: 'Clinic management system',
-          summary: 'Front-desk software for appointments, patient records and billing.',
+          name: 'ClinicDesk HMS',
+          category: 'Hospital management system',
+          summary:
+              'A working hospital front office: OPD tokens, a live patient queue, a ward bed '
+              'board and billing that update together.',
           overview:
-              'Concept for a clinic front desk: a day view of appointments, quick patient '
-              'look-up, visit notes and simple billing, with role-based access for doctors '
-              'and reception staff.',
-          features: ['Appointment day view', 'Patient records', 'Billing and receipts', 'Role-based access'],
+              'A hospital management demo. Issue an OPD token, call the next patient, admit '
+              'a patient to a free bed, discharge them and settle the bill, and the dashboard '
+              'counts, bed occupancy and collection change immediately. Sample data only; it '
+              'stays in your browser session.',
+          features: ['OPD token queue', 'Ward bed board', 'Admission and discharge', 'Billing and collections'],
           imageAlt: 'Clinic staff working together at a reception desk.',
+          demoRoute: '${AppRoutes.demoPrefix}hospital-management',
         ),
         SampleProject(
           id: 'fleetboard',

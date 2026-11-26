@@ -26,6 +26,9 @@ class AppRoutes {
   static const String portfolio = '/portfolio';
   static const String industries = '/industries';
 
+  /// Websites and software built for clients.
+  static const String ourWork = '/our-work';
+
   /// All services, and our expertise in AI and technology.
   static const String services = '/services';
   static const String expertise = '/expertise';
@@ -72,6 +75,7 @@ class AppRoutes {
       '/internship' || '/internship-careers' || '/internships' || '/jobs' => careers,
       _ when normalised.startsWith('/internship/') => careers,
       '/projects' || '/work' => portfolio,
+      '/clients' || '/our-clients' => ourWork,
       // Flutter is now part of Mobile Application Development.
       '/services/flutter-development' => service('mobile-app-development'),
       // Project pages; unknown project links open the portfolio.

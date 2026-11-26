@@ -84,6 +84,7 @@ void openCareersPage(BuildContext context, {bool apply = false}) =>
 /// Top-level pages listed in the navigation beside the homepage sections.
 enum SitePage {
   portfolio('Portfolio', AppRoutes.portfolio),
+  ourWork('Our Work', AppRoutes.ourWork),
   industries('Industries', AppRoutes.industries);
 
   const SitePage(this.label, this.route);
